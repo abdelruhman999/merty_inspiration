@@ -219,6 +219,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                       name: data.name,
                       price: price,
                       sizeSelector: sizeSelector,
+                      count:1
                     },
                   ])
                 );

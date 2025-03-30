@@ -9,7 +9,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import Link from 'next/link';
-import { removeItemsShopping, setItemsFromLocalStorage, setShow } from '@/redux/slices/dataShopping';
+import { decreaseCount, increaseCount, removeItemsShopping, setItemsFromLocalStorage, setShow } from '@/redux/slices/dataShopping';
 import { FaXmark } from "react-icons/fa6";
 import logo1 from '../../../assets/master-173035bc8124581983d4efa50cf8626e8553c2b311353fbf67485f9c1a2b88d1.svg'
 import logo2 from '../../../assets/visa-319d545c6fd255c9aad5eeaad21fd6f7f7b4fdbdb1a35ce83b89cca12a187f00.svg'
@@ -20,27 +20,23 @@ import { get_data } from '@/calls/constant';
 interface ShoppingProps {}
 
 const Shopping: FC<ShoppingProps> = () => {
-  const [total_price , setTotal_price] = useState(0)
-  const {itemsShopping,show} = useSelector((state:RootState)=>state.dataShopping)
+
+  const {itemsShopping,show,sup_total} = useSelector((state:RootState)=>state.dataShopping)
   const dispatsh = useDispatch();
 
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+   
       const itemsFromLocalStorage = localStorage.getItem(get_data);
       if (itemsFromLocalStorage) {
         dispatsh(setItemsFromLocalStorage(JSON.parse(itemsFromLocalStorage)));
+    
       }
-    }
-  }, [dispatsh]);
-
-
-    useEffect(()=>{
-        if(itemsShopping){
-        const price =  itemsShopping.reduce((prev,current)=> prev + current.price , 0)
-        setTotal_price(price);   
-        }  
-    },[itemsShopping])
+ 
+    }, [dispatsh]);
+    
+    
+  
 
     return (
       <div className={`flex flex-col items-start fixed left-0 top-[87px] bg-black/50 z-40 h-screen
@@ -64,10 +60,12 @@ const Shopping: FC<ShoppingProps> = () => {
           
 
             {itemsShopping.length > 0 ? (
+              
               <div className={`flex flex-col gap-[20px]   pb-[87px] w-full h-full  overflow-y-auto no-scrollbar ${!show && 'hidden'}`}>
                 <div className="w-full h-full  overflow-y-auto no-scrollbar flex flex-col gap-[20px]">
                { 
                itemsShopping.map((el, index) => (
+                
                   <div key={index} className='flex flex-col gap-[20px] items-center w-full'>
                     <div className={`gap-[30px] ${show ? 'w-fit' : 'w-0'} flex justify-end items-center`}>
                       <div className='flex flex-col items-end gap-[10px]'>
@@ -78,9 +76,21 @@ const Shopping: FC<ShoppingProps> = () => {
                         </div> 
           
                         <div className='border border-black w-[120px] h-[40px] gap-[20px] flex items-center justify-center rounded-2xl'>
-                          <FaPlus className='text-xl font-semibold cursor-pointer' />
-                          <p className='text-[17px]'>1</p>
-                          <FaMinus className='text-xl font-semibold cursor-pointer' />
+                          <FaPlus
+                          onClick={()=>{
+                           
+                           dispatsh(
+                            increaseCount(index)
+                          )
+                          }}
+                          className='text-xl font-semibold cursor-pointer' />
+                          <p className='text-[17px]'>{el.count}</p>
+                          <FaMinus
+                           onClick={() => {
+                            
+                            dispatsh(decreaseCount(index))
+                           }}
+                          className='text-xl font-semibold cursor-pointer' />
                         </div>
           
                         <p className="text-lg font-medium text-gray-700">
@@ -118,7 +128,7 @@ const Shopping: FC<ShoppingProps> = () => {
                 </div>
                 <div className='bg-white pb-3 pt-3 shadow  shadow-gray-400 gap-[20px] flex flex-col items-center   w-full '>
                     <div className='flex items-center justify-between w-full p-1.5'>
-                      <p className='text-xl font-semibold text-zinc-700'>LE {total_price} EGP</p>
+                      <p className='text-xl font-semibold text-zinc-700'>LE {sup_total} EGP</p>
                       <p className='text-xl font-semibold text-zinc-700'>:Subtotal</p>
                     </div>
                     <div className='bg-zinc-700  text-white hover:bg-zinc-500 duration-200 cursor-pointer h-[35px] w-[90%] flex justify-center items-center'>
