@@ -89,7 +89,9 @@ const Shopping: FC<ShoppingProps> = () => {
           
                         <div className='flex gap-[10px] items-center justify-center pr-3'>
                           <MdDelete
-                            onClick={() => dispatsh(removeItemsShopping(index))}
+                            onClick={() => dispatsh(
+                              removeItemsShopping(index)
+                             )}
                             className='text-red-500 text-xl cursor-pointer'
                           />
                           <Link href={`${el.id}`}>

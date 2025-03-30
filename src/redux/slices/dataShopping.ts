@@ -21,7 +21,11 @@ export const dataShopping = createSlice({
       state.show = !state.show;
     },
     removeItemsShopping: (state, action: PayloadAction<number>) => {
+
       state.itemsShopping = state.itemsShopping.filter((_, i) => i !== action.payload);
+      if (isClient) {
+      localStorage.setItem(get_data,JSON.stringify(state.itemsShopping));
+      }
     },
     addItemsShopping: (state, action: PayloadAction<any[]>) => {
       state.itemsShopping = [...state.itemsShopping, ...action.payload];
