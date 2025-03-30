@@ -43,7 +43,7 @@ export default function RootLayout({
             {children}                
             
               <Fotter />
-              <div className="fixed bottom-[50px] right-[50px]">
+              <div className="fixed bottom-[50px] max-sm:right-2 right-[50px]">
                 <Whatsappicon />
               </div>
             

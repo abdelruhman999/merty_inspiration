@@ -21,6 +21,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
   const [sizeSelector, setSizeSelector] = useState("");
   const [size, setSize] = useState<ProductSizeColor[]>([]);
   const [current_img, setCurrent_img] = useState("");
+  const [stock , setStock] = useState<number>(0)
   const dispatsh = useDispatch();
   const params = useParams();
 
@@ -65,7 +66,6 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
   useEffect(() => {
     if (data) {
       setCurrent_img(data.image);
-      // console.log(data);
     }
   }, [data]);
 
@@ -76,32 +76,41 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
     }
   }, [size]);
 
+  useEffect(()=>{
+    const stock =  size.filter((el)=>el.size.size === sizeSelector)
+    if(stock.length>0){
+      setStock(stock[0].stock);
+    }
+  },[sizeSelector])
+
   return (
     <>
       {data ? (
         <div
           className="flex
         justify-center items-center
-        xs:items-center 
-        xs:flex-col rounded-2xl
-         gap-[50px]  h-[650px]
-         xs:gap-[20px]
+        max-sm:items-center 
+        max-sm:flex-col rounded-2xl
+         gap-[50px] h-[650px] max-sm:h-auto
+         max-sm:gap-[20px]
          bg-white w-[90%]"
         >
           <div
             className="flex
-          gap-[15px]  flex-row-reverse"
+          gap-[15px]  max-sm:flex-col
+           max-sm:items-center
+            flex-row-reverse"
           >
             <div className="relative ">
               <Image
                 src={`${Base_Url}/${current_img}`}
                 className="w-[491px]
-                xs:w-[350px] 
-                xs:h-[400px]
+                max-sm:w-[350px] 
+                max-sm:h-[400px]
                 h-[567px]"
                 alt="logo"
-                width={400}
-                height={400}
+                width={200}
+                height={200}
               />
               <div
                 className="bg-black absolute 
@@ -115,7 +124,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                 </p>
               </div>
             </div>
-            <div className="flex justify-end items-start h-fit w-[150px] flex-wrap gap-[10px]">
+            <div className="flex justify-end items-start h-fit max-sm:w-full max-sm:justify-center w-[150px] flex-wrap gap-[10px]">
               <Image
                 onClick={() => {
                   setCurrent_img(data.image);
@@ -134,24 +143,25 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
 
           <div
             className="flex
-        gap-[50px] flex-col"
+           gap-[50px] flex-col"
           >
-            <div
-              className="flex
+        <div
+          className="flex
          flex-col 
          gap-[10px]
-         xs:gap-[0]
-         xs:items-center
+         max-sm:gap-[0]
+         max-sm:items-center
          
          "
             >
-              <div className="flex w-[300px] justify-between items-center">
+              <div className="flex w-[300px]  justify-between items-start">
                 <p
                   className="font-semibold
-          text-wrap  xs:w-[350px]
-           text-2xl"
+                  text-wrap 
+                    max-sm:w-[200px]
+                  text-2xl"
                 >
-                  {data.name}
+                  {data.name} 
                 </p>
                 <p className={style["tag"]}>-50%</p>
               </div>
@@ -159,25 +169,25 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
 
             <div
               className="flex
-       xs:items-center
-        flex-col
-        xs:gap-[15px]
-        gap-[10px]"
+              max-sm:items-start
+                flex-col  
+                max-sm:gap-[15px]  
+                gap-[10px]"
             >
               <p className="text-3xl font-bold">LE {price}</p>
               <p
-                className="text-wrap xs:text-center
-         w-[380px] xs:w-[350px]
-        text-sm font-semibold text-gray-400"
+                className="text-wrap max-sm:text-
+              w-[250px] max-sm:w-[200px] 
+              text-sm font-semibold text-gray-400"
               >
-                {data.description}
+                {data.description} تبثعبا ثعص اهثاصهبتابر اثبعصث عثهب تعقب 
               </p>
             </div>
 
             <div
               className="flex flex-col
-        xs:gap-[15px]
-        gap-[10px]"
+              max-sm:gap-[15px] 
+              gap-[10px]"
             >
               <p className="text-xl xs:text-2xl">Select Size</p>
 
@@ -186,7 +196,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                   return (
                     <div
                       key={index}
-                      onClick={() => {
+                      onClick={() => {                        
                         setPrice(el.size.price);
                         setactive(index);
                         setSizeSelector(el.size.size);
@@ -206,7 +216,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
               </div>
             </div>
 
-            <div className="flex flex-col gap-[30px]">
+            <div className="flex  flex-col gap-[30px]">
          
 
             <button
@@ -219,7 +229,8 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                       name: data.name,
                       price: price,
                       sizeSelector: sizeSelector,
-                      count:1
+                      count:1,
+                      stock:stock
                     },
                   ])
                 );
@@ -241,15 +252,12 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
               اضف الى عربة تسوقك
             </button>
               <div
-                className="bg-gray-300
-              h-[1px]"
-              ></div>
+                className="bg-gray-300 h-[1px]"></div>
 
               <p
                 className="text-wrap 
-                font-serif
-                text-sm
-                w-[330px]
+                font-serif text-sm
+                w-[330px] max-sm:pb-[10px] max-sm:w-[300px]
                 text-gray-500 
                  "
               >

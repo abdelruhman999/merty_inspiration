@@ -4,7 +4,7 @@ interface WhatsappiconProps {}
 
 const Whatsappicon: FC<WhatsappiconProps> = () => {
     return (
-        <button className="Btn  ">
+        <button className="Btn">
         <div className="sign">
           <svg className="socialSvg whatsappSvg" viewBox="0 0 16 16">
             <path

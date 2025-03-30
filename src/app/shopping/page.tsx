@@ -30,7 +30,6 @@ const Shopping: FC<ShoppingProps> = () => {
       const itemsFromLocalStorage = localStorage.getItem(get_data);
       if (itemsFromLocalStorage) {
         dispatsh(setItemsFromLocalStorage(JSON.parse(itemsFromLocalStorage)));
-    
       }
  
     }, [dispatsh]);

@@ -1,3 +1,12 @@
+
+@media (max-width: 390px) {
+  .card {
+    width: 45% !important;
+   
+  }
+}
+
+
 .card {
     width: 192px;
     height: 310px;
@@ -86,3 +95,16 @@
     font-weight: 500;
   }
   
+
+  /* اخفار السكرول */
+
+  .noScrollbar {
+    overflow: -moz-scrollbars-none;  
+    -ms-overflow-style: none;       
+    scrollbar-width: none;          
+  }
+  .noScrollbar::-webkit-scrollbar { 
+    width: 0 !important;
+    height: 0 !important;
+    display: none;
+  }

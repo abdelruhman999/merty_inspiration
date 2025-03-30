@@ -57,23 +57,25 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
           <p></p>
         </div>
         
+        <div className={`${style.noScrollbar} overflow-y-hidden flex justify-center w-[150px] overflow-x-auto`}>
 
-        <div className="flex gap-2">
+       <div className={` flex w-[220px] gap-2 `}>
+
 
           {colors.map((el , index: number) => {
-            return (       
+            return (      
+           
               <div
+                key={index}
                 onMouseEnter={()=>{
-                const element =  colors.find((element)=> el.image == element.image)    
-                // console.log(element);
-                   
+                const element =  colors.find((element)=> el.image == element.image)              
                   if(element){
                     setImg(element.image)
                   }        
               }}
-               key={index}
+             
                className="size-[30px] p-[2px]
-               flex justify-center
+               flex justify-center 
                items-center rounded-full 
                border-[1.5px] cursor-pointer
                 border-[#c5b3b3]  hover:border-gray-800" 
@@ -87,6 +89,9 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
                  />     
                
               </div>
+    
+
+            
             );
           })}
 
@@ -103,6 +108,8 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
                 الاصلي
               </p>
             </div>
+        </div>
+
         </div>
 
       

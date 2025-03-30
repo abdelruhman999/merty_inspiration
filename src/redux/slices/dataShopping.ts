@@ -45,14 +45,14 @@ export const dataShopping = createSlice({
     },
 
     increaseCount: (state, action: PayloadAction<number>) => {
-      if (state.itemsShopping[action.payload]) {
+      if (state.itemsShopping[action.payload] && state.itemsShopping[action.payload].count < state.itemsShopping[action.payload].stock) {
         state.itemsShopping[action.payload].count += 1;
         state.sup_total = state.itemsShopping.reduce((prev, current) => prev + current.count * current.price, 0);
       }
     },
 
     decreaseCount: (state, action: PayloadAction<number>) => {
-      if (state.itemsShopping[action.payload] && state.itemsShopping[action.payload].count > 1) {
+      if (state.itemsShopping[action.payload] && state.itemsShopping[action.payload].count > 1 ) {
         state.itemsShopping[action.payload].count -= 1;
         state.sup_total = state.itemsShopping.reduce((prev, current) => prev + current.count * current.price, 0);
       }

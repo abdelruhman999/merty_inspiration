@@ -12,7 +12,7 @@ const Fotter: FC<FotterProps> = () => {
 
 return (
 <footer className=" flex flex-col gap-[50px] w-full  bg-gray-800">
-    <div className="w-full flex justify-between  mx-auto max-w-screen-xl p-4 md:items-center md:justify-between">
+    <div className="w-full max-sm:flex-col max-sm:gap-[50px] flex justify-between  mx-auto max-w-screen-xl p-4 md:items-center md:justify-between">
    
     <ul className=" text-end   text-sm font-medium text-gray-400 dark:text-gray-400 sm:mt-0">
         <li className="text-lg font-bold mb-3  text-gray-300"> الروابط السريعة</li>
@@ -58,10 +58,10 @@ return (
     </div>
 
     </div>
-      <p className="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2023
+      <p className="text-sm  text-gray-500 max-sm:text-center dark:text-gray-400">© 2023
          <a href="https://www.facebook.com/mertyinspiration?rdid=tNTOQ53NfoakWgtR&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Q7JbhsJSV%2F#" className="hover:underline"> MERTY inspiration 5 </a>
          . جميع الحقوق محفوظه .
-         </p>
+      </p>
 
 </footer>
 
