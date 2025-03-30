@@ -9,29 +9,37 @@ import { FaRegEdit } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import Link from 'next/link';
-import { removeItemsShopping, setShow } from '@/redux/slices/dataShopping';
+import { removeItemsShopping, setItemsFromLocalStorage, setShow } from '@/redux/slices/dataShopping';
 import { FaXmark } from "react-icons/fa6";
 import logo1 from '../../../assets/master-173035bc8124581983d4efa50cf8626e8553c2b311353fbf67485f9c1a2b88d1.svg'
 import logo2 from '../../../assets/visa-319d545c6fd255c9aad5eeaad21fd6f7f7b4fdbdb1a35ce83b89cca12a187f00.svg'
 import logo3 from '../../../assets/3a0870c1369eb2bc105bd4838665defa.jpg'
 import { TbShoppingBagX } from "react-icons/tb";
+import { get_data } from '@/calls/constant';
 
 interface ShoppingProps {}
 
 const Shopping: FC<ShoppingProps> = () => {
   const [total_price , setTotal_price] = useState(0)
   const {itemsShopping,show} = useSelector((state:RootState)=>state.dataShopping)
-  const dispatch = useDispatch();
+  const dispatsh = useDispatch();
+
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const itemsFromLocalStorage = localStorage.getItem(get_data);
+      if (itemsFromLocalStorage) {
+        dispatsh(setItemsFromLocalStorage(JSON.parse(itemsFromLocalStorage)));
+      }
+    }
+  }, [dispatsh]);
 
 
     useEffect(()=>{
         if(itemsShopping){
-        const price =  itemsShopping.reduce((prev,current)=>prev + current.price , 0)
-        setTotal_price(price);
-        
-        }
-
-        
+        const price =  itemsShopping.reduce((prev,current)=> prev + current.price , 0)
+        setTotal_price(price);   
+        }  
     },[itemsShopping])
 
     return (
@@ -49,7 +57,7 @@ const Shopping: FC<ShoppingProps> = () => {
               Sopping cart
             </p>
             <FaXmark
-              onClick={() => dispatch(setShow())}
+              onClick={() => dispatsh(setShow())}
               className='text-2xl text-blue-600 duration-500 hover:rotate-[180deg] hover:text-red-500 cursor-pointer'
             />
           </div>
@@ -81,7 +89,7 @@ const Shopping: FC<ShoppingProps> = () => {
           
                         <div className='flex gap-[10px] items-center justify-center pr-3'>
                           <MdDelete
-                            onClick={() => dispatch(removeItemsShopping(index))}
+                            onClick={() => dispatsh(removeItemsShopping(index))}
                             className='text-red-500 text-xl cursor-pointer'
                           />
                           <Link href={`${el.id}`}>
@@ -148,7 +156,7 @@ const Shopping: FC<ShoppingProps> = () => {
                <p>Your cart is empty.</p>
                <Link 
                onClick={()=>{
-                dispatch(setShow())
+                dispatsh(setShow())
                }}
                href={'/'}
                className='bg-zinc-700 font-semibold  text-white
