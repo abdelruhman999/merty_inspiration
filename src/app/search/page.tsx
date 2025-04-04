@@ -31,7 +31,6 @@ const Search = () => {
 
     useEffect(() => {
         if (data) {
-            console.log(data);
             setProducts(data);
         }
     }, [data]);
@@ -84,7 +83,6 @@ const Search = () => {
             {
             !loading && products && products.results.length === 0 &&
                 <Ropot/>
-          
             }
         </div>
     );

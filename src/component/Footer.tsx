@@ -58,7 +58,7 @@ return (
     </div>
 
     </div>
-      <p className="text-sm  text-gray-500 max-sm:text-center dark:text-gray-400">© 2023
+      <p className="text-sm  text-gray-500 text-center dark:text-gray-400">© 2023
          <a href="https://www.facebook.com/mertyinspiration?rdid=tNTOQ53NfoakWgtR&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Q7JbhsJSV%2F#" className="hover:underline"> MERTY inspiration 5 </a>
          . جميع الحقوق محفوظه .
       </p>
