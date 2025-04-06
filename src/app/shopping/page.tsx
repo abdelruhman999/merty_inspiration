@@ -130,9 +130,14 @@ const Shopping: FC<ShoppingProps> = () => {
                       <p className='text-xl font-semibold text-zinc-700'>LE {sup_total} EGP</p>
                       <p className='text-xl font-semibold text-zinc-700'>:Subtotal</p>
                     </div>
-                    <div className='bg-zinc-700  text-white hover:bg-zinc-500 duration-200 cursor-pointer h-[35px] w-[90%] flex justify-center items-center'>
+                    <Link
+                    href={'/create-order'}
+                    onClick={()=>{
+                      dispatsh(setShow())
+                    }}
+                    className='bg-zinc-700  text-white hover:bg-zinc-500 duration-200 cursor-pointer h-[35px] w-[90%] flex justify-center items-center'>
                     CHEAK OUT
-                    </div>
+                    </Link>
                     <div className='flex justify-center items-center gap-[10px]'>
                     <Image
                           src={logo1 }
