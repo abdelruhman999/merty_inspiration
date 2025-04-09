@@ -8,12 +8,14 @@ const Products = async () => {
     cache: "no-store", 
   });
   const data:Pagination<Product> = await response.json(); 
+  console.log(data);
+  
   return (<>
       {data.results.length > 0 ? (
         data.results.map((el:any) => (
           <Cardstyle 
             key={el.id} 
-            image={el.image} 
+            image={el.colors[0].image} 
             name={el.name} 
             id={el.id} 
             colors={el.colors} 

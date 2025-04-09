@@ -1,19 +1,138 @@
+'use client';
+export const dynamic = 'force-dynamic';
 import Image from 'next/image';
-import type { FC } from 'react';
-import  logo from '../../../assets/p_img13.png'
+import { FormEvent, useEffect, useState, type FC } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import Swal from 'sweetalert2';
+import Loaderimg from '@/component/Loaderimg';
+import { sendRequest } from '@/api';
+import useRequest from '@/hooks/call';
+import { get_data } from '@/calls/constant';
+import {  removeItemsAfterCreateOrder } from '@/redux/slices/dataShopping';
 
-interface Create_orderProps {}
+
+interface Create_orderProps {
+    items: items[],
+    first_name: string,
+    last_name: string,
+    phone_number: string,
+    landmark:string ,
+    address:string ,
+    note: string,
+    type:string,
+    total_price: number ,
+    delivery_price: number,
+    city_id: number  
+}
+interface items {
+    size_color:number,
+    quantity: number;
+}
+interface Cities {    
+        id: number,
+        name: string,
+        delivery_price: number
+}
+
 
 const Create_order: FC<Create_orderProps> = () => {
+    const {itemsShopping ,sup_total} = useSelector((state:RootState)=>state.dataShopping)
+    const dispatsh = useDispatch()
+    const [order, setOrder] = useState<Create_orderProps>({
+        items: [],
+        first_name: "",
+        last_name: "",
+        phone_number: '',
+        landmark: "",
+        address: "",
+        note: "",
+        type: "",
+        total_price: 0,
+        delivery_price: 0,
+        city_id: 0
+    });
+   
+ 
+    const {data:cities} = useRequest<Cities[]>({
+        url:'/api/cities',
+        method:'GET',    
+    })
+    
+
+    useEffect(()=>{
+        if(itemsShopping.length > 0){
+            console.log(itemsShopping);
+            
+           setOrder((prev)=>({
+            ...prev,
+            items: itemsShopping.map(el => ({size_color: el.id , quantity: el.count}))
+        }));
+    }
+    },[itemsShopping])
+
+
+  async function henddeleSubmit(e:FormEvent<HTMLFormElement>){
+       e.preventDefault();
+        if(isNaN(Number(order.phone_number))){
+            Swal.fire('برجاء ادخال رقم صحيح')
+            return
+        }
+        if(order.phone_number.length < 11 || order.phone_number.length > 11){
+            Swal.fire('برجاء ادخال رقم صحيح')
+            return
+        }
+        if(order.address === ''){
+            Swal.fire(' يرجاء ادخال العنوان  ')
+            return
+        }
+        if(order.delivery_price === 0){
+            Swal.fire('برجاء اختيار المحافظة')
+            return
+        }
+        if(order.items.length === 0){
+            Swal.fire('برجاء اختيار منتج')
+            return
+        }
+       
+
+
+       await sendRequest({
+            url:'/api/create-order',
+            method:'POST',
+            data:JSON.stringify(
+              { 
+                items: order.items,
+                first_name:order.first_name ,
+                last_name:order.last_name ,
+                phone_number:order.phone_number ,
+                landmark:order.landmark,
+                address:order.address ,
+                note:order.note,
+                total_price: sup_total + order.delivery_price,
+                delivery_price: order.delivery_price,
+                city: order.city_id
+            }
+            ),
+            headers:{
+              "Content-Type":"application/json"
+            }
+            }).then((res)=>{
+                console.log(res);
+            })
+
+            localStorage.removeItem(get_data)
+            dispatsh(removeItemsAfterCreateOrder())
+
+    }
     return (
-        <div className=' w-full flex  justify-center'>
-          
-          
+        <div className=' w-full flex justify-center'>
 
             <form
+            onSubmit={henddeleSubmit}
             className='
-            
-             w-[50%]  pl-[50px]
+            bg-yellow-400 
+             w-[60%]  pl-[50px]
              flex flex-col pt-[20px] gap-[30px]'>   
 
             <div className='flex flex-col gap-[10px]'>
@@ -22,9 +141,18 @@ const Create_order: FC<Create_orderProps> = () => {
             htmlFor="contact">
                 Contact 
             </label>
+
+            {/* 000000000000000000000000000000000 */}
             <input
+                pattern='^01[0|1|2|5]\d{8}$'
+                onChange={(e)=>{
+                    setOrder((prev)=>({
+                        ...prev,
+                        phone_number: e.target.value
+                    }))
+                }}
             id='contact'
-             type="text" 
+             type="text"
              placeholder='Please Enter Your Phone number'
              className='bg-white  pl-[15px] w-[90%] h-[42px] rounded outline-none'
              />
@@ -51,17 +179,35 @@ const Create_order: FC<Create_orderProps> = () => {
             
             <div className='flex  items-center gap-[10px]'>
             <input
+               onChange={(e)=>{
+                setOrder((prev)=>({
+                    ...prev,
+                    first_name: e.target.value
+                }))
+            }}
              type="text" 
              placeholder='First name'
              className='bg-white  pl-[15px] w-[44%] h-[42px] rounded outline-none'
              />
             <input
+               onChange={(e)=>{
+                setOrder((prev)=>({
+                    ...prev,
+                    last_name: e.target.value
+                }))
+            }}
              type="text" 
              placeholder='Last name'
              className='bg-white  pl-[15px] w-[44%] h-[42px] rounded outline-none'
              />
             </div>
             <input
+               onChange={(e)=>{
+                setOrder((prev)=>({
+                    ...prev,
+                    address: e.target.value
+                }))
+            }}
              type="text" 
              placeholder='Address'
              className='bg-white  pl-[15px] w-[90%] h-[42px] rounded outline-none'
@@ -69,29 +215,70 @@ const Create_order: FC<Create_orderProps> = () => {
 
              <div className='flex gap-[10px]'>
              <input
+                onChange={(e)=>{
+                    setOrder((prev)=>({
+                        ...prev,
+                        landmark: e.target.value
+                    }))
+                }}
              type="text" 
-             placeholder='City'
+             placeholder='landmark'
              className='bg-white  pl-[15px] 
               h-[42px] rounded 
               outline-none w-[44%]'
              />
-             <select className='bg-white  pl-[15px] w-[44%] h-[42px] rounded outline-none'>
-                <option value="cairo">cairo</option>
-                <option value="cairo">alex</option>
+             <select
+             onClick={(e)=>{
+                 const ele = cities?.find((el)=> el.name === e.currentTarget.value)   
+                 if(ele){
+                     setOrder((prev)=>({
+                        ...prev, 
+                        delivery_price:ele.delivery_price,
+                        city_id: ele.id
+                     }))   
+                 }
+             }} 
+             className='bg-white text-sm pl-[15px] w-[44%] h-[42px] rounded outline-none'>
+            <option>Governate</option>
+             {
+             cities?.map((el)=>{
+                return(
+                    <option key={el.id}>
+                        {el.name}
+                    </option>
+                )
+             })
+            }
              </select>
              </div>
+
+             <textarea
+             placeholder='Note (Optional)'
+             className='bg-white  pl-[15px] pt-[15px] w-[90%] h-[150px] rounded outline-none'
+             />
               
+              <button
+              type='submit'
+              className=" bg-neutral-900 text-white font-bold py-4 px-8 rounded-lg cursor-pointer font-sans w-[90%]">
+               Submit
+            </button>
             </form>
 
             <div className='w-[1px] bg-gray-50'></div>
 
-            <div className=' pl-[20px] pt-[30px]  w-[50%] p-1'>
-                <div className=' flex flex-col gap-[30px] w-[80%] p-1'>
+            <div className='bg-blue-700 flex flex-col gap-[20px] pl-[20px] pt-[30px]  w-[40%] p-1'>
+               {
+             itemsShopping.length > 0 ?
+                itemsShopping.map((el,index)=>{
+                return(
+                <div
+                key={index}
+                className='bg-yellow-300 flex flex-col gap-[30px] w-[80%] p-1'>
                     <div className='w-full flex items-center justify-between '>
                         <div className='flex items-center justify-center gap-[10px]'>
                             <div className='relative'>
                             <Image
-                            src={logo}
+                            src={el.image}
                             alt='logo'
                             width={70}
                             height={200}
@@ -105,37 +292,49 @@ const Create_order: FC<Create_orderProps> = () => {
                               absolute top-[-8px]
                                right-[-10px]'
                                >
-                                1
+                                {el.count}
                              </div>
                             </div>
                             <div>
-                                <p className='text-sm font-semibold text-gray-900'>Cookies Slides Basic T_Shirt</p>
-                                <p className='text-sm font-semibold text-gray-400'>Black / M</p>
+                                <p className='text-sm font-semibold text-gray-900'>{el.name}</p>
+                                <p className='text-sm font-semibold text-gray-400'>{el.sizeSelector}</p>
                             </div>
                         </div>
                         <div>
-                            <p>E£149.00</p>
+                            <p>E£{el.price}</p>
                         </div>
                     </div>
-                    <div className=' flex flex-col gap-[10px]'>
+                </div>
+                )
+                }):
+                <div className='w-full flex items-center justify-center h-[200px]'>
+                    <Loaderimg/>
+                </div>
+               }
+
+                <div className='w-[80%] flex flex-col gap-[10px]'>
+
+                   
                     <div className='w-full flex
                      items-center justify-between 
                      text-sm  text-gray-900'>
                      <p>Subtotal</p>
-                     <p className='font-semibold'>E£149.00</p>
+                     <p className='font-semibold'>E£{sup_total}</p>
                     </div>
                     <div className='w-full  flex 
                     items-center justify-between 
                     text-sm  text-gray-900'>
                      <p>Shipping</p>
-                     <p className='font-semibold'>E£65.00</p>
+                     <p className='font-semibold'>E£{order.delivery_price}</p>
                     </div>
-                    </div>
-                    <div className='w-full  flex 
+                   
+                    <div className='  flex 
                     items-center justify-between 
                     text-sm   text-gray-900'>
                      <p className='text-xl text-black font-semibold'>Total</p>
-                     <p className='text-xl font-bold '>E£214.00</p>
+                     <p
+                     className='text-xl font-bold '>E£{sup_total+order.delivery_price}
+                     </p>
                     </div>
                 </div>
             </div>

@@ -1,27 +1,26 @@
 "use client";
 import Image from "next/image";
-import { memo, useEffect, useMemo, useState, type FC } from "react";
+import { useEffect, useMemo, useState, type FC } from "react";
 import useRequest from "../../../hooks/call";
 import { useParams } from "next/navigation";
 import { Base_Url } from "@/calls/constant";
-import { HomeProduct, Product, ProductSizeColor } from "@/types/product";
+import { Product, ProductSizeColor } from "@/types/product";
 import style from "../../../component/CardStyle/Cardstyle.module.css";
 import Loadercom from "@/component/Loadercom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { useDispatch} from "react-redux";
 import { addItemsShopping, setShow } from "@/redux/slices/dataShopping";
 import Swal from "sweetalert2";
-import { useRouter } from "next/navigation";
 
 interface ProdcutdetailsProps {}
 
 const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
-  const [price, setPrice] = useState(0);
-  const [active, setactive] = useState(0);
+  const [price, setPrice] = useState<number>(0);
+  const [active, setactive] = useState<number>(0);
   const [sizeSelector, setSizeSelector] = useState("");
   const [size, setSize] = useState<ProductSizeColor[]>([]);
-  const [current_img, setCurrent_img] = useState("");
+  const [current_img, setCurrent_img] = useState<string>("");
   const [stock , setStock] = useState<number>(0)
+  const [stock_id , setStock_id] = useState<number>(0)
   const dispatsh = useDispatch();
   const params = useParams();
 
@@ -44,6 +43,8 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                     (ele) => ele.color.image === el.image
                   );
                   if (element_img) {
+                    // console.log(element_img);
+                    
                     setSize(element_img);
                     const size_selector = element_img[0].size.size;
                     setSizeSelector(size_selector);
@@ -54,8 +55,8 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                 src={`${Base_Url}/${el.image}`}
                 className={`h-[100px] w-[70px] hover:scale-80 duration-200 xs:size-[75px] cursor-pointer `}
                 alt="logo"
-                width={200}
-                height={200}
+                width={400}
+                height={400}
               />
             );
           })}
@@ -63,22 +64,30 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
     );
   }, [data]);
 
+  // وهنا برجع اول صورة بالمعلومات بتاعتها سواء مقاس او سعر عشان اعرضها في الصفحة
   useEffect(() => {
-    if (data) {
-      setCurrent_img(data.image);
+    if (data) {             
+     const first_img =  data.product_size_colors.filter((el) => el.color.image === data.colors[0].image);
+      setCurrent_img(data.colors[0].image);
+      setPrice(first_img[0].size.price);
+      setSize(first_img);
     }
   }, [data]);
 
+  // كده ديه بترجع اول مقاس بسعره لما اتنقل بين الصور 
   useEffect(() => {
     const ele = size.find((_, index) => index === 0);
     if (ele) {
       setPrice(ele.size.price);
+      setSizeSelector(ele.size.size);
     }
   }, [size]);
 
+  // وهنا بجيب كل ستوك لما اعمل سيليكت عللى مقاس معين 
   useEffect(()=>{
-    const stock =  size.filter((el)=>el.size.size === sizeSelector)
-    if(stock.length>0){
+    const stock =  size.filter((el)=>el.size.size === sizeSelector)  
+    if(stock.length>0){  
+      setStock_id(stock[0].id);
       setStock(stock[0].stock);
     }
   },[sizeSelector])
@@ -124,19 +133,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                 </p>
               </div>
             </div>
-            <div className="flex justify-end items-start h-fit max-sm:w-full max-sm:justify-center w-[150px] flex-wrap gap-[10px]">
-              <Image
-                onClick={() => {
-                  setCurrent_img(data.image);
-                }}
-                src={`${Base_Url}/${data.image}`}
-                className={`h-[100px] w-[70px]
-                   hover:scale-80 duration-200
-                   xs:size-[75px] cursor-pointer `}
-                alt="logo"
-                width={200}
-                height={200}
-              />
+            <div className="flex justify-end items-start h-fit max-sm:w-full max-sm:justify-center w-[150px] flex-wrap gap-[10px]">       
               {Img_card}
             </div>
           </div>
@@ -191,12 +188,13 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
             >
               <p className="text-xl xs:text-2xl">Select Size</p>
 
-              <div className="flex gap-2">
+              <div className="flex  gap-2">
                 {size.map((el, index) => {
                   return (
+                    <div  key={index} className="relative">
                     <div
-                      key={index}
-                      onClick={() => {                        
+                     
+                      onClick={() => {                                             
                         setPrice(el.size.price);
                         setactive(index);
                         setSizeSelector(el.size.size);
@@ -204,12 +202,14 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                       className={`text-xl 
                     border-black border
                     bg-gray-200 text-center
-                    font-serif
-                      w-[60px] cursor-pointer
+                      font-serif relative
+                      w-[60px]  cursor-pointer
                       ${active === index ? "border-red-600" : ""}
                       p-[10px]`}
                     >
                       {el.size.size}
+                    </div>
+                      <div className={`${ active === index && stock == 0 ? ' bg-black/50 absolute inset-0' : '' }  `}></div>
                     </div>
                   );
                 })}
@@ -218,13 +218,14 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
 
             <div className="flex  flex-col gap-[30px]">
          
-
+            {
+              stock > 0 &&
             <button
               onClick={() => {
                 dispatsh(
                   addItemsShopping([
                     {
-                      id:data.id,
+                      id:stock_id,
                       image: `${Base_Url}/${current_img}`,
                       name: data.name,
                       price: price,
@@ -251,6 +252,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
             >
               اضف الى عربة تسوقك
             </button>
+            }
               <div
                 className="bg-gray-300 h-[1px]"></div>
 

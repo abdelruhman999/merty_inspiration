@@ -19,7 +19,7 @@ const ProductsList : FC<ProductsList> = () => {
           items.map((el:any) => (
             <Cardstyle 
               key={el.id} 
-              image={el.image} 
+              image={el.colors[0].image} 
               name={el.name} 
               id={el.id} 
               colors={el.colors} 

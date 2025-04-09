@@ -26,12 +26,10 @@ const Shopping: FC<ShoppingProps> = () => {
 
 
   useEffect(() => {
-   
       const itemsFromLocalStorage = localStorage.getItem(get_data);
       if (itemsFromLocalStorage) {
         dispatsh(setItemsFromLocalStorage(JSON.parse(itemsFromLocalStorage)));
       }
- 
     }, [dispatsh]);
     
     
@@ -46,7 +44,7 @@ const Shopping: FC<ShoppingProps> = () => {
           
           <div className={` flex  w-full items-center  
            p-[10px]  ${show ? 'bg-zinc-700 duration-1000' :'duration-50'}
-            gap-[70px]   justify-end`}
+            gap-[70px] justify-end`}
             >
             <p className="text-white font-semibold text-3xl text-nowrap  self-center ">
               Sopping cart

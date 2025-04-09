@@ -36,7 +36,7 @@ const Search = () => {
     }, [data]);
 
     return (
-        <div className='flex flex-col  items-center gap-[50px]'>
+        <div className='flex flex-col  w-full items-center gap-[50px]'>
             <div className="ui-input-container">
                 <input
                     onChange={(e) => handleSearch(e.target.value)}
@@ -59,7 +59,7 @@ const Search = () => {
                 </div>
             </div>
 
-            <div className='flex gap-[20px] flex-wrap'>
+            <div className='flex  w-full justify-center gap-[20px] flex-wrap'>
                 {loading ?
                     <div className='pt-[100px]'>
                         <Load_search />
@@ -69,7 +69,7 @@ const Search = () => {
                         products.results.map((el: any) => (
                             <Cardstyle
                                 key={el.id}
-                                image={el.image}
+                                image={el.colors[0].image}
                                 name={el.name}
                                 id={el.id}
                                 colors={el.colors}

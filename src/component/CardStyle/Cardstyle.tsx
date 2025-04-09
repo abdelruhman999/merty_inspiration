@@ -59,7 +59,7 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
         
         <div className={`${style.noScrollbar} overflow-y-hidden flex justify-center w-[150px] overflow-x-auto`}>
 
-       <div className={` flex w-[220px] gap-2 `}>
+       <div className={` flex justify-center w-[220px] gap-2 `}>
 
 
           {colors.map((el , index: number) => {
@@ -94,20 +94,6 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
             
             );
           })}
-
-              <div
-              onMouseEnter={()=>{
-              setImg(image)   
-            }}
-             className="size-[30px] p-[12px]
-             flex justify-center
-             items-center rounded-full 
-             border-[1px] cursor-pointer border-[#c5b3b3]" 
-             >
-              <p className="text-gray-500 text-[8px]">
-                الاصلي
-              </p>
-            </div>
         </div>
 
         </div>

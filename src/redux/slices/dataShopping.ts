@@ -57,6 +57,10 @@ export const dataShopping = createSlice({
         state.sup_total = state.itemsShopping.reduce((prev, current) => prev + current.count * current.price, 0);
       }
     },
+
+    removeItemsAfterCreateOrder:(state)=>{
+      state.itemsShopping = []
+    }
   },
 });
 
@@ -67,6 +71,7 @@ export const {
   setItemsFromLocalStorage,
   increaseCount,
   decreaseCount,
+  removeItemsAfterCreateOrder
 } = dataShopping.actions;
 
 export default dataShopping.reducer;
