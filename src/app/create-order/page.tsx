@@ -10,6 +10,7 @@ import { sendRequest } from '@/api';
 import useRequest from '@/hooks/call';
 import { get_data } from '@/calls/constant';
 import {  removeItemsAfterCreateOrder } from '@/redux/slices/dataShopping';
+import { log } from 'node:console';
 
 
 interface Create_orderProps {
@@ -24,6 +25,9 @@ interface Create_orderProps {
     total_price: number ,
     delivery_price: number,
     city_id: number  
+    active:number
+    payment_method_id:number
+
 }
 interface items {
     size_color:number,
@@ -34,23 +38,34 @@ interface Cities {
         name: string,
         delivery_price: number
 }
+interface Methods {
+    id: number,
+    name: string
+}
+interface Response {
+    uuid:string
+    url:string
+}
 
 
 const Create_order: FC<Create_orderProps> = () => {
-    const {itemsShopping ,sup_total} = useSelector((state:RootState)=>state.dataShopping)
+    const {itemsShopping , sup_total} = useSelector((state:RootState)=>state.dataShopping)
     const dispatsh = useDispatch()
     const [order, setOrder] = useState<Create_orderProps>({
         items: [],
-        first_name: "",
-        last_name: "",
-        phone_number: '',
+        first_name:"",
+        last_name:"",
+        phone_number:'',
         landmark: "",
         address: "",
         note: "",
-        type: "",
+        type: "COD",
         total_price: 0,
         delivery_price: 0,
-        city_id: 0
+        city_id: 0,
+        payment_method_id:1,
+        active:0
+    
     });
    
  
@@ -58,12 +73,20 @@ const Create_order: FC<Create_orderProps> = () => {
         url:'/api/cities',
         method:'GET',    
     })
+    const {data:payment_methods} = useRequest<Methods[]>({
+        url:'/api/payment-methods',
+        method:'GET',    
+    })
     
+    useEffect(()=>{
+        if(payment_methods){
+            console.log( payment_methods);
+        }
+    },[payment_methods])
 
     useEffect(()=>{
         if(itemsShopping.length > 0){
             console.log(itemsShopping);
-            
            setOrder((prev)=>({
             ...prev,
             items: itemsShopping.map(el => ({size_color: el.id , quantity: el.count}))
@@ -71,7 +94,7 @@ const Create_order: FC<Create_orderProps> = () => {
     }
     },[itemsShopping])
 
-
+   
   async function henddeleSubmit(e:FormEvent<HTMLFormElement>){
        e.preventDefault();
         if(isNaN(Number(order.phone_number))){
@@ -97,7 +120,7 @@ const Create_order: FC<Create_orderProps> = () => {
        
 
 
-       await sendRequest({
+       await sendRequest<Response>({
             url:'/api/create-order',
             method:'POST',
             data:JSON.stringify(
@@ -111,6 +134,7 @@ const Create_order: FC<Create_orderProps> = () => {
                 note:order.note,
                 total_price: sup_total + order.delivery_price,
                 delivery_price: order.delivery_price,
+                type: order.type,
                 city: order.city_id
             }
             ),
@@ -118,8 +142,17 @@ const Create_order: FC<Create_orderProps> = () => {
               "Content-Type":"application/json"
             }
             }).then((res)=>{
-                console.log(res);
-            })
+                 sendRequest<Response>({
+                    url:'/api/get-payment-link',
+                    method:"GET",
+                    params:{
+                        order_uuid:res.uuid,
+                        payment_method_id:String(order.payment_method_id)
+                    }
+                    }).then((res)=>{
+                        window.open(res.url);
+                    })
+                })
 
             localStorage.removeItem(get_data)
             dispatsh(removeItemsAfterCreateOrder())
@@ -142,7 +175,6 @@ const Create_order: FC<Create_orderProps> = () => {
                 Contact 
             </label>
 
-            {/* 000000000000000000000000000000000 */}
             <input
                 pattern='^01[0|1|2|5]\d{8}$'
                 onChange={(e)=>{
@@ -239,7 +271,9 @@ const Create_order: FC<Create_orderProps> = () => {
                  }
              }} 
              className='bg-white text-sm pl-[15px] w-[44%] h-[42px] rounded outline-none'>
-            <option>Governate</option>
+            <option>
+                Governate
+            </option>
              {
              cities?.map((el)=>{
                 return(
@@ -256,12 +290,114 @@ const Create_order: FC<Create_orderProps> = () => {
              placeholder='Note (Optional)'
              className='bg-white  pl-[15px] pt-[15px] w-[90%] h-[150px] rounded outline-none'
              />
+            <div className='flex gap-[15px] flex-col items-start'>
+            <p className='text-xl font-semibold '>
+            Shipping method 
+            </p>
+             <div className='flex text-sm  font-semibold pr-[20px] pl-[20px] w-[90%] bg-blue-100  rounded-lg h-[45px] justify-between items-center'>
+                <p>توصيل للمنزل </p>
+                <p>E£{order.delivery_price}</p>
+             </div>
+            </div>
+            <div className='flex gap-[15px] flex-col items-start'>
+                <div className='flex flex-col gap-1'>
+                    <p className='text-xl font-semibold '>
+                    Payment
+                    </p>
+                    <p className='text-sm text-gray-400 w-[500px] text-wrap '>
+                    Your payment method’s billing address must match the shipping address. All transactions are secure and encrypted.
+                    </p>
+                </div>
+                <div className='w-[90%]'>
+                <div
+                onClick={()=>{
+                    setOrder((prev)=>({
+                        ...prev,
+                          type:"COD"
+                    }))
+                }}
+                className={`flex items-center
+                 justify-start cursor-pointer rounded-tl-lg rounded-tr-lg
+                   h-[45px] pl-[15px] duration-200
+                  ${order.type === "COD" ? 'bg-blue-100 border-black/50 border' : 'bg-white'}
+                  `}>
+                    <div className='flex items-center gap-[10px]'>
+                        <div className='border border-gray-100 rounded-full'>
+                        <div className={`flex items-center duration-200 ${order.type === "COD" ? 'scale-100' : 'scale-0'} justify-center size-[20px] rounded-full bg-black`}>
+                            <div className='bg-white rounded-full size-[40%]'></div>
+                        </div>
+                        </div>
+                        <p>
+                        Cash on Delivery (COD)
+                        </p>
+                    </div>
+                </div>
+                <div
+                onClick={()=>{
+                    setOrder((prev)=>({
+                        ...prev,
+                        type:"ONLINE"
+                    }))
+                }}
+                className={`flex items-center
+                 justify-start cursor-pointer
+                   h-[45px] pl-[15px] duration-200
+                  ${order.type === "ONLINE" ? 'bg-blue-100 border-black/50 border' : 'bg-white'}
+                  `}>
+                    <div className='flex items-center gap-[10px]'>
+                        <div className='border border-gray-100 rounded-full'>
+                        <div className={`flex items-center duration-200 ${order.type === "ONLINE" ? 'scale-100' : 'scale-0'} justify-center size-[20px] rounded-full bg-black`}>
+                            <div className='bg-white rounded-full size-[40%]'></div>
+                        </div>
+                        </div>
+                        <p>Credit card</p>
+                    </div>
+                </div>
+                 <div className={` bg-white duration-300 pl-[15px]
+                    ${order.type === "ONLINE" ? ' pt-[20px] pb-[15px] ' : 'h-0 '}
+                    flex flex-col gap-[10px] items-start 
+                    `}>
+                        {
+                            payment_methods && 
+                            payment_methods.map((el,index)=>{
+                                return(
+                                <div
+                                onClick={()=>{
+                                    console.log(typeof el.id);
+                                    
+                                    setOrder((prev)=>({
+                                        ...prev, 
+                                        payment_method_id:el.id,
+                                        active:index
+                                    }))
+                                }}
+                                key={el.id}
+                                className={`flex items-center gap-[10px] cursor-pointer   ${order.type === "ONLINE" ? '' : 'hidden'}`}>
+                                    <div className='border border-gray-100 rounded-full  
+                                    '>
+                                        <div className={`flex items-center duration-200
+                                             ${order.active === index ? 'scale-100' : 'scale-0'}
+                                           
+                                             justify-center size-[20px] rounded-full bg-black`}>
+                                    <div className='bg-white rounded-full size-[40%]'></div>
+                                        </div>
+                                    </div>
+                                    <p>{el.name}</p>
+                                </div>
+                                )
+                            })
+                        }
+                 </div>
+                </div>
+
+            </div>
               
               <button
               type='submit'
-              className=" bg-neutral-900 text-white font-bold py-4 px-8 rounded-lg cursor-pointer font-sans w-[90%]">
-               Submit
+              className=" bg-neutral-900 hover:bg-gray-800 duration-200 text-white font-bold py-4 px-8 rounded-lg cursor-pointer font-sans w-[90%]">
+               Complete order
             </button>
+
             </form>
 
             <div className='w-[1px] bg-gray-50'></div>
