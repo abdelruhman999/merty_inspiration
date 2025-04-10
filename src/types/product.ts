@@ -42,7 +42,18 @@ export interface ProductSizeColor {
     size: Size; 
     stock: number;
     product: number;
+    discounts:Discounts_types[]
     
+}
+
+export interface Discounts_types{
+created_at: string
+discount: number
+end_date: string
+id: number
+size_color: number
+start_date:string
+updated_at:string
 }
 
 ////////////////////////////////////// Product  //////////////////////////////////////

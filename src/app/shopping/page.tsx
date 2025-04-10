@@ -68,7 +68,7 @@ const Shopping: FC<ShoppingProps> = () => {
                       <div className='flex flex-col items-end gap-[10px]'>
                         <p className={style["title"]}>{el.name}</p>  
                         <div className='flex flex-row-reverse'>
-                          <p className={`${style["title"]} ${style["price"]} ${style["old-price"]} text-lg`}>&nbsp;LE6</p>
+                          <p className={`${style["title"]} ${style["price"]} ${style["old-price"]} text-lg`}>&nbsp;LE{el.old_Price}</p>
                           <p className={`text-red-500 font-semibold text-lg`}>LE{el.price}</p>
                         </div> 
           

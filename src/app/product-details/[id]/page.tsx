@@ -15,11 +15,13 @@ interface ProdcutdetailsProps {}
 
 const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
   const [price, setPrice] = useState<number>(0);
+  const [old_Price , setOld_Price] = useState<number>(0)
   const [active, setactive] = useState<number>(0);
-  const [sizeSelector, setSizeSelector] = useState("");
+  const [sizeSelector, setSizeSelector] = useState<string>("");
   const [size, setSize] = useState<ProductSizeColor[]>([]);
   const [current_img, setCurrent_img] = useState<string>("");
   const [stock , setStock] = useState<number>(0)
+  const [discount , setDiscount] = useState<number>(0)
   const [stock_id , setStock_id] = useState<number>(0)
   const dispatsh = useDispatch();
   const params = useParams();
@@ -39,14 +41,25 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
               <Image
                 onClick={() => {
                   setactive(0);
-                  const element_img = data?.product_size_colors.filter(
-                    (ele) => ele.color.image === el.image
-                  );
-                  if (element_img) {
-                    // console.log(element_img);
-                    
+                  const element_img = data?.product_size_colors.filter((ele) => ele.color.image === el.image);
+                  if ( element_img ) {                  
                     setSize(element_img);
                     const size_selector = element_img[0].size.size;
+                    const price_size_selector = element_img[0].size.price;
+                    const Stock_Size_selector = element_img[0].stock;
+                    const Stock_id_selector = element_img[0].id;
+                    if(Stock_Size_selector > 0 && element_img[0].discounts.length > 0){
+                       const Discount_selector = (((element_img[0].discounts[0].discount) / price_size_selector)*100).toFixed(0);
+                       setPrice(price_size_selector - element_img[0].discounts[0].discount) 
+                       setOld_Price(price_size_selector)
+                       setDiscount(Number(Discount_selector));     
+                    }
+                      else{
+                       setDiscount(0);
+                       setPrice(price_size_selector)
+                      }
+                    setStock_id(Stock_id_selector)
+                    setStock(Stock_Size_selector)
                     setSizeSelector(size_selector);
                   }
                   setCurrent_img(el.image);
@@ -68,8 +81,14 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
   useEffect(() => {
     if (data) {             
      const first_img =  data.product_size_colors.filter((el) => el.color.image === data.colors[0].image);
+      console.log(first_img);
       setCurrent_img(data.colors[0].image);
-      setPrice(first_img[0].size.price);
+      if(first_img[0].discounts.length > 0){
+        setPrice(first_img[0].size.price - first_img[0].discounts[0].discount)
+        setOld_Price(first_img[0].size.price)
+      }else{
+        setPrice(first_img[0].size.price);
+      }
       setSize(first_img);
     }
   }, [data]);
@@ -78,7 +97,15 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
   useEffect(() => {
     const ele = size.find((_, index) => index === 0);
     if (ele) {
-      setPrice(ele.size.price);
+      // console.log(ele);
+      if(ele.stock > 0){ 
+          if (ele.discounts.length>0) {
+            setPrice(ele.size.price-ele.discounts[0].discount)  
+            setOld_Price(ele.size.price)
+          }else{
+            setPrice(ele.size.price)
+          }
+      }
       setSizeSelector(ele.size.size);
     }
   }, [size]);
@@ -86,12 +113,23 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
   // وهنا بجيب كل ستوك لما اعمل سيليكت عللى مقاس معين 
   useEffect(()=>{
     const stock =  size.filter((el)=>el.size.size === sizeSelector)  
-    if(stock.length>0){  
+    if(stock.length > 0){ 
+        // console.log(stock[0]);
+          if (stock[0].discounts.length>0) {
+            const Discount_selector = (((stock[0].discounts[0].discount)/stock[0].size.price)*100).toFixed(0);
+            setDiscount(Number(Discount_selector))   
+            setPrice(stock[0].size.price-stock[0].discounts[0].discount)  
+            setOld_Price(stock[0].size.price)
+          }else{
+            setPrice(stock[0].size.price)
+            setDiscount(0)
+          }
       setStock_id(stock[0].id);
       setStock(stock[0].stock);
     }
   },[sizeSelector])
 
+   
   return (
     <>
       {data ? (
@@ -160,7 +198,10 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                 >
                   {data.name} 
                 </p>
-                <p className={style["tag"]}>-50%</p>
+                {
+                stock > 0 &&  discount > 0 &&
+                <p className={style["tag"]}>-{discount}%</p>
+                }
               </div>
             </div>
 
@@ -171,13 +212,19 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                 max-sm:gap-[15px]  
                 gap-[10px]"
             >
+              <div className="flex ">
               <p className="text-3xl font-bold">LE {price}</p>
+              {
+               stock > 0 &&  discount > 0 &&
+              <p className={`${style["title"]} ${style["price"]} ${style["old-price"]}`}>&nbsp;LE{old_Price}</p>
+              }
+              </div>
               <p
                 className="text-wrap max-sm:text-
               w-[250px] max-sm:w-[200px] 
               text-sm font-semibold text-gray-400"
               >
-                {data.description} تبثعبا ثعص اهثاصهبتابر اثبعصث عثهب تعقب 
+                {data.description}
               </p>
             </div>
 
@@ -188,32 +235,48 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
             >
               <p className="text-xl xs:text-2xl">Select Size</p>
 
-              <div className="flex  gap-2">
-                {size.map((el, index) => {
-                  return (
-                    <div  key={index} className="relative">
-                    <div
-                     
-                      onClick={() => {                                             
-                        setPrice(el.size.price);
+              <div className="flex gap-2">
+            {size.map((el, index) => {
+              const isOutOfStock = el.stock === 0;
+              return (
+                <div key={index} className="relative">
+                  <button
+                    disabled={isOutOfStock}
+                    onClick={() => {
+                      if (!isOutOfStock) {
+                        if (el.discounts.length>0) {
+                        const Discount_selector = (((el.discounts[0].discount)/el.size.price)*100).toFixed(0);
+                        setDiscount(Number(Discount_selector))
+                        setPrice(el.size.price - el.discounts[0].discount) 
+                        setOld_Price(el.size.price)
+                        }else{
+                          setDiscount(0)
+                          setPrice(el.size.price);
+                        }
                         setactive(index);
                         setSizeSelector(el.size.size);
-                      }}
-                      className={`text-xl 
-                    border-black border
-                    bg-gray-200 text-center
+                        setStock(el.stock)
+                        setStock_id(el.id)
+                      }
+                    }}
+                    className={`text-xl 
+                      border-black border
+                      ${isOutOfStock ? 'bg-gray-100 text-gray-400' : 'bg-gray-200 cursor-pointer'}
+                      text-center
                       font-serif relative
-                      w-[60px]  cursor-pointer
+                      w-[60px]
                       ${active === index ? "border-red-600" : ""}
                       p-[10px]`}
-                    >
-                      {el.size.size}
-                    </div>
-                      <div className={`${ active === index && stock == 0 ? ' bg-black/50 absolute inset-0' : '' }  `}></div>
-                    </div>
-                  );
-                })}
-              </div>
+                  >
+                    {el.size.size}
+                  </button>
+                  {isOutOfStock && (
+                    <div className="absolute inset-0 bg-black/50"></div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
             </div>
 
             <div className="flex  flex-col gap-[30px]">
@@ -229,6 +292,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                       image: `${Base_Url}/${current_img}`,
                       name: data.name,
                       price: price,
+                      old_Price:old_Price,
                       sizeSelector: sizeSelector,
                       count:1,
                       stock:stock

@@ -26,7 +26,7 @@ interface Create_orderProps {
     delivery_price: number,
     city_id: number  
     active:number
-    payment_method_id:number
+    payment_method_id:string
 
 }
 interface items {
@@ -63,7 +63,7 @@ const Create_order: FC<Create_orderProps> = () => {
         total_price: 0,
         delivery_price: 0,
         city_id: 0,
-        payment_method_id:1,
+        payment_method_id:'1',
         active:0
     
     });
@@ -132,7 +132,6 @@ const Create_order: FC<Create_orderProps> = () => {
                 landmark:order.landmark,
                 address:order.address ,
                 note:order.note,
-                total_price: sup_total + order.delivery_price,
                 delivery_price: order.delivery_price,
                 type: order.type,
                 city: order.city_id
@@ -142,12 +141,13 @@ const Create_order: FC<Create_orderProps> = () => {
               "Content-Type":"application/json"
             }
             }).then((res)=>{
+                console.log(res);
                  sendRequest<Response>({
                     url:'/api/get-payment-link',
                     method:"GET",
                     params:{
                         order_uuid:res.uuid,
-                        payment_method_id:String(order.payment_method_id)
+                        payment_method_id:order.payment_method_id
                     }
                     }).then((res)=>{
                         window.open(res.url);
@@ -167,7 +167,6 @@ const Create_order: FC<Create_orderProps> = () => {
             bg-yellow-400 
              w-[60%]  pl-[50px]
              flex flex-col pt-[20px] gap-[30px]'>   
-
             <div className='flex flex-col gap-[10px]'>
             <label
             className='text-xl font-semibold '
@@ -362,12 +361,10 @@ const Create_order: FC<Create_orderProps> = () => {
                             payment_methods.map((el,index)=>{
                                 return(
                                 <div
-                                onClick={()=>{
-                                    console.log(typeof el.id);
-                                    
+                                onClick={()=>{    
                                     setOrder((prev)=>({
                                         ...prev, 
-                                        payment_method_id:el.id,
+                                        payment_method_id:String(el.id),
                                         active:index
                                     }))
                                 }}
