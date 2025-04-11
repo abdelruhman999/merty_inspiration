@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useMemo, useState, type FC } from "react";
-import useRequest from "../../../hooks/call";
+import useRequest from "../../../../hooks/call";
 import { useParams } from "next/navigation";
 import { Base_Url } from "@/calls/constant";
 import { Product, ProductSizeColor } from "@/types/product";

@@ -1,5 +1,5 @@
 export const Routes = [
-    {name:'الرئيسيه', path:'/'},
+    {name:'الرئيسية', path:'/home'},
     {name:'عروض وخصومات', path:'/sales'},
     {name:'من نحن ', path:'/about'},
     {name:'التواصل', path:'/contact'},
