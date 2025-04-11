@@ -14,7 +14,7 @@ type FormData = {
 interface LoginProps {}
 
 const Login: FC<LoginProps> = () => {
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>();
+    const { register,reset, handleSubmit, formState: { errors, isSubmitting} } = useForm<FormData>();
     const router = useRouter();
     const onSubmit = async (data: FormData) => {
         const { username, password } = data;
@@ -29,8 +29,8 @@ const Login: FC<LoginProps> = () => {
         .catch((error) => {
             console.error('Login failed:', error);
             alert('Login failed. Please check your credentials.');
-        }
-        );
+            reset();
+        });
     };
 
     return (
