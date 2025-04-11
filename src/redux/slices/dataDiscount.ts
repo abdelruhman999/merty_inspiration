@@ -24,7 +24,7 @@ export const counterdiscountSlice = createSlice({
       state.next = action.payload;   
     },
     additems : (state , action:PayloadAction<Product[] >) =>{
-        state.items = action.payload
+        state.items = state.items
     }
 
    

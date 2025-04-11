@@ -14,7 +14,7 @@ export const dataSlice = createSlice({
   initialState,
   reducers: {
     addItems: (state, action: PayloadAction<HomeProduct[]>) => {
-      state.items = action.payload; 
+      state.items = [...state.items , ...action.payload]; 
     },
   },
 });
