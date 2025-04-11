@@ -1,5 +1,6 @@
 import { Product } from "@/types/product";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { act } from "react";
 
 interface CountType {
   count: number;
@@ -24,7 +25,7 @@ export const counterdiscountSlice = createSlice({
       state.next = action.payload;   
     },
     additems : (state , action:PayloadAction<Product[] >) =>{
-        state.items = state.items
+        state.items = action.payload
     }
 
    

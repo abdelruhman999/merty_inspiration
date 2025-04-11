@@ -25,22 +25,23 @@ const Pagination: FC<PaginationProps> = () => {
         }
     },[count])
 
-    useEffect(()=>{
-        if(data){
-            dispatch(setNext(data.next))
-            dispatch(addItems(data.results))
+    useEffect(() => {
+        if (data) {
+            dispatch(setNext(data.next));
+            dispatch(addItems(data.results));
             console.log(data);  
-        }
-    },[data])
-  
+        }       
+    }, [data, dispatch]);
 
     return (
      
             <>
-                { next &&
+                { data && data.results.length>0 && next &&
                         <div
                         onClick={()=>{
                             dispatch(increment());
+                           
+                          
                         }}
                         className='text-sm cursor-pointer font-semibold 
                         border-2 border-black p-[10px] text-gray-700

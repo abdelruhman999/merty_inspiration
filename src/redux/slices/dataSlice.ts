@@ -14,11 +14,17 @@ export const dataSlice = createSlice({
   initialState,
   reducers: {
     addItems: (state, action: PayloadAction<HomeProduct[]>) => {
-      state.items = [...state.items , ...action.payload]; 
+      const existingIds = new Set(state.items.map(item => item.id));
+      const uniqueNewItems = action.payload.filter(
+        (item, index, self) => 
+          !existingIds.has(item.id) && 
+          self.findIndex(i => i.id === item.id) === index
+      );
+      state.items = [...state.items, ...uniqueNewItems];
     },
   },
 });
 
-export const { addItems } = dataSlice.actions;
+export const { addItems  } = dataSlice.actions;
 
 export default dataSlice.reducer;

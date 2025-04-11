@@ -12,7 +12,7 @@ interface Pgaination_SalesProps {
 
 const Pgaination_Sales: FC<Pgaination_SalesProps> = () => {
 
-      const {count , next , items} = useSelector((state:RootState)=>state.counterTow)
+      const {count , next } = useSelector((state:RootState)=>state.counterTow)
       const dispatch = useDispatch()
 
         const {data} = useRequest<Product>({
@@ -26,8 +26,7 @@ const Pgaination_Sales: FC<Pgaination_SalesProps> = () => {
         useEffect(()=>{
             if(data){
                 dispatch(setNext(data.next))
-                dispatch(additems(data.results))
-                console.log(data);  
+                dispatch(additems(data.results)) 
             }
         },[data])
 
