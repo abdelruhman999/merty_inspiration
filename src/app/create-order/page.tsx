@@ -8,9 +8,9 @@ import Swal from 'sweetalert2';
 import Loaderimg from '@/component/Loaderimg';
 import { sendRequest } from '@/api';
 import useRequest from '@/hooks/call';
-import { get_data } from '@/calls/constant';
+import { get_data, get_orders } from '@/calls/constant';
 import {  removeItemsAfterCreateOrder } from '@/redux/slices/dataShopping';
-import { log } from 'node:console';
+import { useRouter } from 'next/navigation';
 
 
 interface Create_orderProps {
@@ -45,10 +45,12 @@ interface Methods {
 interface Response {
     uuid:string
     url:string
+    type:string
 }
 
 
 const Create_order: FC<Create_orderProps> = () => {
+    const router  = useRouter()
     const {itemsShopping , sup_total} = useSelector((state:RootState)=>state.dataShopping)
     const dispatsh = useDispatch()
     const [order, setOrder] = useState<Create_orderProps>({
@@ -65,10 +67,8 @@ const Create_order: FC<Create_orderProps> = () => {
         city_id: 0,
         payment_method_id:'1',
         active:0
-    
     });
    
- 
     const {data:cities} = useRequest<Cities[]>({
         url:'/api/cities',
         method:'GET',    
@@ -142,16 +142,30 @@ const Create_order: FC<Create_orderProps> = () => {
             }
             }).then((res)=>{
                 console.log(res);
-                 sendRequest<Response>({
-                    url:'/api/get-payment-link',
-                    method:"GET",
-                    params:{
-                        order_uuid:res.uuid,
-                        payment_method_id:order.payment_method_id
-                    }
-                    }).then((res)=>{
-                        window.open(res.url);
-                    })
+                localStorage.setItem(get_orders , JSON.stringify(itemsShopping))
+                if(res.type === 'ONLINE'){
+                    sendRequest<Response>({
+                       url:'/api/get-payment-link',
+                       method:"GET",
+                       params:{
+                           order_uuid:res.uuid,
+                           payment_method_id:order.payment_method_id
+                       }
+                       }).then((res)=>{
+                           window.open(res.url);
+                       })
+                }
+                else{
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'تم عمل الأوردر بنجاح ✅',
+                        showConfirmButton: false,
+                        timer: 2000,
+                      });
+                      setTimeout(() => {
+                        router.push('/orders'); 
+                      }, 2000);
+                }
                 })
 
             localStorage.removeItem(get_data)
