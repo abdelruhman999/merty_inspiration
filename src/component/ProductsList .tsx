@@ -8,11 +8,6 @@ interface ProductsList {}
 
 const ProductsList : FC<ProductsList> = () => {
     const items = useSelector((state: RootState) => state.data.items);
-    // useEffect(()=>{
-    //     if(items.length>0){
-    //         console.log(items);
-    //     }
-    // },[items])
    
     return (<>
         {items.length > 0 && (

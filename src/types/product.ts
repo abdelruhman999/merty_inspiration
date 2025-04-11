@@ -77,5 +77,6 @@ export interface Product {
     sizes: Size[];
     season: Season;
     results:[]
+    next:string | null
     product_size_colors: ProductSizeColor[];
 }

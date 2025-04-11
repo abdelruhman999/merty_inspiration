@@ -36,9 +36,9 @@
     height: fit-content;
     display: flex;
     flex-direction: row-reverse;
-    gap:8px;
-    align-items: flex-start;
-    justify-content: center
+    width: 100%;
+    align-items: center;
+    justify-content: space-between
   }
   .title {
     font-size: 0.72em;

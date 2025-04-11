@@ -1,6 +1,6 @@
 'use client'
-import { sendRequest } from '@/api';
-import { increment, incrementRequest, setNext } from '@/redux/slices/count';
+import useRequest from '@/hooks/call';
+import { increment, setNext } from '@/redux/slices/count';
 import { addItems } from '@/redux/slices/dataSlice';
 import { RootState } from '@/redux/store';
 import { Pagination as Result } from '@/types/base';
@@ -13,29 +13,27 @@ interface PaginationProps {}
 
 const Pagination: FC<PaginationProps> = () => {
     const dispatch = useDispatch();
-    const {lastrequest,count,next} = useSelector((state:RootState)=>state.count);
+    const {count,next} = useSelector((state:RootState)=>state.count);
+
+
     
-  
-    useEffect(()=>{
-            if(count > lastrequest){
-                sendRequest<Result<HomeProduct>>({
-                    url:'/api/products',
-                    method:'GET',
-                    params:{
-                        page:String(count),   
-                    }
-                }).then((res)=>{
-                    dispatch(setNext(res.next));
-                    dispatch(addItems(res.results)); 
-                }).catch((err)=>{
-                    console.log(err);
-                }).finally(()=>{
-                    dispatch(incrementRequest());
-                })
-            }
-        
+    const {data} = useRequest<Result<HomeProduct>>({
+        url:'/api/products',
+        method:'GET',
+        params:{
+            page:String(count),
+        }
     },[count])
-   
+
+    useEffect(()=>{
+        if(data){
+            dispatch(setNext(data.next))
+            dispatch(addItems(data.results))
+            console.log(data);  
+        }
+    },[data])
+  
+
     return (
      
             <>
