@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image';
 import {  useEffect, useState, type FC } from 'react';
-import style from "../../component/CardStyle/Cardstyle.module.css";
+import style from "../../../component/CardStyle/Cardstyle.module.css";
 import { FaPlus } from "react-icons/fa6";
 import { FaMinus } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -11,9 +11,9 @@ import { RootState } from '@/redux/store';
 import Link from 'next/link';
 import { decreaseCount, increaseCount, removeItemsShopping, setItemsFromLocalStorage, setShow } from '@/redux/slices/dataShopping';
 import { FaXmark } from "react-icons/fa6";
-import logo1 from '../../../assets/master-173035bc8124581983d4efa50cf8626e8553c2b311353fbf67485f9c1a2b88d1.svg'
-import logo2 from '../../../assets/visa-319d545c6fd255c9aad5eeaad21fd6f7f7b4fdbdb1a35ce83b89cca12a187f00.svg'
-import logo3 from '../../../assets/3a0870c1369eb2bc105bd4838665defa.jpg'
+import logo1 from '../../../../assets/master-173035bc8124581983d4efa50cf8626e8553c2b311353fbf67485f9c1a2b88d1.svg'
+import logo2 from '../../../../assets/visa-319d545c6fd255c9aad5eeaad21fd6f7f7b4fdbdb1a35ce83b89cca12a187f00.svg'
+import logo3 from '../../../../assets/3a0870c1369eb2bc105bd4838665defa.jpg'
 import { TbShoppingBagX } from "react-icons/tb";
 import { get_data } from '@/calls/constant';
 

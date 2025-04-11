@@ -62,7 +62,7 @@ const Navper: FC = () => {
             </div>
            
 
-            <Link href={'/'} className='cursor-pointer'>
+            <Link href={'/home'} className='cursor-pointer'>
              <Image
              onClick={()=>setActive(0)}
              src={logo} alt="logo" width={70} height={70}/>
