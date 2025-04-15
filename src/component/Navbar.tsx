@@ -86,10 +86,10 @@ const Navper: FC = () => {
                 </div>
             <div className={`absolute font-semibold text-gray-500
              gap-[20px] flex flex-col
-              bottom-[-210px] left-[-130px]
+              bottom-[-255px] left-[-130px]
                bg-white shadow-2xl rounded-xl
                 w-[150px] p-[10px] duration-200
-                ${bool ? 'opacity-100' :'opacity-0'}
+                ${bool ? 'opacity-100' :'scale-0'}
                 `}>
                 {
                     Routes.map((el, index) => {

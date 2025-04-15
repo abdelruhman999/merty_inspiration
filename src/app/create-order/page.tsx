@@ -8,9 +8,12 @@ import Swal from 'sweetalert2';
 import Loaderimg from '@/component/Loaderimg';
 import { sendRequest } from '@/api';
 import useRequest from '@/hooks/call';
-import { get_data, get_orders } from '@/calls/constant';
+import { get_data, get_orders, get_response_from_createOrders } from '@/calls/constant';
 import {  removeItemsAfterCreateOrder } from '@/redux/slices/dataShopping';
 import { useRouter } from 'next/navigation';
+import { additemstolocalstorage } from '@/redux/slices/orders';
+import logo from '../../../assets/original-d775108071a243c7e9a96158fb2f0b54.webp'
+import Link from 'next/link';
 
 
 interface Create_orderProps {
@@ -42,7 +45,7 @@ interface Methods {
     id: number,
     name: string
 }
-interface Response {
+export interface Response {
     uuid:string
     url:string
     type:string
@@ -97,9 +100,17 @@ const Create_order: FC<Create_orderProps> = () => {
    
   async function henddeleSubmit(e:FormEvent<HTMLFormElement>){
        e.preventDefault();
-        if(isNaN(Number(order.phone_number))){
-            Swal.fire('برجاء ادخال رقم صحيح')
-            return
+       if(isNaN(Number(order.phone_number))){
+           Swal.fire('برجاء ادخال رقم صحيح')
+           return
+        }
+        if(!order.first_name ){
+         Swal.fire('برجاء ادخال الاسم الاول ')
+         return
+        }
+        if(!order.last_name){
+         Swal.fire('برجاء ادخال الاسم الاخير ')
+         return
         }
         if(order.phone_number.length < 11 || order.phone_number.length > 11){
             Swal.fire('برجاء ادخال رقم صحيح')
@@ -142,7 +153,8 @@ const Create_order: FC<Create_orderProps> = () => {
             }
             }).then((res)=>{
                 console.log(res);
-                localStorage.setItem(get_orders , JSON.stringify(itemsShopping))
+                localStorage.setItem(get_response_from_createOrders ,JSON.stringify(res))
+                dispatsh(additemstolocalstorage(itemsShopping))
                 if(res.type === 'ONLINE'){
                     sendRequest<Response>({
                        url:'/api/get-payment-link',
@@ -173,14 +185,16 @@ const Create_order: FC<Create_orderProps> = () => {
 
     }
     return (
-        <div className=' w-full flex justify-center'>
+        <div className=' w-full max-sm:flex-col-reverse max-sm:gap-[20px] max-sm:items-center  flex justify-center'>
 
-            <form
+          {
+          itemsShopping.length > 0 ?
+          <>
+          <form
             onSubmit={henddeleSubmit}
             className='
-            bg-yellow-400 
-             w-[60%]  pl-[50px]
-             flex flex-col pt-[20px] gap-[30px]'>   
+             w-[60%] max-sm:w-[100%]  pl-[50px]
+             flex flex-col max-sm:pl-[15px] pt-[20px] gap-[30px]'>   
             <div className='flex flex-col gap-[10px]'>
             <label
             className='text-xl font-semibold '
@@ -317,7 +331,7 @@ const Create_order: FC<Create_orderProps> = () => {
                     <p className='text-xl font-semibold '>
                     Payment
                     </p>
-                    <p className='text-sm text-gray-400 w-[500px] text-wrap '>
+                    <p className='text-sm text-gray-400 max-sm:w-[300px] w-[500px] text-wrap '>
                     Your payment method’s billing address must match the shipping address. All transactions are secure and encrypted.
                     </p>
                 </div>
@@ -411,16 +425,16 @@ const Create_order: FC<Create_orderProps> = () => {
 
             </form>
 
-            <div className='w-[1px] bg-gray-50'></div>
-
-            <div className='bg-blue-700 flex flex-col gap-[20px] pl-[20px] pt-[30px]  w-[40%] p-1'>
+            <div className='w-[1px] max-sm:hidden bg-gray-50'></div>
+             <div className='hidden max-sm:block h-[1px] bg-gray-50 w-[90%]'></div>               
+            <div className=' max-sm:w-[100%] max-sm:pr-[20px] flex flex-col gap-[20px] pl-[20px] pt-[30px]  w-[40%] p-1'>
                {
              itemsShopping.length > 0 ?
                 itemsShopping.map((el,index)=>{
                 return(
                 <div
                 key={index}
-                className='bg-yellow-300 flex flex-col gap-[30px] w-[80%] p-1'>
+                className=' max-sm:w-[100%] flex flex-col gap-[30px] w-[80%] p-1'>
                     <div className='w-full flex items-center justify-between '>
                         <div className='flex items-center justify-center gap-[10px]'>
                             <div className='relative'>
@@ -459,7 +473,7 @@ const Create_order: FC<Create_orderProps> = () => {
                 </div>
                }
 
-                <div className='w-[80%] flex flex-col gap-[10px]'>
+                <div className='w-[80%] max-sm:w-[100%] flex flex-col gap-[10px]'>
 
                    
                     <div className='w-full flex
@@ -485,7 +499,22 @@ const Create_order: FC<Create_orderProps> = () => {
                     </div>
                 </div>
             </div>
-
+          </>: 
+                 <div className='flex flex-col items-center gap-[20px]'>    
+                 <Image
+                     src={logo}
+                     alt='logo'
+                     className=' rounded-lg  object-contain'
+                      />
+                 <Link 
+                    href={'/'}
+                    className='bg-zinc-700 font-semibold  text-white
+                     hover:bg-zinc-500 duration-200
+                      cursor-pointer h-[35px] w-[200px] flex justify-center items-center'>
+                    Return To Shop
+                     </Link>
+                 </div>
+            }
         </div>
     );
 }

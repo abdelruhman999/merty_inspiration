@@ -5,7 +5,7 @@ import { addItems } from '@/redux/slices/dataSlice';
 import { RootState } from '@/redux/store';
 import { Pagination as Result } from '@/types/base';
 import { HomeProduct } from '@/types/product';
-import { useEffect, type FC } from 'react';
+import { useEffect, useState, type FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 
@@ -14,7 +14,6 @@ interface PaginationProps {}
 const Pagination: FC<PaginationProps> = () => {
     const dispatch = useDispatch();
     const {count,next} = useSelector((state:RootState)=>state.count);
-
 
     
     const {data} = useRequest<Result<HomeProduct>>({
@@ -40,8 +39,6 @@ const Pagination: FC<PaginationProps> = () => {
                         <div
                         onClick={()=>{
                             dispatch(increment());
-                           
-                          
                         }}
                         className='text-sm cursor-pointer font-semibold 
                         border-2 border-black p-[10px] text-gray-700

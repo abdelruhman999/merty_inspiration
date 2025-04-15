@@ -29,7 +29,7 @@ const Sales: FC<SalesProps> = () => {
             alt='logo'
             width={500}
             height={500}
-            className='w-[50%]  h-[510px]'
+            className='w-[50%] max-sm:h-[250px] h-[510px]'
             />
             <div className='flex w-full flex-col gap-[10px]'>
             <Image
@@ -37,21 +37,21 @@ const Sales: FC<SalesProps> = () => {
             alt='logo'
             width={500}
             height={500}
-            className='w-[100%]  h-[250px]'
+            className='w-[100%] max-sm:h-[120px] h-[250px]'
             />
              <Image
             src={logo4}
             alt='logo'
             width={500}
             height={500}
-            className='w-[100%]  h-[250px]'
+            className='w-[100%] max-sm:h-[120px] h-[250px]'
             />
             </div>
             </div>
             </div>
 
             <div className='flex gap-[50px]  flex-col  items-center w-full'>
-                <div className='flex items-center gap-[10px] flex-wrap'>
+                <div className='flex justify-center items-center gap-[10px] flex-wrap'>
               <ProductListSale/>
                 </div>
               <Pgaination_Sales/>

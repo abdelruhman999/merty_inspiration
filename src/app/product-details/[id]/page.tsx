@@ -79,7 +79,9 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
 
   // وهنا برجع اول صورة بالمعلومات بتاعتها سواء مقاس او سعر عشان اعرضها في الصفحة
   useEffect(() => {
-    if (data) {             
+    if (data) {          
+    
+         
      const first_img =  data.product_size_colors.filter((el) => el.color.image === data.colors[0].image);
       console.log(first_img);
       setCurrent_img(data.colors[0].image);

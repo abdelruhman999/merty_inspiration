@@ -7,7 +7,7 @@ import {Color} from "@/types/product";
 import Loaderimg from "../Loaderimg";
 
 
-interface CardstyleProps {
+export interface CardstyleProps {
   image: string;
   name: string;
   id: number;
@@ -19,7 +19,7 @@ interface CardstyleProps {
 
 }
 
-interface Product{
+interface PriceType{
 price:number,
 
 }
@@ -32,7 +32,7 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
 
   useEffect(()=>{
         const sizes = el.sizes        
-        const min_value = Math.min(...sizes.map((el:Product)=>el.price))
+        const min_value = Math.min(...sizes.map((el:PriceType)=>el.price))
         setMin_Cost(min_value)
   },[])
 
@@ -57,7 +57,6 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
     
         <div className={`${style["content"]}`}>
           <p className={style["title"]}>{name}</p>   
-          {/* <p className={`${style["title"]} ${style["price"]} ${style["old-price"]}`}>&nbsp;LE6</p> */}
           <p className={`${style["title"]} ${style["price"]}`}>LE{min_Cost?min_Cost : ''}</p>
         </div>
         
@@ -67,6 +66,9 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
 
 
           {colors.map((el , index: number) => {
+          
+         
+            
             return (      
            
               <div

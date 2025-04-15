@@ -1,10 +1,12 @@
 'use client';
 import { RootState } from '@/redux/store';
-import { useEffect, type FC } from 'react';
+import {  type FC } from 'react';
 import { useSelector } from 'react-redux';
 import Cardstyle from './CardStyle/Cardstyle';
+import { HomeProduct } from '@/types/product';
 
 interface ProductsList {}
+
 
 const ProductsList : FC<ProductsList> = () => {
     const items = useSelector((state: RootState) => state.data.items);

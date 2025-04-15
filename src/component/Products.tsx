@@ -4,7 +4,7 @@ import { Pagination } from "@/types/base";
 import { Product } from "@/types/product";
 
 const Products = async () => {
-  const response = await fetch(`${Base_Url}/api/products?page=1&page_size=1`, {
+  const response = await fetch(`${Base_Url}/api/products?page=1&page_size=5`, {
     cache: "no-store", 
   });
   const data:Pagination<Product> = await response.json(); 
