@@ -1,9 +1,9 @@
 import type { FC } from 'react';
 
-interface tProps {}
+interface DashboardProps {}
 
-const t: FC<tProps> = () => {
-    return (<div>ddsdfsdfdd</div>);
+const Dashboard: FC<DashboardProps> = () => {
+    return (<></>);
 }
 
-export default t;
+export default Dashboard;
