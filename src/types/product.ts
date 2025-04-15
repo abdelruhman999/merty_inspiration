@@ -72,10 +72,10 @@ export interface Product {
     id: number;
     name: string;
     description: string;
-    image: string;
     colors: Color[];
     sizes: Size[];
     season: Season;
     results:[]
     product_size_colors: ProductSizeColor[];
+    is_active: boolean;
 }
