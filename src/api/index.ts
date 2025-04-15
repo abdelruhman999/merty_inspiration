@@ -1,5 +1,6 @@
 import Swal from "sweetalert2";
 import { Base_Url } from "../calls/constant";
+import Cookies from 'js-cookie';
 
 export interface sendRequestKwargs {
     url: string,
@@ -14,15 +15,24 @@ export interface sendRequestKwargs {
 }
 
 export const sendRequest = async <T>({ url, method, params, data, headers, cache, next }: sendRequestKwargs): Promise<T> => {
+    const sessionId = Cookies.get('sessionid');
+    const mergedHeaders = {
+        'Content-Type': 'application/json',
+        ...headers,
+        'sessionid': sessionId || ''
+    };
+
     const response = await fetch(`${Base_Url}${url}${params ? "?" + new URLSearchParams(params).toString() : ""}`, {
         method: method,
         body: data,
-        headers: headers,
+        headers: mergedHeaders,
         cache: cache,
+        credentials: 'include',
         ...next
     })
     if (!response.ok) {
          if (response.status > 199 && response.status < 400) {
+
                     return await response.json();
                 }
         //  else if (response.status === 401) {
@@ -52,6 +62,7 @@ export const sendRequest = async <T>({ url, method, params, data, headers, cache
                     throw new Error(response.statusText);
                 }  
     }
+    console.log('Response is OK but not 2xx:', response.headers);
 
     return response.json();
 }
