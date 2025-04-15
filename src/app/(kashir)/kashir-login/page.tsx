@@ -3,13 +3,18 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import type { FC } from 'react';
 import { sendRequest } from '@/api';
-
+import Cookies from 'js-cookie';
 
 type FormData = {
     username: string;
     password: string;
 };
 
+interface LoginResponse {
+    sessionid: string;
+    user_id: number;
+    username: string;
+}
 
 interface LoginProps {}
 
@@ -18,16 +23,22 @@ const Login: FC<LoginProps> = () => {
     const router = useRouter();
     const onSubmit = async (data: FormData) => {
         const { username, password } = data;
-        sendRequest({
+        sendRequest<LoginResponse>({
             method: 'POST',
-            url: '/api/login',
+            url: '/api/login/',
+            headers: {
+                'Content-Type': 'application/json',
+            },
             data: JSON.stringify({ username, password }),
         })
         .then((response) => {
+            // Set cookies with session data
+            Cookies.set('sessionid', response.sessionid , {expires:1});
+            Cookies.set('user_id', response.user_id.toString(), {expires:1});
+            Cookies.set('username', response.username, {expires:1});
             router.push('/kashir'); 
         })
         .catch((error) => {
-            console.error('Login failed:', error);
             alert('Login failed. Please check your credentials.');
             reset();
         });
