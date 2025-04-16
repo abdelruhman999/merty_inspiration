@@ -42,13 +42,15 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                 onClick={() => {
                   setactive(0);
                   const element_img = data?.product_size_colors.filter((ele) => ele.color.image === el.image);
-                  if ( element_img ) {                  
+                  if ( element_img ) {    
+                    // console.log(element_img);
+                                  
                     setSize(element_img);
                     const size_selector = element_img[0].size.size;
                     const price_size_selector = element_img[0].size.price;
                     const Stock_Size_selector = element_img[0].stock;
                     const Stock_id_selector = element_img[0].id;
-                    if(Stock_Size_selector > 0 && element_img[0].discounts.length > 0){
+                    if( element_img[0].discounts.length > 0){
                        const Discount_selector = (((element_img[0].discounts[0].discount) / price_size_selector)*100).toFixed(0);
                        setPrice(price_size_selector - element_img[0].discounts[0].discount) 
                        setOld_Price(price_size_selector)
@@ -81,6 +83,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
   useEffect(() => {
     if (data) {          
     
+         console.log(data);
          
      const first_img =  data.product_size_colors.filter((el) => el.color.image === data.colors[0].image);
       console.log(first_img);
@@ -245,6 +248,8 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                   <button
                     disabled={isOutOfStock}
                     onClick={() => {
+                   
+                      
                       if (!isOutOfStock) {
                         if (el.discounts.length>0) {
                         const Discount_selector = (((el.discounts[0].discount)/el.size.price)*100).toFixed(0);

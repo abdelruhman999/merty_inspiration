@@ -7,104 +7,96 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { get_orders } from '@/calls/constant';
 import { takeItemsFormLocalStorage } from '@/redux/slices/orders';
+
 interface OrdersProps {}
 
 const Orders: FC<OrdersProps> = () => {
-    const {items} = useSelector((state:RootState)=>state.ordersStorage)
-
+    const { items } = useSelector((state: RootState) => state.ordersStorage)
     const dispatch = useDispatch()
 
-    useEffect(()=>{
-      const data = localStorage.getItem(get_orders)
-      if(data){
-        dispatch(
-            takeItemsFormLocalStorage(JSON.parse(data))
-        )
-      }   
-    },[])
-
-  
+    useEffect(() => {
+        const data = localStorage.getItem(get_orders)
+        if (data) {
+            dispatch(takeItemsFormLocalStorage(JSON.parse(data)))
+        }
+    }, [dispatch])
 
     return (
-        <div className='w-full  flex items-center justify-center  h-screen'>
-        {
-            items.length > 0 ?
-            (
-            <div className="relative w-full  p-[20px]  overflow-x-auto shadow-md sm:rounded-lg">
-              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                  <thead className="text-xs text-gray-700 uppercase dark:text-gray-400">
-                      <tr>
-                          <th scope="col" className="px-6 py-3 bg-gray-50 dark:bg-gray-800">
-                              Product name
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                              Image
-                          </th>
-                          <th scope="col" className="px-6 py-3 bg-gray-50 dark:bg-gray-800">
-                              Size
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                              Price
-                          </th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                    {
-                     items.length > 0 &&
-                     items.map((el,index)=>{
-                        return(
-                      <tr
-                      key={index}
-                      className="border-b border-gray-200 dark:border-gray-700">
-                          <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">
-                              {el.name}"
-                          </th>
-                          <td className="px-6 py-4">
-                              <Image
-                                src={el.image}
-                                alt='logo'
-                                width={50}
-                                height={50}
-                                className='size-[50px]'
-                              />
-                          </td>
-                          <td className="px-6 py-4 bg-gray-50 dark:bg-gray-800">
-                              {el.sizeSelector}
-                          </td>
-                          <td className="px-6 py-4">
-                          E£ {el.price}
-                          </td>
-                      </tr>
+        <div className='w-full min-h-screen bg-gray-50 py-8 px-4 sm:px-6'>
+            <div className='max-w-7xl mx-auto'>
+                <div className='mb-8'>
+                    <h1 className='text-2xl font-bold text-gray-900'>Order History</h1>
+                    <div className='bg-gray-300 w-full h-px mt-2'></div>
+                </div>
 
-                        )
-                     })
-                    }
-                   
-                  </tbody>
-              </table>
-          </div>
-            ) : 
-
-            <div className='flex flex-col items-center gap-[20px]'>    
-            <Image
-                src={logo}
-                alt='logo'
-                className=' rounded-lg  object-contain'
-                 />
-            <Link 
-               href={'/'}
-               className='bg-zinc-700 font-semibold  text-white
-                hover:bg-zinc-500 duration-200
-                 cursor-pointer h-[35px] w-[200px] flex justify-center items-center'>
-               Return To Shop
-                </Link>
+                {items.length > 0 ? (
+                    <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-100">
+                                    <tr>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                                            Product
+                                        </th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                                            Image
+                                        </th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                                            Size
+                                        </th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                                            Price
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {items.map((el, index) => (
+                                        <tr key={index} className="hover:bg-gray-50 transition-colors">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                {el.name}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <Image
+                                                    src={el.image}
+                                                    alt={el.name}
+                                                    width={60}
+                                                    height={60}
+                                                    className='h-15 w-15 object-contain rounded'
+                                                />
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {el.sizeSelector}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                                                E£ {el.price.toLocaleString()}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                ) : (
+                    <div className='flex flex-col items-center justify-center py-12 space-y-6'>
+                        <Image
+                            src={logo}
+                            alt='Mirty Inspiration Logo'
+                            className='w-48 h-auto rounded-lg'
+                            width={192}
+                            height={192}
+                        />
+                        <p className='text-lg text-gray-600'>You haven't placed any orders yet</p>
+                        <Link
+                            href={'/'}
+                            className='bg-zinc-700 font-semibold text-white hover:bg-zinc-600 transition-colors duration-200 px-6 py-2 rounded-md'
+                        >
+                            Continue Shopping
+                        </Link>
+                    </div>
+                )}
             </div>
-    
-        }   
-
         </div>
-
-    );
+    )
 }
 
-export default Orders;
+export default Orders
