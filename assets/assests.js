@@ -1,9 +1,9 @@
 export const Routes = [
-    {name:'الرئيسيه', path:'/'},
-    {name:'عروض وخصومات', path:'/sales'},
-    {name:'الاوردرات السابقه', path:'/orders'},
-    {name:'من نحن ', path:'/about'},
-    {name:'التواصل', path:'/contact'},
+    {name:'Home', path:'/'},
+    {name:'offers ', path:'/sales'},
+    {name:'Order History', path:'/orders'},
+    {name:'About', path:'/about'},
+    {name:'Contact', path:'/contact'},
 ]
 
 export const Routesfotter = [
