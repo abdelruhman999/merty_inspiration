@@ -1,0 +1,292 @@
+.container {
+    display: flex;
+    justify-content: center;
+    flex-direction: row-reverse;
+    width: 100%;
+    background-color: white;
+  }
+  
+  .thankYouSection {
+    width: 50%;
+    padding-right: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-top: 40px;
+  }
+  
+  .invoiceSection {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 16px;
+  }
+  
+  .invoiceContainer {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 100%;
+    max-width: 448px;
+  }
+  
+  .invoiceHeader {
+    background: linear-gradient(to right, #2563eb, #3b82f6);
+    padding: 24px;
+    color: white;
+    text-align: center;
+  }
+  
+  .invoiceTitle {
+    font-size: 1.875rem;
+    font-weight: 700;
+    line-height: 2.25rem;
+  }
+  
+  .invoiceSubtitle {
+    margin-top: 8px;
+    opacity: 0.9;
+  }
+  
+  .statusContainer {
+    padding: 24px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .statusText {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .detailsContainer {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .detailRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  
+  .detailLabel {
+    color: #4b5563;
+    font-weight: 500;
+  }
+  
+  .detailValue {
+    color: #1f2937;
+    font-weight: 600;
+  }
+  
+  .itemsTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-align: right;
+  }
+  
+  .itemsTable {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .tableHeader {
+    background-color: #f9fafb;
+  }
+  
+  .tableHeaderCell {
+    padding: 12px 16px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: right;
+  }
+  
+  .tableHeaderCell:last-child {
+    text-align: left;
+  }
+  
+  .tableRow {
+    background-color: white;
+  }
+  
+  .tableCell {
+    padding: 12px 16px;
+    font-size: 0.875rem;
+    color: #1f2937;
+    text-align: right;
+    white-space: nowrap;
+  }
+  
+  .tableCell:last-child {
+    text-align: left;
+  }
+  
+  .totalContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 2px solid #e5e7eb;
+  }
+  
+  .totalLabel {
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+  
+  .totalValue {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2563eb;
+  }
+  
+  .footer {
+    background-color: #f9fafb;
+    padding: 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+  }
+  
+  .button {
+    padding: 8px 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+  }
+  
+  .primaryButton {
+    background-color: #2563eb;
+    color: white;
+  }
+  
+  .primaryButton:hover {
+    background-color: #1d4ed8;
+  }
+  
+  .secondaryButton {
+    background-color: #4b5563;
+    color: white;
+  }
+  
+  .secondaryButton:hover {
+    background-color: #374151;
+  }
+  
+  .footerText {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 16px;
+  }
+  
+  .contactInfo {
+    margin-top: 16px;
+    font-size: 0.75rem;
+    color: #9ca3af;
+  }
+  
+  /* Print Styles */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    
+    .invoiceContainer, .invoiceContainer * {
+      visibility: visible;
+    }
+    
+    .invoiceContainer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      margin: 0;
+      padding: 20px;
+      box-shadow: none;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .noPrint {
+      display: none !important;
+    }
+  }
+  
+  /* Animation Classes */
+  .initialState {
+    opacity: 0;
+  }
+  
+  .animateIn {
+    animation: fadeIn 0.5s forwards;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .slideInFromLeft {
+    animation: slideInLeft 0.3s forwards;
+  }
+  
+  @keyframes slideInLeft {
+    from { 
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  .scaleIn {
+    animation: scaleIn 0.5s forwards;
+  }
+  
+  @keyframes scaleIn {
+    from { transform: scale(0.9); }
+    to { transform: scale(1); }
+  }
+
+  @media (max-width : 600px) {
+    .container{
+        flex-direction: column;
+        align-items: center;
+        gap: 50px;
+    }
+    .thankYouSection{
+        width: 100%;
+        padding-right: 0px;
+    }
+  }
