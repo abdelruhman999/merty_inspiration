@@ -6,7 +6,7 @@ import Fotter from "@/component/Footer";
 import Whatsappicon from "@/component/Whatsappicon";
 import Scrollbutton from "@/component/Buttonscroll";
 import Providers from "@/component/Providers"; 
-import Shopping from "./shopping/page";
+import Shopping from "./(website)/shopping/page";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
