@@ -26,7 +26,7 @@ export function Select<T extends FieldValues>({
 }: SelectProps<T>) {
     return (
         <div className={`space-y-2 ${className}`}>
-            <label className="block text-gray-700 font-semibold" htmlFor={name}>
+            <label className="block text-gray-700 text-center p-2 font-semibold" htmlFor={name}>
                 {label}
             </label>
             <select

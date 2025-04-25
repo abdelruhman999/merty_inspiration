@@ -19,6 +19,7 @@ export function Table<T>({
     onRowClick,
     className = ''
 }: TableProps<T>) {
+    
     return (
         <div className="w-full overflow-x-auto">
             <table className={`min-w-full divide-y divide-gray-200 ${className}`}>
@@ -26,7 +27,7 @@ export function Table<T>({
                     <tr>
                         {headers.map((header) => (
                             <th
-                                key={String(header.key)}
+                                key={String(header.key)+String(header.label)}
                                 scope="col"
                                 className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
                             >
@@ -44,7 +45,7 @@ export function Table<T>({
                         >
                             {headers.map((header) => (
                                 <td
-                                    key={`${index}-${String(header.key)}`}
+                                    key={`${index}-${String(header.key)}-${String(header.label)}`}
                                     className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center"
                                 >
                                     {header.render 
