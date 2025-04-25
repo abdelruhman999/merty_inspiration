@@ -1,55 +1,80 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { ReactNode, useEffect, useState } from 'react';
-import { Table, TableHeader } from '@/component/Table/Table';
+import { useEffect, useState } from 'react';
+import { Table } from '@/component/Table/Table';
 import { sendRequest } from '@/api';
 
-interface Product {
+interface Order extends Record<string, string | number> {
     id: number;
-    name: string;
-    description: string;
-    is_active: string | number;
+    customer_name: string;
+    total_amount: number;
+    status: string;
+    created_at: string;
 }
 
-interface ProductsResponse {
-    results: Product[];
+interface FormattedOrder extends Omit<Order, 'total_amount'> {
+    total_amount: string;
+}
+
+interface OrdersResponse {
+    results: Order[];
     count: number;
 }
 
 const PAGE_SIZE = 10;
 
-const headers: TableHeader<Product>[] = [
-    { key: 'id', label: 'رقم المنتج' },
-    { key: 'name', label: 'اسم المنتج' },
-    { key: 'description', label: 'الوصف' },
-    { key: 'is_active', label: 'الحالة' , render: (item) => item.is_active ? <span className="text-green-500"   >مفعل</span> : <span className="text-red-500">معطل</span> },
-];
-
-export default function ProductList() {
+export default function OrderList() {
     const router = useRouter();
-    const [products, setProducts] = useState<Product[]>([]);
+    const [orders, setOrders] = useState<FormattedOrder[]>([]);
     const [totalCount, setTotalCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
 
-    const fetchProducts = async (page: number) => {
+    const headers = [
+        { key: 'id', label: 'رقم الطلب' },
+        { key: 'customer_name', label: 'اسم العميل' },
+        { key: 'total_amount', label: 'المبلغ الإجمالي' },
+        { key: 'status', label: 'الحالة' },
+        { key: 'created_at', label: 'تاريخ الإنشاء' },
+    ];
+
+    const fetchOrders = async (page: number) => {
         try {
             setLoading(true);
-            const response = await sendRequest<ProductsResponse>({
+            const response = await sendRequest<OrdersResponse>({
                 method: 'GET',
-                url: `/api/products?page=${page}&page_size=${PAGE_SIZE}`,
+                url: `/api/orders?page=${page}&page_size=${PAGE_SIZE}`,
             });
-            setProducts(response.results);
+            
+            // Format the dates and amounts in the response
+            const formattedOrders = response.results.map(order => ({
+                ...order,
+                created_at: new Date(order.created_at).toLocaleDateString('ar-EG'),
+                total_amount: `${order.total_amount} جنيه`,
+                status: getStatusInArabic(order.status)
+            }));
+            
+            setOrders(formattedOrders);
             setTotalCount(response.count);
         } catch (error) {
-            console.error('Error fetching products:', error);
+            console.error('Error fetching orders:', error);
         } finally {
             setLoading(false);
         }
     };
 
+    const getStatusInArabic = (status: string) => {
+        const statusMap: Record<string, string> = {
+            'pending': 'قيد الانتظار',
+            'processing': 'قيد التنفيذ',
+            'completed': 'مكتمل',
+            'cancelled': 'ملغي'
+        };
+        return statusMap[status] || status;
+    };
+
     useEffect(() => {
-        fetchProducts(currentPage);
+        fetchOrders(currentPage);
     }, [currentPage]);
 
     const handlePageChange = (page: number) => {
@@ -62,12 +87,12 @@ export default function ProductList() {
     return (
         <div className="p-6" dir="rtl">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">المنتجات</h1>
+                <h1 className="text-2xl font-bold">الطلبات</h1>
                 <button
-                    onClick={() => router.push('/kashir/add-product')}
+                    onClick={() => router.push('/kashir/orders/create')}
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                    إضافة منتج جديد
+                    إضافة طلب جديد
                 </button>
             </div>
 
@@ -77,10 +102,10 @@ export default function ProductList() {
                 </div>
             ) : (
                 <>
-                    <Table<Product>
+                    <Table<FormattedOrder>
                         headers={headers}
-                        data={products}
-                        onRowClick={(product) => router.push(`/kashir/edit-product/${product.id}`)}
+                        data={orders}
+                        onRowClick={(order) => router.push(`/kashir/orders/${order.id}`)}
                     />
 
                     {/* Pagination */}
