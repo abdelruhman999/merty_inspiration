@@ -9,19 +9,22 @@ export interface sendRequestKwargs {
     data?: BodyInit | null,
     headers?: HeadersInit,
     cache?: RequestCache,
+    ignoreContentType?: boolean,
     next?: {
         revalidate: number
     }
 }
 
-export const sendRequest = async <T>({ url, method, params, data, headers, cache, next }: sendRequestKwargs): Promise<T> => {
+export const sendRequest = async <T>({ url, method, params, data, headers, cache, next , ignoreContentType = false}: sendRequestKwargs): Promise<T> => {
     const sessionId = Cookies.get('sessionid');
-    const mergedHeaders = {
+    const mergedHeaders: HeadersInit = ignoreContentType ? {
+        'sessionid': sessionId || '',
+        ...(headers || {}),
+    } : {
+        'sessionid': sessionId || '',
         'Content-Type': 'application/json',
-        ...headers,
-        'sessionid': sessionId || ''
+        ...(headers || {}),
     };
-
     const response = await fetch(`${Base_Url}${url}${params ? "?" + new URLSearchParams(params).toString() : ""}`, {
         method: method,
         body: data,
