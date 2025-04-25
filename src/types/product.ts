@@ -5,13 +5,19 @@ export interface ShortColor {
     image: string;
 }
 
-export interface Color {
+
+interface BaseColor {
     id: number;
-    image: string;
     color: string;
     product: number;
+    name: string;
 }
-
+export interface Color extends BaseColor {
+    image: string;
+}
+export interface ColorCreate extends BaseColor {
+    image: File | null | FileList;
+}
 
 ////////////////////////////////////// Size  //////////////////////////////////////
 
