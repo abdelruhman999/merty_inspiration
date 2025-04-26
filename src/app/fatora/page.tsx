@@ -10,7 +10,7 @@ import styles from './Fatora.module.css';
 const Fatora = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [invoiceData, setInvoiceData] = useState({
-    status: 'ناجحة',
+    status: 'قيد الانتظار',
     id: 'TRX-2023-0456',
     date: '',
     paymentMethod: 'بطاقة ائتمان',
