@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navpar from "@/component/Navbar";
-import Fotter from "@/component/Footer";
-import Whatsappicon from "@/component/Whatsappicon";
-import Scrollbutton from "@/component/Buttonscroll";
+// import Navpar from "@/component/Navbar";
+// import Fotter from "@/component/Footer";
+// import Whatsappicon from "@/component/Whatsappicon";
+// import Scrollbutton from "@/component/Buttonscroll";
 import Providers from "@/component/Providers"; 
-import Shopping from "./shopping/page";
+import Shopping from "./(website)/shopping/page";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,18 +37,7 @@ export default function RootLayout({
          `}
       >
         <Providers>
-          <div className="flex flex-col  gap-[50px] items-center justify-between w-full">
-            <Navpar/>
-          <Shopping/>
-            {children}                
-            
-              <Fotter />
-              <div className="fixed bottom-[50px] max-sm:right-2 right-[50px]">
-                <Whatsappicon />
-              </div>
-            
-          </div>
-           
+        {children}
         </Providers>
       </body>
     </html>

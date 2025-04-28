@@ -33,7 +33,7 @@ const ProductListSale: FC<ProductListSaleProps> = () => {
               <i className="text-4xl mb-4">📭</i>
               <h2 className="text-xl font-semibold">مافيش عروض حالياً</h2>
               <p className="text-sm mt-2">تابعنا دايمًا، العروض بترجع كل فترة 😉</p>
-            </div>
+             </div>
           
           
           }

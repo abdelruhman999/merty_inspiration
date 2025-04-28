@@ -5,13 +5,19 @@ export interface ShortColor {
     image: string;
 }
 
-export interface Color {
+
+interface BaseColor {
     id: number;
-    image: string;
     color: string;
     product: number;
+    name: string;
 }
-
+export interface Color extends BaseColor {
+    image: string;
+}
+export interface ColorCreate extends BaseColor {
+    image: File | null | FileList;
+}
 
 ////////////////////////////////////// Size  //////////////////////////////////////
 
@@ -72,11 +78,11 @@ export interface Product {
     id: number;
     name: string;
     description: string;
-    image: string;
     colors: Color[];
     sizes: Size[];
     season: Season;
     results:[]
     next:string | null
     product_size_colors: ProductSizeColor[];
+    is_active: boolean;
 }
