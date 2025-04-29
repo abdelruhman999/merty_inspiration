@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Table, TableHeader } from '@/component/Table/Table';
 import { MdDelete } from 'react-icons/md';
 import { sendRequest } from '@/api';
@@ -10,8 +10,12 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import Image from 'next/image';
 import { serve } from '@/api/utils';
 import UpdateModal from './UpdateModal/UpdateModal';
-import { FiEdit2 } from 'react-icons/fi';
+import { FiEdit2, FiPrinter } from 'react-icons/fi';
 import { LuRefreshCcw } from 'react-icons/lu';
+import Barcode from 'react-barcode';
+import { useReactToPrint } from "react-to-print";
+
+
 
 interface SizeColor {
   id: string;
@@ -21,6 +25,7 @@ interface SizeColor {
   color_id: string;
   size: Size;
   color: Color;
+  code: string;
 }
 
 interface SizeColorCreate {
@@ -39,6 +44,8 @@ export default function EditSizeColors({ id }: EditSizeColorsProps) {
   const [refresh, setRefresh] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [selectedSizeColor, setSelectedSizeColor] = useState<SizeColor | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const reactToPrintFn = useReactToPrint({ contentRef});
   const { data: sizeColors } = useRequest<SizeColor[]>({
     url: `/api/product/${id}/size-colors`,
     method: 'GET',
@@ -183,10 +190,34 @@ export default function EditSizeColors({ id }: EditSizeColorsProps) {
       render: (sizeColor: SizeColor) => sizeColor.size.price
     },
     {
+      key: 'code',
+      label: 'Barcode',
+      render: (sizeColor: SizeColor) => {
+        return (
+          <div className="flex flex-col items-center justify-between overflow-auto" ref={contentRef}>
+            <Barcode
+              value={sizeColor.code} 
+              className="h-[100px] w-[100px]" 
+              format="CODE128"
+              displayValue={true}
+              text={`${sizeColor.size.size  ? sizeColor.size.size + "-" : "" }${sizeColor.size.price.toString()}LE`}
+            />
+          </div>
+        );
+      }
+    },
+    {
       key: 'id',
       label: 'العمليات',
       render: (sizeColor: SizeColor) => (
         <div className="flex gap-2 justify-center">
+          <button
+            type="button"
+            onClick={() => reactToPrintFn()}
+            className="p-2 text-green-600 hover:bg-green-100 rounded-full transition-colors duration-200"
+          >
+            <FiPrinter className="h-5 w-5" />
+          </button>
           <button
             type="button"
             onClick={() => {
@@ -211,6 +242,27 @@ export default function EditSizeColors({ id }: EditSizeColorsProps) {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
+      <style>
+      {`
+      @media print {
+        body {
+          margin: 0;
+          padding: 0;
+        }
+        #barcode {
+          width: 50mm;
+          height: 30mm;
+          margin: 0;
+          page-break-after: always;
+        }
+        @page {
+          size: 50mm 30mm;
+          margin: 0;
+        }
+      }
+      `}
+      </style>
+
       <div className="flex items-center gap-2 justify-between">
         <button type="button" onClick={() => setRefresh(prev => !prev)} className="flex items-center gap-2 rounded-md p-2 bg-blue-400 shadow-2xl hover:bg-blue-500 cursor-pointer"> 
           <LuRefreshCcw  className="h-5 w-5" />
