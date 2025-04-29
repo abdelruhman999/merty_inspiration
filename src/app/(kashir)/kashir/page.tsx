@@ -37,7 +37,7 @@ const CashierSystem: FC = () => {
     watch: watchProduct,
     reset: resetProduct,
     formState: { errors: productErrors },
-  } = useForm<ProductData>({ defaultValues: { price: 1000, name: '', discountPrice: 0, category: '', quantity: 1 } });
+  } = useForm<ProductData>({ defaultValues: { price: 1000,  discountPrice: 0, category: '', quantity: 1 } });
 
   const { 
     register: registerCustomer,
@@ -54,12 +54,13 @@ const CashierSystem: FC = () => {
   // محاكاة استرجاع بيانات المنتج
   const fetchProductData = (barcode: number) => {
     console.log('Searching for product with barcode:', barcode);
+    const product = watchProduct();
     // بيانات تجريبية
     const mockProduct: ProductData = {
       barcode: barcode,
       name: 'تيشيرت رجالي قطني',
-      price: 249.99,
-      discountPrice: 199.99,
+      price: product.price || 100.00,
+      discountPrice: product.discountPrice || 80.00,
       category: 'ملابس رجالي',
       quantity: 1,
       size: 'XL',
@@ -85,8 +86,7 @@ const CashierSystem: FC = () => {
     } else {
       setCart([...cart, {
         ...product,
-        name: product.name,
-      
+        name: product.name, 
         quantity: product.quantity || 1,
         total: (product.discountPrice || product.price) * (product.quantity || 1)
       }]);
@@ -379,7 +379,7 @@ const CashierSystem: FC = () => {
                 <tr key={item.barcode}>
                   <td>{item.name}</td>
                   <td>{item.quantity}</td>
-                  <td>{(item.discountPrice || item.price).toFixed(2)}</td>
+                  {/* <td>{(item.discountPrice || item.price).toFixed(2)}</td> */}
                 </tr>
               ))}
             </tbody>
