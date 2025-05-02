@@ -12,3 +12,22 @@ export const Routesfotter = [
     {name:'📞 0123456789' },
    
 ]
+
+export const imageToBase64 = async (path) => {
+    try {
+      if (!path) return null; // إرجاع null إذا كان المسار فارغًا
+      
+      const response = await fetch(path);
+      if (!response.ok) return null; // إذا فشل طلب الصورة
+      
+      const blob = await response.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error("Failed to convert image to base64:", error);
+      return null;
+    }
+  };

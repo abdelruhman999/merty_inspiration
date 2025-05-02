@@ -8,12 +8,13 @@ import Swal from 'sweetalert2';
 import Loaderimg from '@/component/Loaderimg';
 import { sendRequest } from '@/api';
 import useRequest from '@/hooks/call';
-import { get_data, get_orders, get_response_from_createOrders } from '@/calls/constant';
+import { get_data } from '@/calls/constant';
 import {  removeItemsAfterCreateOrder } from '@/redux/slices/dataShopping';
 import { useRouter } from 'next/navigation';
 import { additemstolocalstorage } from '@/redux/slices/orders';
 import logo from '../../../../assets/original-d775108071a243c7e9a96158fb2f0b54.webp'
 import Link from 'next/link';
+import { Add_Response_Create_Order_To_Localstorage, itemsType } from '@/redux/slices/response_from_createOrders';
 
 
 interface Create_orderProps {
@@ -45,11 +46,7 @@ interface Methods {
     id: number,
     name: string
 }
-export interface Response {
-    uuid:string
-    url:string
-    type:string
-}
+
 
 
 const Create_order: FC<Create_orderProps> = () => {
@@ -131,7 +128,7 @@ const Create_order: FC<Create_orderProps> = () => {
        
 
 
-       await sendRequest<Response>({
+       await sendRequest<itemsType>({
             url:'/api/create-order',
             method:'POST',
             data:JSON.stringify(
@@ -153,10 +150,10 @@ const Create_order: FC<Create_orderProps> = () => {
             }
             }).then((res)=>{
                 console.log(res);
-                localStorage.setItem(get_response_from_createOrders ,JSON.stringify(res))
+                dispatsh(Add_Response_Create_Order_To_Localstorage(res))
                 dispatsh(additemstolocalstorage(itemsShopping))
                 if(res.type === 'ONLINE'){
-                    sendRequest<Response>({
+                    sendRequest<itemsType>({
                        url:'/api/get-payment-link',
                        method:"GET",
                        params:{
@@ -164,7 +161,7 @@ const Create_order: FC<Create_orderProps> = () => {
                            payment_method_id:order.payment_method_id
                        }
                        }).then((res)=>{
-                           window.open(res.url);
+                           window.open(res.url , '_target');
                        })
                 }
                 else{

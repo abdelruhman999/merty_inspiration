@@ -7,6 +7,7 @@ import Whatsappicon from "@/component/Whatsappicon";
 import Scrollbutton from "@/component/Buttonscroll";
 import Providers from "@/component/Providers"; 
 import Shopping from "./shopping/page";
+import Payment from "@/component/Payment";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,28 +30,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // <html lang="en">
-    //   <body
-    //     className={`${geistSans.variable} ${geistMono.variable} antialiased
-    //      bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100
 
-    //      `}
-    //   >
-    //     <Providers>
           <div className="flex flex-col  gap-[50px] items-center justify-between w-full">
             <Navpar/>
-          <Shopping/>
+             <Shopping/>
+             <Payment />
             {children}                
             
               <Fotter />
               <div className="fixed bottom-[50px] max-sm:right-2 right-[50px]">
                 <Whatsappicon />
-              </div>
-            
+              </div>   
           </div>
            
-    //     </Providers>
-    //   </body>
-    // </html>
+   
   );
 }

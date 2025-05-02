@@ -6,24 +6,71 @@ import Image from 'next/image';
 import logo from '../../../../assets/logo.png';
 import Link from 'next/link';
 import styles from './Fatora.module.css';
+import { useSearchParams } from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { get_orders } from '@/calls/constant';
+import { takeItemsFormLocalStorage } from '@/redux/slices/orders';
 
 const Fatora = () => {
+  const { items } = useSelector((state: RootState) => state.ordersStorage)
+  const dispatch = useDispatch()
+  const searchParams = useSearchParams();
+  const success = searchParams.get("success");
+  const pending = searchParams.get("pending");
+  const id = searchParams.get("id");
+  const source_data_type = searchParams.get("source_data.type");
+  const sub_type = searchParams.get("source_data.sub_type");
+  const amount_cents = searchParams.get("amount_cents");
+  const created_at = searchParams.get("created_at");
+      console.log(sub_type);
+
   const [isMounted, setIsMounted] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+
   const [invoiceData, setInvoiceData] = useState({
     status: 'قيد الانتظار',
-    id: 'TRX-2023-0456',
-    date: '',
-    paymentMethod: 'بطاقة ائتمان',
-    cardType: 'فيزا',
-    amount: 1250.50,
-    items: [
-      { id: 0, name: 'خدمة اشتراك سنوي', price: 1000 },
-      { id: 1, name: 'ضريبة القيمة المضافة', price: 150 },
-      { id: 2, name: 'رسوم خدمة', price: 100.50 }
-    ]
+    id: id,
+    date: created_at,
+    paymentMethod: source_data_type,
+    cardType: sub_type,
+    amount: Number(amount_cents)/100,
   });
 
-  const [isDownloading, setIsDownloading] = useState(false);
+
+  useEffect(() => {
+      const data = localStorage.getItem(get_orders)
+      if (data) {
+          dispatch(takeItemsFormLocalStorage(JSON.parse(data)))
+      }
+  }, [dispatch])
+
+   
+     useEffect(()=>{
+         if(pending === 'true'){
+          setInvoiceData((prev)=>({
+            ...prev,
+            status: 'قيد الانتظار',
+          }))
+        }
+      else{
+          if(success){
+            setInvoiceData((prev)=>({
+              ...prev,
+              status: 'ناجحة',
+            }))
+          
+          }else{
+            setInvoiceData((prev)=>({
+              ...prev,
+              status: 'فاشلة',
+            }))
+          
+          }
+      }
+  
+     },[pending,invoiceData.status])
 
   useEffect(() => {
     setIsMounted(true);
@@ -251,8 +298,8 @@ const Fatora = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {invoiceData.items.map((item) => (
-                        <tr key={item.id} className={styles.tableRow}>
+                      {items.map((item , index) => (
+                        <tr key={index} className={styles.tableRow}>
                           <td className={styles.tableCell}>{item.name}</td>
                           <td className={styles.tableCell}>{item.price.toFixed(2)} جنيه</td>
                         </tr>

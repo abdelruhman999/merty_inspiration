@@ -6,7 +6,6 @@ import logo2 from '../../../../assets/7640112.jpg'
 import logo3 from '../../../../assets/post_social_media_feed_consumer_week_with_discount_coupon.jpg'
 import logo4 from '../../../../assets/Social_media_feed_Instagram_holiday_deals_for_supermarkets.jpg'
 import Image from 'next/image';
-import useRequest from '@/hooks/call';
 import ProductListSale from '@/component/ProductListSale';
 
 interface SalesProps {}

@@ -42,15 +42,15 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
       <div className={style.wrapper}>
         <div>
         <Suspense  fallback={<Loaderimg/>}>
-          {image &&
+    
             <Image   
-              className={`${style["card-image"]}  `}
-              src={img}
+              className={`${style["card-image"]}`}
+              src={img }
               alt="logo"
               width={200}
               height={200}
             />  
-          }
+          
         </Suspense>
         </div>
       

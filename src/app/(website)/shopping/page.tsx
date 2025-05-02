@@ -17,6 +17,7 @@ import logo3 from '../../../../assets/3a0870c1369eb2bc105bd4838665defa.jpg'
 import { TbShoppingBagX } from "react-icons/tb";
 import { get_data } from '@/calls/constant';
 
+
 interface ShoppingProps {}
 
 const Shopping: FC<ShoppingProps> = () => {
@@ -172,7 +173,7 @@ const Shopping: FC<ShoppingProps> = () => {
                onClick={()=>{
                 dispatsh(setShow())
                }}
-               href={'/'}
+               href={'/home'}
                className='bg-zinc-700 font-semibold  text-white
                 hover:bg-zinc-500 duration-200
                  cursor-pointer h-[35px] w-[200px] flex justify-center items-center'>

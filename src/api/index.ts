@@ -61,11 +61,19 @@ export const sendRequest = async <T>({ url, method, params, data, headers, cache
                 } 
                 else {
                     const errorResponse = await response.json();
-                    console.log('Error response:', errorResponse);
+                    // console.log('Error response:', errorResponse.error);
+                    Swal.fire({
+                        icon: 'error',
+                        text:`${errorResponse.error}`,
+                        showConfirmButton: false,
+                        timer: 10000
+                    });
+                    
                     throw new Error(response.statusText);
+                    
                 }  
     }
-    console.log('Response is OK but not 2xx:', response.headers);
+    // console.log('Response is OK but not 2xx:', response.headers);
 
     return response.json();
 }
