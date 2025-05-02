@@ -371,7 +371,6 @@ const addToCart = () => {
 
   // حساب الإجماليات
   const subtotal = cart.reduce((sum, item) => sum + item.total, 0);
-  const delivary_price = 150; 
   const total = subtotal + deliveryPrice;
 
   return (
@@ -566,7 +565,7 @@ const addToCart = () => {
                         <td className="px-4 py-2 text-right">
                           <button
                             onClick={() => removeFromCart(item.code)}
-                            className="text-red-500 hover:text-red-700"
+                            className="text-red-500 cursor-pointer hover:text-red-700"
                           >
                             <FaTimes />
                           </button>

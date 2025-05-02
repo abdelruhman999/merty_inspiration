@@ -191,7 +191,7 @@ const Fatora = () => {
           <p className="text-gray-600 mb-6">نقدّر ثقتك بنا ونسعى دائمًا لتقديم الأفضل لك.</p>
           <Link
             href={'/contact'}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200">
+            className="bg-blue-600  hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200">
             تواصل معنا
           </Link>
         </div>

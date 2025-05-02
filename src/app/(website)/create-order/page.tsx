@@ -150,7 +150,7 @@ const Create_order: FC<Create_orderProps> = () => {
             }
             }).then((res)=>{
                 console.log(res);
-                dispatsh(Add_Response_Create_Order_To_Localstorage(res))
+                dispatsh(Add_Response_Create_Order_To_Localstorage([res]))
                 dispatsh(additemstolocalstorage(itemsShopping))
                 if(res.type === 'ONLINE'){
                     sendRequest<itemsType>({

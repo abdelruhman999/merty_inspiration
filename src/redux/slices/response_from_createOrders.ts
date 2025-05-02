@@ -44,8 +44,8 @@ export const ordersSlice = createSlice({
   name: "itemfromstorage",
   initialState,
   reducers: {
-    Add_Response_Create_Order_To_Localstorage: (state , action:PayloadAction<itemsType>) => {
-      state.items = [...state.items ,{...action.payload}]
+    Add_Response_Create_Order_To_Localstorage: (state , action:PayloadAction<itemsType[]>) => {
+      state.items = [...state.items ,...action.payload]
       localStorage.setItem(get_response_from_createOrders ,JSON.stringify(state.items))
     },
     take_Response_Create_Order_From_LocalStorage:(state , action:PayloadAction<itemsType[] | []>)=>{
