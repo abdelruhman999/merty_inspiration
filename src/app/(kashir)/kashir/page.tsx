@@ -622,12 +622,7 @@ const addToCart = () => {
             <h2 className="text-lg font-bold">Merty inspiration</h2>
           </div>
 
-          {/* بيانات الفاتورة */}
-          <div className="text-center mb-3">
-            <p className="text-xs">التاريخ: {new Date().toLocaleDateString('ar-EG')}</p>
-            <p className="text-xs">رقم الفاتورة: {Math.floor(Math.random() * 100000)}</p>
-          </div>
-
+      
           {/* بيانات العميل */}
           <div className="mb-3 border-b pb-2 text-xs">
             <div className="flex justify-between">
