@@ -161,7 +161,7 @@ const Create_order: FC<Create_orderProps> = () => {
                            payment_method_id:order.payment_method_id
                        }
                        }).then((res)=>{
-                           window.open(res.url , '_target');
+                           window.open(res.url , '_blank');
                        })
                 }
                 else{

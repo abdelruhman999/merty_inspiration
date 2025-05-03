@@ -51,8 +51,8 @@ async function henddelePayment(e: React.MouseEvent<HTMLButtonElement, MouseEvent
                 payment_method_id:String(selectedMethodId)
             }
             }).then((res)=>{
-                          
-                window.open(res.url , '_target');
+                 
+                window.open(res.url , '_blank');;
             })
 
 
