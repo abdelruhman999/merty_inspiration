@@ -2,12 +2,19 @@ import Cardstyle from "./CardStyle/Cardstyle";
 import { Base_Url } from "../calls/constant";
 import { Pagination } from "@/types/base";
 import { Product } from "@/types/product";
+import { sendRequest } from "../api";
 
 const Products = async () => {
-  const response = await fetch(`${Base_Url}/api/products?page=1&page_size=5`, {
-    cache: "no-store", 
+  const response = await sendRequest<Pagination<Product>>({
+    url:'/api/products',
+    server:true,
+    method:'GET',
+    params:{
+      page:"1",
+      page_size:"5"
+    }
   });
-  const data:Pagination<Product> = await response.json(); 
+  const data:Pagination<Product> = response; 
   console.log(data);
   
   return (<>
