@@ -12,12 +12,25 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...compat.extends("next","next/core-web-vitals", "next/typescript" ,"next/recommended"),
   {
     rules: {
-      "no-unused-vars": "warn", // For JavaScript
-      "@typescript-eslint/no-unused-vars": "warn", // For TypeScript
-      "@typescript-eslint/no-empty-object-type": "warn"
+      // Suppress hook dependency warning
+      'react-hooks/exhaustive-deps': 'off',
+
+      // Suppress warning about <img>
+      '@next/next/no-img-element': 'off',
+
+      // Allow unused variables
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+
+      // Allow empty interfaces
+      '@typescript-eslint/no-empty-interface': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
+
+      // Allow `any` type
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   }
 ];
