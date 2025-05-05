@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 
 export interface sendRequestKwargs {
     url: string,
+    server?:boolean,
     method?: "GET" | "POST" | "PUT" | "DELETE",
     params?: Record<string, string>,
     data?: BodyInit | null,
@@ -15,7 +16,7 @@ export interface sendRequestKwargs {
     }
 }
 
-export const sendRequest = async <T>({ url, method, params, data, headers, cache, next , ignoreContentType = false}: sendRequestKwargs): Promise<T> => {
+export const sendRequest = async <T>({ url, server=false, method, params, data, headers, cache, next , ignoreContentType = false}: sendRequestKwargs): Promise<T> => {
     const sessionId = Cookies.get('sessionid');
     const mergedHeaders: HeadersInit = ignoreContentType ? {
         'sessionid': sessionId || '',
@@ -25,7 +26,8 @@ export const sendRequest = async <T>({ url, method, params, data, headers, cache
         'Content-Type': 'application/json',
         ...(headers || {}),
     };
-    const response = await fetch(`${Base_Url}${url}${params ? "?" + new URLSearchParams(params).toString() : ""}`, {
+    const full_url = server ? `http://0.0.0.0:8000${url}` : `${Base_Url}${url}`;
+    const response = await fetch(`${full_url}${params ? "?" + new URLSearchParams(params).toString() : ""}`, {
         method: method,
         body: data,
         headers: mergedHeaders,
