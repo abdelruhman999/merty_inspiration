@@ -2,12 +2,11 @@
 import logo1 from '../../assets/medium-shot-woman-holding-hanger.jpg'
 import logo2 from '../../assets/shirt-mockup-concept-with-plain-clothing.jpg'
 import logo3 from '../../assets/still-life-hanging-bag.jpg'
-import logo4 from '../../assets/woman-looking-clothes-side-view.jpg'
 import { useState, useEffect } from 'react';
 
 const Carousel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const images = [logo1, logo2, logo3, logo4];
+  const images = [logo1, logo2, logo3];
 
   const handleNext = () => {
     setActiveIndex((prevIndex) => (prevIndex + 1) % images.length);
