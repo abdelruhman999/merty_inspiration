@@ -217,7 +217,7 @@
   
   /* Print Styles */
   @media print {
-    body * {
+    .print-hide * {
       visibility: hidden;
     }
     
