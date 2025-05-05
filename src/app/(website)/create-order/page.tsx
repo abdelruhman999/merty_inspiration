@@ -49,7 +49,7 @@ interface Methods {
 
 
 
-const Create_order: FC<Create_orderProps> = () => {
+const CreateOrder: FC = () => {
     const router  = useRouter()
     const {itemsShopping , sup_total} = useSelector((state:RootState)=>state.dataShopping)
     const dispatsh = useDispatch()
@@ -516,4 +516,4 @@ const Create_order: FC<Create_orderProps> = () => {
     );
 }
 
-export default Create_order;
+export default CreateOrder;

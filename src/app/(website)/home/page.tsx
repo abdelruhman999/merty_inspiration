@@ -4,11 +4,8 @@ import Products from '@/component/Products';
 import ProductsList from '@/component/ProductsList ';
 import type { FC } from 'react';
 
-interface pageProps {
-  name: number;
-}
 
-const page: FC<pageProps> = async () => {
+const page: FC = async () => {
   return (
         <div className='w-full flex flex-col  items-center gap-[20px]'>
             <Carousel/>

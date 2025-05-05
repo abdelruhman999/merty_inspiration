@@ -1,7 +1,7 @@
 import { sendRequest } from "@/api";
 import Modal from "@/component/Modal/Modal";
 import { Size } from "@/types/product";
-import {useForm ,SubmitHandler} from 'react-hook-form';
+import {useForm } from 'react-hook-form';
 
 
 

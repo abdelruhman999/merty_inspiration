@@ -1,10 +1,10 @@
 import { sendRequest } from "@/api";
 import Modal from "@/component/Modal/Modal";
-import { Color , ColorCreate} from "@/types/product";
+import { Color } from "@/types/product";
 import { useState } from "react";
-import {useForm ,SubmitHandler} from 'react-hook-form';
+import {useForm } from 'react-hook-form';
 import { MdFileUpload } from "react-icons/md";
-
+import Image from "next/image";
 
 
 
@@ -30,7 +30,7 @@ const UpdateModal: React.FC<UpdateModalProps> = ({ isOpen , color , onClose , on
             reader.onloadend = () => {
               if (typeof reader.result === 'string') {
                 setImageUrl(reader.result);
-                setValue('image', file);
+                setValue('image', reader.result);
               }
             };  
             reader.readAsDataURL(file);

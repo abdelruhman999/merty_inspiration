@@ -12,7 +12,7 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next","next/core-web-vitals", "next/typescript" ,"next/recommended"),
+  ...compat.extends("next","next/core-web-vitals", "next/typescript" ),
   {
     rules: {
       // Suppress hook dependency warning

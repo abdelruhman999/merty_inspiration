@@ -139,7 +139,7 @@ const Orders: FC<OrdersProps> = () => {
                     width={192}
                     height={192}
                 />
-                <p className='text-lg text-gray-600'>You haven't placed any orders yet</p>
+                <p className='text-lg text-gray-600'>You haven&apos;t placed any orders yet</p>
                 <Link
                     href={'/'}
                     className='bg-zinc-700 font-semibold text-white hover:bg-zinc-600 transition-colors duration-200 px-6 py-2 rounded-md'
