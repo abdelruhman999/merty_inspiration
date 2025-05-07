@@ -1,5 +1,5 @@
 'use client';
-import logo1 from '../../assets/medium-shot-woman-holding-hanger.jpg'
+import logo1 from '../../assets/parker-burchfield-tvG4WvjgsEY-unsplash.jpg'
 import logo2 from '../../assets/shirt-mockup-concept-with-plain-clothing.jpg'
 import logo3 from '../../assets/still-life-hanging-bag.jpg'
 import { useState, useEffect } from 'react';

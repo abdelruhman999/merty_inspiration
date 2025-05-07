@@ -250,13 +250,13 @@ export default function EditSizeColors({ id }: EditSizeColorsProps) {
           padding: 0;
         }
         #barcode {
-          width: 50mm;
-          height: 30mm;
+          width: 38mm;
+          height: 25mm;
           margin: 0;
           page-break-after: always;
         }
         @page {
-          size: 50mm 30mm;
+          size: 38mm 25mm;
           margin: 0;
         }
       }

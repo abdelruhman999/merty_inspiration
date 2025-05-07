@@ -80,7 +80,7 @@ const CashierSystem: FC = () => {
   
   useEffect(() => {
     const code = watchProduct('code');
-    if (code && code.length >= 12) {
+    if (code) {
       sendRequest<ProductData>({
         url: '/api/product/get-product-by-barcode',
         method: 'GET',
