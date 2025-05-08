@@ -11,11 +11,11 @@ const Products = async () => {
     method:'GET',
     params:{
       page:"1",
-      page_size:"1"
+      page_size:"10"
     },
-    next:{
-      revalidate:60
-    }
+    // next:{
+    //   revalidate:60
+    // }
 
   });
   const data:Pagination<Product> = response; 
