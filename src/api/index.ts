@@ -18,12 +18,14 @@ export interface sendRequestKwargs {
 
 export const sendRequest = async <T>({ url, server=false, method, params, data, headers, cache, next , ignoreContentType = false}: sendRequestKwargs): Promise<T> => {
     const sessionId = Cookies.get('sessionid');
+    const csrfToken = Cookies.get('csrftoken');
     const mergedHeaders: HeadersInit = ignoreContentType ? {
         'sessionid': sessionId || '',
         ...(headers || {}),
     } : {
         'sessionid': sessionId || '',
         'Content-Type': 'application/json',
+        'x-csrftoken': csrfToken || '',
         ...(headers || {}),
     };
     const full_url = server ? `http://0.0.0.0:8000${url}` : `${Base_Url}${url}`;
