@@ -7,9 +7,11 @@ export const Routes = [
 ]
 
 export const Routesfotter = [
-    {name:'📍 1234 Street Name, City Name'},
-    {name:'📧 info@example.com'},
-    {name:'📞 0123456789' },
+    {name:'  36 المحور المركزى - الحصرى - 6 اكتوبر'},
+    {name:'📞 01000355808' },
+    {name:'📞 01026456902' },
+    {name:'📞 01227727874' },
+    
    
 ]
 
