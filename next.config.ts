@@ -5,6 +5,18 @@ const nextConfig: NextConfig = {
     // domains: ["heshammoawad120.pythonanywhere.com"],
     remotePatterns: [
       {
+        protocol:"https",
+        hostname:"merty-inspiration.com",
+        port:"",
+        pathname:"/**",
+      },      
+      {
+        protocol:"http",
+        hostname:"merty-inspiration.com",
+        port:"",
+        pathname:"/**",
+      },
+      {
         protocol: "https",
         hostname: "heshammoawad120.pythonanywhere.com",
         port: "",
