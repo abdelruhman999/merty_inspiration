@@ -195,12 +195,12 @@ export default function EditSizeColors({ id }: EditSizeColorsProps) {
       render: (sizeColor: SizeColor) => {
         return (
           <div className="flex flex-col items-center justify-between overflow-auto" ref={contentRef}>
+            <p>{sizeColor.size.size  ? sizeColor.size.size + " - " : "" } {sizeColor.size.price.toString()}LE</p>
             <Barcode
               value={sizeColor.code} 
               className="h-[100px] w-[100px]" 
               format="CODE128"
               displayValue={true}
-              text={`${sizeColor.size.size  ? sizeColor.size.size + "-" : "" }${sizeColor.size.price.toString()}LE`}
             />
           </div>
         );
