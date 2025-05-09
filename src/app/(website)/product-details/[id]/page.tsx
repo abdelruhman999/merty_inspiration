@@ -10,6 +10,7 @@ import Loadercom from "@/component/Loadercom";
 import { useDispatch} from "react-redux";
 import { addItemsShopping, setShow } from "@/redux/slices/dataShopping";
 import Swal from "sweetalert2";
+import {serve} from "@/api/utils";
 
 interface ProdcutdetailsProps {}
 
@@ -67,7 +68,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                   setCurrent_img(el.image);
                 }}
                 key={el.id}
-                src={`${Base_Url}/${el.image}`}
+                src={`${serve(el.image)}`}
                 className={`h-[100px] w-[70px] hover:scale-80 duration-200 xs:size-[75px] cursor-pointer `}
                 alt="logo"
                 width={400}
@@ -155,7 +156,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
           >
             <div className="relative ">
               <Image
-                src={`${Base_Url}/${current_img}`}
+                src={`${serve(current_img)}`}
                 className="w-[491px]
                 max-sm:w-[350px] 
                 max-sm:h-[400px]
@@ -296,7 +297,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                   addItemsShopping([
                     {
                       id:stock_id,
-                      image: `${Base_Url}/${current_img}`,
+                      image: `${serve(current_img)}`,
                       name: data.name,
                       price: price,
                       old_Price:old_Price,
