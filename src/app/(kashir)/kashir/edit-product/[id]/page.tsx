@@ -7,7 +7,7 @@ import EditSizeColors from '../__components/EditSizeColors/EditSizeColors';
 import SwitchSizeColor from '../__components/EditDiscounts/SwitchSizeColor';
 import { sendRequest } from '@/api';
 import Swal from 'sweetalert2';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 
 interface EditProductFormsProps {
     params: Promise<{ id: string }>;
@@ -15,6 +15,8 @@ interface EditProductFormsProps {
 
 const EditProductForms: FC<EditProductFormsProps> = ({params}) => {
     const id = use(params).id;
+    const router = useRouter();
+    
     return (
         <div className="min-h-screen bg-gray-50 p-6 space-y-2" dir="rtl">
             <button 

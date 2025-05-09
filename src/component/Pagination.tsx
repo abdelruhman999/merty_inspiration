@@ -21,6 +21,7 @@ const Pagination: FC<PaginationProps> = () => {
         method:'GET',
         params:{
             page:String(count),
+            page_size:"20"
         }
     },[count])
 

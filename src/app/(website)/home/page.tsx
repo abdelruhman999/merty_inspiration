@@ -10,7 +10,7 @@ const page: FC = async () => {
         <div className='w-full flex flex-col  items-center gap-[20px]'>
             <Carousel/>
             <div className="flex justify-center  max-sm:p-[0px] max-sm:gap-[10px] gap-[50px] flex-wrap w-full p-[50px]">
-                <Products/>
+                {/* <Products/> */}
                 <ProductsList/>
             </div>
                 <Pagination />

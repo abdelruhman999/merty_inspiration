@@ -81,9 +81,9 @@ export const sendRequest = async <T>({
             throw new Error(response.statusText);
         }
     }
-    // else if (response.status === 201){
-    //     return {} as T;
-    // }
+    else if (response.status === 204){
+        return {} as T;
+    }
 
     return response.json();
 };

@@ -239,7 +239,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
               max-sm:gap-[15px] 
               gap-[10px]"
             >
-              <p className="text-xl xs:text-2xl">Select Size</p>
+              <p className="text-xl xs:text-2xl">اختر المقاس</p>
 
               <div className="flex gap-2">
             {size.map((el, index) => {
@@ -328,16 +328,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
               <div
                 className="bg-gray-300 h-[1px]"></div>
 
-              <p
-                className="text-wrap 
-                font-serif text-sm
-                w-[330px] max-sm:pb-[10px] max-sm:w-[300px]
-                text-gray-500 
-                 "
-              >
-                100% Original product.Cash on delivery is available on this
-                product.Easy return and exchange policy within 7 days.
-              </p>
+
             </div>
           </div>
         </div>

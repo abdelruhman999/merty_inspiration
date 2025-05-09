@@ -6,7 +6,7 @@ interface CountType {
 }
 
 const initialState: CountType = {
-    count: 2, 
+    count: 1, 
     next: null
 };
 
