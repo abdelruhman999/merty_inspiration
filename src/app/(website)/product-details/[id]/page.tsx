@@ -155,8 +155,10 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
             flex-row-reverse"
           >
             <div className="relative ">
-              <Image
-                src={`${serve(current_img)}`}
+              {
+                current_img ? (
+                  <Image
+                src={`${serve(current_img)}` }
                 className="w-[491px]
                 max-sm:w-[350px] 
                 max-sm:h-[400px]
@@ -165,6 +167,10 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                 width={200}
                 height={200}
               />
+                ) : (
+                  <p>الصورة غير موجودة حاليا</p>
+                )
+              }
               <div
                 className="bg-black absolute 
                 w-[55px] h-[65px] 
@@ -184,7 +190,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
 
           <div
             className="flex
-           gap-[50px] flex-col"
+           gap-[50px] flex-col pl-5"
           >
         <div
           className="flex
@@ -216,7 +222,8 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
               max-sm:items-start
                 flex-col  
                 max-sm:gap-[15px]  
-                gap-[10px]"
+                gap-[10px]
+                "
             >
               <div className="flex ">
               <p className="text-3xl font-bold">LE {price}</p>
@@ -241,16 +248,15 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
             >
               <p className="text-xl xs:text-2xl">اختر المقاس</p>
 
-              <div className="flex gap-2">
-            {size.map((el, index) => {
+              <div className="grid grid-cols-4 md:grid-cols-6 gap-2 pr-5">
+            {
+            size.map((el, index) => {
               const isOutOfStock = el.stock === 0;
               return (
-                <div key={index} className="relative">
+                <div key={index} className="relative hover:scale-105 duration-200">
                   <button
                     disabled={isOutOfStock}
                     onClick={() => {
-                   
-                      
                       if (!isOutOfStock) {
                         if (el.discounts.length>0) {
                         const Discount_selector = (((el.discounts[0].discount)/el.size.price)*100).toFixed(0);

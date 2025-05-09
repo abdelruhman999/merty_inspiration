@@ -32,7 +32,7 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
 
   useEffect(()=>{
         const sizes = el.sizes        
-        const min_value = Math.min(...sizes.map((el:PriceType)=>el.price))
+        const min_value = sizes.length > 0 ? Math.min(...sizes.map((el:PriceType)=>el.price)) : 0;
         setMin_Cost(min_value)
   },[])
 
@@ -42,7 +42,6 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
       <div className={style.wrapper}>
         <div>
         <Suspense  fallback={<Loaderimg/>}>
-    
             <Image   
               className={`${style["card-image"]}`}
               src={img }
@@ -50,14 +49,13 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
               width={200}
               height={200}
             />  
-          
         </Suspense>
         </div>
       
     
-        <div className={`${style["content"]}`}>
-          <p className={style["title"]}>{name}</p>   
-          <p className={`${style["title"]} ${style["price"]}`}>LE{min_Cost?min_Cost : ''}</p>
+        <div className={`${style["content"]} `}>
+          <p className={`${style["title"]}`}>{name}</p>   
+          <p className={`${style["title"]} ${style["price"]}`}>{ min_Cost ? min_Cost : '0'} LE</p>
         </div>
         
         <div className={`${style.noScrollbar} overflow-y-hidden flex justify-center w-[150px] overflow-x-auto`}>
