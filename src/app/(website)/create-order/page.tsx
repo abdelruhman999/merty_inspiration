@@ -196,7 +196,7 @@ const CreateOrder: FC = () => {
             <label
             className='text-xl font-semibold '
             htmlFor="contact">
-                Contact 
+                رقم التواصل 
             </label>
 
             <input
@@ -209,7 +209,7 @@ const CreateOrder: FC = () => {
                 }}
             id='contact'
              type="text"
-             placeholder='Please Enter Your Phone number'
+             placeholder='الرجاء ادخال رقم الهاتف'
              className='bg-white  pl-[15px] w-[90%] h-[42px] rounded outline-none'
              />
              </div>
@@ -218,9 +218,9 @@ const CreateOrder: FC = () => {
 
           <div className='flex flex-col gap'>
             <p className='text-xl font-semibold '>
-                Delivery 
+                بيانات الطلب 
             </p>
-            <p className='text-gray-400 text-sm'>This will also be used as your billing address for this order.</p>
+            <p className='text-gray-400 text-sm'>هذا سيتم استخدامه كعنوان للدفع لهذا الطلب.</p>
           </div>
           <select 
           className='bg-white text-sm  
@@ -228,7 +228,7 @@ const CreateOrder: FC = () => {
           h-[46px] rounded 
           '>
             <option>
-               Egypt 
+               مصر 
             </option>
           </select>
             </div>
@@ -242,7 +242,7 @@ const CreateOrder: FC = () => {
                 }))
             }}
              type="text" 
-             placeholder='First name'
+             placeholder='الاسم الاول'
              className='bg-white  pl-[15px] w-[44%] h-[42px] rounded outline-none'
              />
             <input
@@ -253,7 +253,7 @@ const CreateOrder: FC = () => {
                 }))
             }}
              type="text" 
-             placeholder='Last name'
+             placeholder='الاسم الاخير'
              className='bg-white  pl-[15px] w-[44%] h-[42px] rounded outline-none'
              />
             </div>
@@ -265,7 +265,7 @@ const CreateOrder: FC = () => {
                 }))
             }}
              type="text" 
-             placeholder='Address'
+             placeholder='العنوان'
              className='bg-white  pl-[15px] w-[90%] h-[42px] rounded outline-none'
              />
 
@@ -278,7 +278,7 @@ const CreateOrder: FC = () => {
                     }))
                 }}
              type="text" 
-             placeholder='landmark'
+             placeholder='علامة مميزة'
              className='bg-white  pl-[15px] 
               h-[42px] rounded 
               outline-none w-[44%]'
@@ -296,7 +296,7 @@ const CreateOrder: FC = () => {
              }} 
              className='bg-white text-sm pl-[15px] w-[44%] h-[42px] rounded outline-none'>
             <option>
-                Governate
+                المحافظة
             </option>
              {
              cities?.map((el)=>{
@@ -311,12 +311,12 @@ const CreateOrder: FC = () => {
              </div>
 
              <textarea
-             placeholder='Note (Optional)'
+             placeholder='ملاحظة (اختياري)'
              className='bg-white  pl-[15px] pt-[15px] w-[90%] h-[150px] rounded outline-none'
              />
             <div className='flex gap-[15px] flex-col items-start'>
             <p className='text-xl font-semibold '>
-            Shipping method 
+            طريقة الشحن 
             </p>
              <div className='flex text-sm  font-semibold pr-[20px] pl-[20px] w-[90%] bg-blue-100  rounded-lg h-[45px] justify-between items-center'>
                 <p>توصيل للمنزل </p>
@@ -326,10 +326,10 @@ const CreateOrder: FC = () => {
             <div className='flex gap-[15px] flex-col items-start'>
                 <div className='flex flex-col gap-1'>
                     <p className='text-xl font-semibold '>
-                    Payment
+                    الدفع
                     </p>
                     <p className='text-sm text-gray-400 max-sm:w-[300px] w-[500px] text-wrap '>
-                    Your payment method’s billing address must match the shipping address. All transactions are secure and encrypted.
+                    يجب أن يتطابق عنوان الدفع مع عنوان الشحن. جميع المعاملات آمنة .
                     </p>
                 </div>
                 <div className='w-[90%]'>
@@ -352,7 +352,7 @@ const CreateOrder: FC = () => {
                         </div>
                         </div>
                         <p>
-                        Cash on Delivery (COD)
+                        دفع عند الاستلام (COD)
                         </p>
                     </div>
                 </div>
@@ -374,7 +374,7 @@ const CreateOrder: FC = () => {
                             <div className='bg-white rounded-full size-[40%]'></div>
                         </div>
                         </div>
-                        <p>Credit card</p>
+                        <p>الدفع الالكترونى</p>
                     </div>
                 </div>
                  <div className={` bg-white duration-300 pl-[15px]
@@ -417,7 +417,7 @@ const CreateOrder: FC = () => {
               <button
               type='submit'
               className=" bg-neutral-900 hover:bg-gray-800 duration-200 text-white font-bold py-4 px-8 rounded-lg cursor-pointer font-sans w-[90%]">
-               Complete order
+               إتمام الطلب
             </button>
 
             </form>
@@ -459,7 +459,7 @@ const CreateOrder: FC = () => {
                             </div>
                         </div>
                         <div>
-                            <p>E£{el.price}</p>
+                            <p>LE{el.price}</p>
                         </div>
                     </div>
                 </div>
@@ -476,22 +476,22 @@ const CreateOrder: FC = () => {
                     <div className='w-full flex
                      items-center justify-between 
                      text-sm  text-gray-900'>
-                     <p>Subtotal</p>
-                     <p className='font-semibold'>E£{sup_total}</p>
+                     <p>اجمالى سعر المنتجات</p>
+                     <p className='font-semibold'>LE{sup_total}</p>
                     </div>
                     <div className='w-full  flex 
                     items-center justify-between 
                     text-sm  text-gray-900'>
-                     <p>Shipping</p>
-                     <p className='font-semibold'>E£{order.delivery_price}</p>
+                     <p>الشحن</p>
+                     <p className='font-semibold'>LE{order.delivery_price}</p>
                     </div>
                    
                     <div className='  flex 
                     items-center justify-between 
                     text-sm   text-gray-900'>
-                     <p className='text-xl text-black font-semibold'>Total</p>
+                     <p className='text-xl text-black font-semibold'>اجمالى الطلب</p>
                      <p
-                     className='text-xl font-bold '>E£{sup_total+order.delivery_price}
+                     className='text-xl font-bold '>LE{sup_total+order.delivery_price}
                      </p>
                     </div>
                 </div>
@@ -508,7 +508,7 @@ const CreateOrder: FC = () => {
                     className='bg-zinc-700 font-semibold  text-white
                      hover:bg-zinc-500 duration-200
                       cursor-pointer h-[35px] w-[200px] flex justify-center items-center'>
-                    Return To Shop
+                    العودة للتسوق
                      </Link>
                  </div>
             }

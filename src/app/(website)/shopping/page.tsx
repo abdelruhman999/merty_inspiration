@@ -48,7 +48,7 @@ const Shopping: FC<ShoppingProps> = () => {
             gap-[70px] justify-end`}
             >
             <p className="text-white font-semibold text-3xl text-nowrap  self-center ">
-              Sopping cart
+              عربة التسوق
             </p>
             <FaXmark
               onClick={() => dispatsh(setShow())}
@@ -127,7 +127,7 @@ const Shopping: FC<ShoppingProps> = () => {
                 <div className='bg-white pb-3 pt-3 shadow  shadow-gray-400 gap-[20px] flex flex-col items-center   w-full '>
                     <div className='flex items-center justify-between w-full p-1.5'>
                       <p className='text-xl font-semibold text-zinc-700'>LE {sup_total} EGP</p>
-                      <p className='text-xl font-semibold text-zinc-700'>:Subtotal</p>
+                      <p className='text-xl font-semibold text-zinc-700'>:اجمالى سعر المنتجات</p>
                     </div>
                     <Link
                     href={'/create-order'}
@@ -135,7 +135,7 @@ const Shopping: FC<ShoppingProps> = () => {
                       dispatsh(setShow())
                     }}
                     className='bg-zinc-700  text-white hover:bg-zinc-500 duration-200 cursor-pointer h-[35px] w-[90%] flex justify-center items-center'>
-                    CHEAK OUT
+                    الذهاب للدفع
                     </Link>
                     <div className='flex justify-center items-center gap-[10px]'>
                     <Image
@@ -168,7 +168,7 @@ const Shopping: FC<ShoppingProps> = () => {
                 items-center justify-center
                   h-screen gap-[10px]`}>
                 <TbShoppingBagX  className='text-5xl'/>
-               <p>Your cart is empty.</p>
+               <p>عربة تسوقك فارغة.</p>
                <Link 
                onClick={()=>{
                 dispatsh(setShow())
@@ -177,7 +177,7 @@ const Shopping: FC<ShoppingProps> = () => {
                className='bg-zinc-700 font-semibold  text-white
                 hover:bg-zinc-500 duration-200
                  cursor-pointer h-[35px] w-[200px] flex justify-center items-center'>
-               Return To Shop
+               الرجوع للتسوق
                 </Link>
               </div>
             )}
