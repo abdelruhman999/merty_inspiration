@@ -1,5 +1,6 @@
 'use client'
 import type { FC } from 'react';
+import {WA_NUMBER} from '../../assets/assests';
 
 interface WhatsappiconProps {}
 
@@ -8,7 +9,7 @@ const Whatsappicon: FC<WhatsappiconProps> = () => {
      
         <button
         onClick={()=>{
-          window.open('https://wa.me/201281126696/','_self')
+          window.open('https://wa.me/${}/','_self')
         }}
          className="Btn">
         <div
