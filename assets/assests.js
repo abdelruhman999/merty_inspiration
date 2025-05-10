@@ -1,7 +1,7 @@
 export const Routes = [
-    {name:'الرئيسيه', path:'/'},
+    {name:'الرئيسية', path:'/'},
     {name:'خصومات ', path:'/sales'},
-    {name:'الاوردرات السابقه ', path:'/orders'},
+    {name:'الاوردرات السابقة ', path:'/orders'},
     {name:'من نحن ', path:'/about'},
     {name:'التواصل', path:'/contact'},
 ]
@@ -11,9 +11,9 @@ export const Routesfotter = [
     {name:'📞 01000355808' },
     {name:'📞 01026456902' },
     {name:'📞 01227727874' },
-    
-   
 ]
+
+export const WA_NUMBER = '01000355808'
 
 export const imageToBase64 = async (path) => {
     try {
