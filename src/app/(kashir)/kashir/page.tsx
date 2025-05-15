@@ -142,7 +142,7 @@ const addToCart = () => {
         const newItem: InvoiceItem = {
           ...data,
           quantity: product.quantity,
-          total: price * 1
+          total: price * product.quantity
         };
         return [...prevCart, newItem];
       }
@@ -254,13 +254,17 @@ const addToCart = () => {
           display: flex;
           justify-content: space-between;
           }
+          .logo{
+            width : 50px
+          }
         </style>
       </head>
       <body>
         <!-- رأس الفاتورة -->
         <div class="header">
           <img 
-            src={imgSrc} 
+            class="logo"
+            src=${imgSrc} 
             alt="شعار المحل" 
             style={{ width: '60px', margin: '0 auto' }} 
           />

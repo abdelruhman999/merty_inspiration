@@ -32,7 +32,7 @@ const Orders: FC<OrdersProps> = () => {
                     <div className='bg-gray-300 w-full h-px mt-2'></div>
                 </div>
 
-                {items.length > 0 ? (
+ {items.length > 0 ? (
     <div className="bg-white shadow-md rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
@@ -102,7 +102,7 @@ const Orders: FC<OrdersProps> = () => {
                  }
                 </td>
 
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6  py-4 whitespace-nowrap text-sm text-gray-500">
                     {
                      el.type === 'ONLINE' ? (
                       

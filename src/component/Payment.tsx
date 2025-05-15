@@ -4,13 +4,11 @@ import { FormEvent, useEffect, useState, type FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setShow_payment } from '@/redux/slices/payment';
 import { FaCreditCard, FaWallet, FaCheck, FaXmark } from 'react-icons/fa6';
-// import 'animate.css';
+import 'animate.css';
 import useRequest from '@/hooks/call';
-import { Form } from 'react-hook-form';
 import Swal from 'sweetalert2';
 import { sendRequest } from '@/api';
-import { itemsType, take_Response_Create_Order_From_LocalStorage } from '@/redux/slices/response_from_createOrders';
-import { get_response_from_createOrders } from '@/calls/constant';
+import { itemsType } from '@/redux/slices/response_from_createOrders';
 
 
 interface paymentProps {
