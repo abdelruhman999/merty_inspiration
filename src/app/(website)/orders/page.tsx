@@ -5,9 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import logo from '../../../../assets/original-d775108071a243c7e9a96158fb2f0b54.webp'
 import Image from 'next/image';
 import Link from 'next/link';
-import {  Base_Url, get_response_from_createOrders } from '@/calls/constant';
+import {  get_response_from_createOrders } from '@/calls/constant';
 import { take_Response_Create_Order_From_LocalStorage } from '@/redux/slices/response_from_createOrders';
 import { add_uuid, setShow_payment } from '@/redux/slices/payment';
+import { serve } from '@/api/utils';
 
 interface OrdersProps {}
 
@@ -28,7 +29,7 @@ const Orders: FC<OrdersProps> = () => {
         <div className='w-full min-h-screen bg-gray-50 py-8 px-4 sm:px-6'>
             <div className='max-w-7xl mx-auto'>
                 <div className='mb-8'>
-                    <h1 className='text-2xl font-bold text-gray-900'>Order History</h1>
+                    <h1 className='text-2xl font-bold text-gray-900'>تاريخ الطلبات</h1>
                     <div className='bg-gray-300 w-full h-px mt-2'></div>
                 </div>
 
@@ -39,22 +40,22 @@ const Orders: FC<OrdersProps> = () => {
         <thead className="bg-gray-100">
     <tr>
         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-            Product
+            المنتج
         </th>
         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-            Image
+            الصورة
         </th>
         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-            Size
+            الحجم
         </th>
         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-            Price
+            السعر
         </th>
         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-            Payment Status
+            حالة الدفع
         </th>
         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-            Action
+            طريقة الدفع
         </th>
     </tr>
 </thead>
@@ -68,7 +69,7 @@ const Orders: FC<OrdersProps> = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                     <Image
-                        src={`${Base_Url}/${item.size_color.color.image}`}
+                        src={serve(item.size_color.color.image)}
                         alt={item.size_color.color.name || 'Product Image'}
                         width={60}
                         height={60}
@@ -79,7 +80,7 @@ const Orders: FC<OrdersProps> = () => {
                     {item.size_color.size.size}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                    E£ {item.price.toLocaleString()}
+                    LE {item.price.toLocaleString()}
                 </td>
                     
                     
@@ -89,7 +90,7 @@ const Orders: FC<OrdersProps> = () => {
                      ( 
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                        ${el.is_paid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                        {el.is_paid ? 'Completed' : 'Pending'}
+                        {el.is_paid ? 'تم الدفع' : 'غير مدفوع'}
                     </span>
                      )
                      : 
@@ -97,7 +98,7 @@ const Orders: FC<OrdersProps> = () => {
                         text-xs leading-5 
                         font-semibold rounded-full 
                         bg-green-100 text-green-800">
-                          Completed
+                          تم الدفع
                        </span>
                  }
                 </td>
@@ -116,7 +117,7 @@ const Orders: FC<OrdersProps> = () => {
                         }
                             className="px-3 py-1 cursor-pointer bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
                         >
-                            Pay Now
+                            دفع الآن
                         </button>
                         ) 
                     ):'Cash On Delivery'
@@ -139,12 +140,12 @@ const Orders: FC<OrdersProps> = () => {
                     width={192}
                     height={192}
                 />
-                <p className='text-lg text-gray-600'>You haven&apos;t placed any orders yet</p>
+                <p className='text-lg text-gray-600'>لا توجد طلبات سابقة</p>
                 <Link
                     href={'/'}
                     className='bg-zinc-700 font-semibold text-white hover:bg-zinc-600 transition-colors duration-200 px-6 py-2 rounded-md'
                 >
-                    Continue Shopping
+                    اكمل التسوق
                 </Link>
             </div>
         )}
