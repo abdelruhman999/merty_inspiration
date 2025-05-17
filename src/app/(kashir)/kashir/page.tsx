@@ -1,5 +1,5 @@
 'use client';
-import type { FC } from 'react';
+import type { FC, HtmlHTMLAttributes } from 'react';
 import React, {  useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaQrcode, FaPrint, FaTimes } from 'react-icons/fa';
@@ -7,19 +7,23 @@ import { useRef, useState } from 'react';
 import logo from '../../../../assets/logo.png';
 import { imageToBase64 } from '../../../../assets/assests';
 import { sendRequest } from '@/api';
+import style from "./Cardstyle.module.css";
 import Swal from 'sweetalert2';
+import { FaInstagram, FaFacebookF, FaTiktok, FaGlobe, FaMapMarkerAlt } from "react-icons/fa";
 
 
 interface ProductData {
+  id:number
   code: string;
   product:{
     name: string;
   }
   color: {
-    
+    id:number
     image?: string;
   };
   size: {
+    id:number
     size: string;
     price: number;
   };
@@ -33,6 +37,7 @@ interface discountData {
 }
 
 interface CustomerData {
+  note:string,
   name: string;
   phone: string;
   address: string;
@@ -42,19 +47,41 @@ interface InvoiceItem extends ProductData {
   total: number;
 }
 
+
+interface Create_orderProps {
+    items: items[],
+    source:string,
+    status:string
+    type:string
+}
+interface items {
+    size_color:number,
+    quantity: number;
+}
+
+type OrderStatus = "PENDING" | "ONWAY" | "DELIVERED" | "CANCELLED";
+
+
 const CashierSystem: FC = () => {
 
   const [logoBase64, setLogoBase64] = useState('');
   const [data, setData] = useState<ProductData | null>(null);
+  const [showButtonPrint  , setShowButtonPrint] = useState<boolean>(false)
   const [stock, setStock] = useState<number>(0);
   const [cart, setCart] = useState<InvoiceItem[]>([]);
   const [deliveryPrice, setDeliveryPrice] = useState<number>(0); 
-  const [isPrinting, setIsPrinting] = useState(false);
+  const [order, setOrder] = useState<Create_orderProps>({
+    items: [],
+    source:"HOTSPOT",
+    status:"PENDING", 
+    type:"HOTSPOT"
+
+  });
   const invoiceRef = useRef<HTMLDivElement>(null); 
+
   
   const { 
     register: registerProduct,
-    handleSubmit: handleProductSubmit,
     setValue: setProductValue,
     watch: watchProduct,
     reset: resetProduct,
@@ -63,8 +90,6 @@ const CashierSystem: FC = () => {
 
   const { 
     register: registerCustomer,
-    handleSubmit: handleCustomerSubmit,
-    setValue: setCustomerValue,
     watch: watchCustomer,
     formState: { errors: customerErrors },
   } = useForm<CustomerData>();
@@ -87,6 +112,7 @@ const CashierSystem: FC = () => {
         params: { barcode: String(code) },
       }).then((res) => {
         setData(res);
+        console.log(res);
         setProductValue('color', res.color);
         setProductValue('size', res.size);
         setProductValue('discounts', res.discounts);
@@ -97,6 +123,58 @@ const CashierSystem: FC = () => {
       });
     }
   }, [watchProduct('code')]);
+
+      useEffect(()=>{
+        if(cart.length > 0){
+            console.log(cart);
+           setOrder((prev)=>({
+            ...prev,
+            items: cart.map(el => ({size_color: el.id , quantity: el.quantity}))
+            }));
+        }
+        },[cart])
+
+   
+
+  async function CreateOrder(){
+    const custmor = watchCustomer()
+    if(!custmor.name){
+      Swal.fire("برجاء ادخال اسم العميل ")
+      return
+    }
+    if(!custmor.phone){
+      Swal.fire("برجاء ادخال  رقم الهاتف ")
+      return
+    }
+    if(custmor.phone.length< 11 || custmor.phone.length > 11 ){
+      Swal.fire("برجاء ادخال  رقم الهاتف صحيح ")
+      return
+    }
+    if(!custmor.address){
+      Swal.fire("برجاء ادخال  العنوان  ")
+      return
+    }
+    
+    await sendRequest({
+      url:'/api/create-order',
+      method:'POST',
+      data:JSON.stringify({
+      items: order.items,
+      first_name: custmor.name,
+      phone_number: custmor.phone,
+      address: custmor.address, 
+      source:order.source,
+      status:order.status, 
+      note: custmor.note, 
+      delivery_price: deliveryPrice, 
+      type: order.type,  
+      })
+    }).then((res)=>{
+      console.log(res);
+      setShowButtonPrint(true)
+      
+    })
+  }
 
 const addToCart = () => {
     const product = watchProduct();
@@ -128,7 +206,6 @@ const addToCart = () => {
     
     setCart(prevCart => {
       const existingItemIndex = prevCart.findIndex(item => item.code === product.code);
-      
       if (existingItemIndex >= 0) {
         const updatedCart = [...prevCart];
         updatedCart[existingItemIndex] = {
@@ -157,7 +234,7 @@ const addToCart = () => {
 
   const handlePrint = async () => {
     const logoBase64 = await imageToBase64(logo.src);
-    const imgSrc = logoBase64 || null; // سيستخدم null إذا كان logoBase64 فارغًا
+    const imgSrc = logoBase64 || null; 
     
     const printContent = `
       <!DOCTYPE html>
@@ -297,6 +374,12 @@ const addToCart = () => {
             ${watchCustomer('address') || 'غير محدد'}
           </div>
            </div>
+          <div class="customer-name">
+          <strong>الملاحطه:</strong>
+          <div>
+            ${watchCustomer('note') || ' لا يوجد ملاحطه  '}
+          </div>
+           </div>
         </div>
   
         <!-- تفاصيل الفاتورة -->
@@ -360,13 +443,7 @@ const addToCart = () => {
   };
 
 
-  // useEffect(()=>{
-  //   if(cart.length > 0){
-  //    console.log('cart', cart);
-  //   }
-  // },[cart])
 
-  
 
   // إزالة منتج من السلة
   const removeFromCart = (barcode: string) => {
@@ -437,7 +514,7 @@ const addToCart = () => {
 
             <button
               onClick={addToCart}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md"
+              className="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md"
             >
               إضافة للسلة
             </button>
@@ -498,35 +575,136 @@ const addToCart = () => {
                 <span className="text-red-500 text-sm">{customerErrors.address.message}</span>
               )}
             </div>
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">ملاحطه</label>
+              <textarea
+                {...registerCustomer('note')}
+                rows={3}
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+                  customerErrors.note ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-blue-200'
+                }`}
+                placeholder=" اكتب ملاحطتك "
+              />
+              {customerErrors.note && (
+                <span className="text-red-500 text-sm">{customerErrors.note.message}</span>
+              )}
+            </div>
+        <div className="mb-3">
+           <p className="block text-sm font-medium text-gray-700 mb-1"> اختر نوع المنتج </p>
+          <ul className={style.wrapper}>
+            <li
+            onClick={()=>{
+              setOrder((prev)=>({
+                ...prev,
+                source:"INSTAGRAM"
+              }))
+            }}
+            className={`${style.icon} ${style.instagram} ${order.source === "INSTAGRAM" ? ' !bg-[#e4405f] text-white' : ''} `}>
+              <span className={style.tooltip}>Instagram</span>
+              <FaInstagram size="1.4em" />
+            </li>
+
+            <li
+            onClick={()=>{
+              setOrder((prev)=>({
+                ...prev,
+                source:"FACEBOOK"
+              }))
+            }}
+            className={` ${style.icon} ${style.facebook} ${order.source === "FACEBOOK" ? '!bg-[#1877f2] text-white' : ''} `}>
+              <span className={`${style['tooltip']}`}>Facebook</span>
+              <FaFacebookF size="1.4em" />
+            </li>
+
+            <li
+            onClick={()=>{
+              setOrder((prev)=>({
+                ...prev,
+                source:"TIKTOK"
+              }))
+            }}
+            className={`${style.icon} ${style.tiktok} ${order.source === "TIKTOK" ? '!bg-[#000000] text-white' : ''}`}>
+              <span className={style.tooltip}>TikTok</span>
+              <FaTiktok size="1.5em" />
+            </li>
+
+
+            <li
+            onClick={()=>{
+              setOrder((prev)=>({
+                ...prev,
+                source:"WEBSITE"
+              }))
+            }}
+            className={`${style.icon} ${style.website} ${order.source === "WEBSITE" ? '!bg-[#4caf50] text-white' : ''}`}>
+              <span className={style.tooltip}>Website</span>
+              <FaGlobe size="1.4em" />
+            </li>
+
+
+            <li
+            onClick={()=>{
+              setOrder((prev)=>({
+                ...prev,
+                source:"HOTSPOT"
+              }))
+            }}
+            className={`${style.icon} ${style.location} ${order.source === "HOTSPOT" ? '!bg-[#ff5722] text-white' : ''}`}>
+              <span className={style.tooltip}>Location</span>
+              <FaMapMarkerAlt size="1.4em" />
+            </li>
+          </ul>
+
+
+      </div>
+
           </div>
 
           <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
             <h2 className="font-medium text-gray-700 mb-4">أوامر سريعة</h2>
-            <div className="grid grid-cols-2 gap-3">
+            { 
+          showButtonPrint?
+           <div className="grid grid-cols-2 gap-3">
               <button
              onClick={handlePrint}
                 disabled={cart.length === 0}
-                className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md ${
-                  cart.length === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 text-white'
-                }`}
+                className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md bg-green-600 hover:bg-green-700 text-white`}
               >
                 <FaPrint /> طباعة
               </button>
               <button
-                onClick={() => setCart([])}
+                onClick={() =>
+                  { 
+                    setCart([])
+                   setShowButtonPrint(false)
+                  }
+                  }
                 disabled={cart.length === 0}
-                className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md ${
-                  cart.length === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700 text-white'
-                }`}
+                className={`flex items-center justify-center gap-2 py-2 px-3 rounded-md bg-red-600 hover:bg-red-700 text-white`}
               >
                 <FaTimes /> إلغاء
               </button>
             </div>
+            :
+            
+            <button
+            onClick={()=>{
+              CreateOrder()
+            }}
+            disabled={cart.length === 0}
+              className={`flex w-full  items-center justify-center gap-2 py-2 px-3 rounded-md ${
+                  cart.length === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }`}
+            >
+              حفظ
+            </button>
+         
+            }
           </div>
         </div>
 
         {/* قسم السلة والفاتورة */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 flex flex-col gap-[10px]">
           <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
             <h2 className="font-medium text-gray-700 mb-4">سلة المشتريات</h2>
             
@@ -580,7 +758,59 @@ const addToCart = () => {
                 </table>
               </div>
             )}
-          </div>
+          </div> 
+
+      <div className=' flex flex-col gap-[10px]'>
+
+        <div className="flex  gap-5 pt-4">
+        <span
+        onClick={()=>{
+          setOrder((prev)=>({
+            ...prev,
+            type:"COD"
+          }))
+        }}
+        className={`px-3 hover:scale-110 ${order.type === "COD" ? 'scale-110 shadow border border-purple-800  ' : 'scale-90'} duration-200 cursor-pointer py-1.5 rounded-full text-sm bg-purple-100 text-purple-800 border border-purple-200 flex items-center gap-1.5`}>
+          💵 COD - دفع عند الاستلام
+        </span>
+
+        <span
+        onClick={()=>{
+          setOrder((prev)=>({
+            ...prev,
+            type:"ONLINE"
+          }))
+        }}
+        className={`px-3 hover:scale-110 ${order.type === "ONLINE" ? 'scale-110 shadow border border-emerald-800 ' : 'scale-90'} duration-200 cursor-pointer py-1.5 rounded-full text-sm bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center gap-1.5`}>
+          🌐 ONLINE - دفع إلكتروني
+        </span>
+
+        <span
+        onClick={()=>{
+          setOrder((prev)=>({
+            ...prev,
+            type:"HOTSPOT"
+          }))
+        }}
+        className={`px-3 hover:scale-110 ${order.type === "HOTSPOT" ? 'scale-110 shadow border border-amber-800 ' : 'scale-90'} duration-200 cursor-pointer py-1.5 rounded-full text-sm bg-amber-100 text-amber-800 border border-amber-200 flex items-center gap-1.5`}>
+          📶 HOTSPOT - دفع محلي
+        </span>
+      </div>
+      <select
+         onClick={(e)=>{
+          setOrder((prev)=>({
+            ...prev,
+            status:(e.target as HTMLSelectElement).value as OrderStatus 
+          }))
+         }} 
+          className="mt-4 p-2 w-full outline-none border-2 border-gray-300 rounded-lg focus:ring-2 cursor-pointer focus:ring-blue-500">
+          <option value="PENDING" className="bg-yellow-50 cursor-pointer">🟡 PENDING - قيد الانتظار</option>
+          <option value="ONWAY" className="bg-blue-50 cursor-pointer">🚚 ONWAY - في الطريق</option>
+          <option value="DELIVERED" className="bg-green-50 cursor-pointer">✅ DELIVERED - تم التوصيل</option>
+          <option value="CANCELLED" className="bg-red-50 cursor-pointer">❌ CANCELLED - ملغي</option>
+        </select>
+
+      </div>
 
           {/* ملخص الفاتورة */}
           <div className="flex justify-between pt-[10px] items-center mb-2 text-sm text-gray-600">
@@ -639,6 +869,10 @@ const addToCart = () => {
             <div className="flex justify-between">
               <span>العنوان:</span>
               <span className="text-left max-w-[60%]">{watchCustomer('address') || 'غير محدد'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>ملاحطه:</span>
+              <span className="text-left max-w-[60%]">{watchCustomer('note') || 'لا يوجد ملاحطه'}</span>
             </div>
           </div>
 

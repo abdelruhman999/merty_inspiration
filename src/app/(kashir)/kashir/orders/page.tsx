@@ -89,8 +89,8 @@ export default function OrderList() {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold">الطلبات</h1>
                 <button
-                    onClick={() => router.push('/kashir/orders/create')}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    onClick={() => router.push('/kashir')}
+                    className="bg-blue-600 cursor-pointer text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                     إضافة طلب جديد
                 </button>
