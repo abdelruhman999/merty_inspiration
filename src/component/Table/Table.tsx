@@ -37,25 +37,27 @@ export function Table<T>({
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                    {data.map((item, index) => (
-                        <tr
-                            key={index}
-                            onClick={() => onRowClick?.(item)}
-                            className={`${onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''}`}
+                  {data.map((item, index) => (
+                 
+                    
+                <tr
+                    key={index}
+                    onClick={() => onRowClick?.(item)}
+                    className={`${onRowClick || index === 0 ? 'cursor-pointer hover:bg-gray-50' : ''}`}
+                >
+                    {headers.map((header) => (
+                        <td
+                            key={`${index}-${String(header.key)}-${String(header.label)}`}
+                            className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center"
                         >
-                            {headers.map((header) => (
-                                <td
-                                    key={`${index}-${String(header.key)}-${String(header.label)}`}
-                                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center"
-                                >
-                                    {header.render 
-                                        ? header.render(item)
-                                        : String(item[header.key])}
-                                </td>
-                            ))}
-                        </tr>
+                            {header.render 
+                                ? header.render(item)
+                                : String(item[header.key])}
+                        </td>
                     ))}
-                </tbody>
+                </tr>
+            ))}
+         </tbody>
             </table>
         </div>
     );

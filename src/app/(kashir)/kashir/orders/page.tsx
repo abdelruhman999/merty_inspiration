@@ -10,6 +10,8 @@ interface Order extends Record<string, string | number> {
     total_amount: number;
     status: string;
     created_at: string;
+    source: string;
+    type: string;
 }
 
 interface FormattedOrder extends Omit<Order, 'total_amount'> {
@@ -23,18 +25,50 @@ interface OrdersResponse {
 
 const PAGE_SIZE = 10;
 
+// أنواع الفلاتر
+const statusFilters = [
+    { value: 'PENDING', label: 'قيد الانتظار' },
+    { value: 'processing', label: 'قيد التنفيذ' },
+    { value: 'ONWAY', label: 'في الطريق' },
+    { value: 'DELIVERED', label: 'تم التسليم' },
+    { value: 'CANCELLED', label: 'ملغي' }
+];
+
+const sourceFilters = [
+    { value: 'HOTSPOT', label: 'نقطة بيع' },
+    { value: 'WEBSITE', label: 'الموقع' },
+    { value: 'INSTAGRAM', label: 'انستجرام' },
+    { value: 'FACEBOOK', label: 'فيسبوك' },
+    { value: 'TIKTOK', label: 'تيك توك' }
+];
+
+const typeFilters = [
+    { value: 'COD', label: 'الدفع عند الاستلام' },
+    { value: 'ONLINE', label: 'دفع إلكتروني' },
+    { value: 'HOTSPOT', label: 'نقطة بيع' }
+];
+
 export default function OrderList() {
     const router = useRouter();
     const [orders, setOrders] = useState<FormattedOrder[]>([]);
+    const [originalOrders, setOriginalOrders] = useState<FormattedOrder[]>([]);
     const [totalCount, setTotalCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
+    
+   
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [selectedStatus, setSelectedStatus] = useState<string>('');
+    const [selectedSource, setSelectedSource] = useState<string>('');
+    const [selectedType, setSelectedType] = useState<string>('');
 
     const headers = [
         { key: 'id', label: 'رقم الطلب' },
         { key: 'customer_name', label: 'اسم العميل' },
         { key: 'total_amount', label: 'المبلغ الإجمالي' },
         { key: 'status', label: 'الحالة' },
+        { key: 'source', label: 'المصدر' },
+        { key: 'payment_type', label: 'نوع الدفع' },
         { key: 'created_at', label: 'تاريخ الإنشاء' },
     ];
 
@@ -43,18 +77,23 @@ export default function OrderList() {
             setLoading(true);
             const response = await sendRequest<OrdersResponse>({
                 method: 'GET',
-                url: `/api/orders?page=${page}&page_size=${PAGE_SIZE}`,
+                url:`/api/orders?search=${searchQuery}&status=${selectedStatus}&source=${selectedSource}&type=${selectedType}&page=${page}&page_size=${PAGE_SIZE}`,
+              
             });
-            
-            // Format the dates and amounts in the response
+                        console.log(response.results);
+                        
             const formattedOrders = response.results.map(order => ({
                 ...order,
+                customer_name: order.first_name,     
                 created_at: new Date(order.created_at).toLocaleDateString('ar-EG'),
-                total_amount: `${order.total_amount} جنيه`,
-                status: getStatusInArabic(order.status)
+                total_amount: `${order.total_price} جنيه`,  
+                status: getStatusInArabic(order.status),
+                source: getSourceInArabic(order.source || ''),
+                payment_type: getTypeInArabic(order.type)
             }));
             
             setOrders(formattedOrders);
+            setOriginalOrders(formattedOrders);
             setTotalCount(response.count);
         } catch (error) {
             console.error('Error fetching orders:', error);
@@ -65,20 +104,54 @@ export default function OrderList() {
 
     const getStatusInArabic = (status: string) => {
         const statusMap: Record<string, string> = {
-            'pending': 'قيد الانتظار',
-            'processing': 'قيد التنفيذ',
-            'completed': 'مكتمل',
-            'cancelled': 'ملغي'
+            'PENDING': 'قيد الانتظار',
+            'PROCESSING': 'قيد التنفيذ',
+            'ONWAY': 'في الطريق',
+            'DELIVERED': 'تم التسليم',
+            'CANCELLED': 'ملغي'
         };
         return statusMap[status] || status;
     };
 
+    const getSourceInArabic = (source: string) => {
+        const sourceMap: Record<string, string> = {
+            'HOTSPOT': 'نقطة بيع',
+            'WEBSITE': 'الموقع',
+            'INSTAGRAM': 'انستجرام',
+            'FACEBOOK': 'فيسبوك',
+            'TIKTOK': 'تيك توك'
+        };
+        return sourceMap[source] || source;
+    };
+
+    const getTypeInArabic = (type: string) => {
+        const typeMap: Record<string, string> = {
+            'COD': 'الدفع عند الاستلام',
+            'ONLINE': 'دفع إلكتروني',
+            'HOTSPOT': 'نقطة بيع'
+        };
+        return typeMap[type] || type;
+    };
+
     useEffect(() => {
         fetchOrders(currentPage);
-    }, [currentPage]);
+    }, [currentPage, selectedStatus, selectedSource, selectedType, searchQuery]);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
+    };
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        fetchOrders(1); // إعادة تحميل الصفحة الأولى مع نتائج البحث
+    };
+
+    const handleResetFilters = () => {
+        setSearchQuery('');
+        setSelectedStatus('');
+        setSelectedSource('');
+        setSelectedType('');
+        setCurrentPage(1);
     };
 
     const totalPages = Math.ceil(totalCount / PAGE_SIZE);
@@ -96,6 +169,94 @@ export default function OrderList() {
                 </button>
             </div>
 
+            {/* شريط البحث والفلاتر */}
+            <div className="bg-white p-4 rounded-lg shadow-md mb-6">
+                <form onSubmit={handleSearch} className="mb-4">
+                    <div className="flex gap-4">
+                        <input
+                            type="text"
+                            placeholder="ابحث برقم الطلب أو اسم العميل..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <button
+                            type="submit"
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                            بحث
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleResetFilters}
+                            className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+                        >
+                            إعادة الضبط
+                        </button>
+                    </div>
+                </form>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* فلتر الحالة */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">حالة الطلب</label>
+                        <select
+                            value={selectedStatus}
+                            onChange={(e) => setSelectedStatus(e.target.value)}
+                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="">الكل</option>
+                            {statusFilters.map((filter) => (
+                                <option key={filter.value} value={filter.value}>
+                                    {filter.label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* فلتر المصدر */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">مصدر الطلب</label>
+                        <select
+                            value={selectedSource}
+                            onChange={(e) => 
+                            {
+                            setSelectedSource(e.target.value)
+                            console.log(e.target.value);
+
+                            }
+                            
+                            }
+                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="">الكل</option>
+                            {sourceFilters.map((filter) => (
+                                <option key={filter.value} value={filter.value}>
+                                    {filter.label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* فلتر نوع الدفع */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">نوع الدفع</label>
+                        <select
+                            value={selectedType}
+                            onChange={(e) => setSelectedType(e.target.value)}
+                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="">الكل</option>
+                            {typeFilters.map((filter) => (
+                                <option key={filter.value} value={filter.value}>
+                                    {filter.label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             {loading ? (
                 <div className="flex justify-center items-center h-64">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -111,11 +272,11 @@ export default function OrderList() {
                     {/* Pagination */}
                     <div className="flex justify-center space-x-2 mt-6">
                         <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            className="px-3 py-1 rounded border disabled:opacity-50 mr-2"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="px-3 py-1 rounded border disabled:opacity-50 ml-2"
                         >
-                            التالي
+                            السابق
                         </button>
                         {pageNumbers.map((page) => (
                             <button
@@ -131,11 +292,11 @@ export default function OrderList() {
                             </button>
                         ))}
                         <button
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="px-3 py-1 rounded border disabled:opacity-50 ml-2"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="px-3 py-1 rounded border disabled:opacity-50 mr-2"
                         >
-                            السابق
+                            التالي
                         </button>
                     </div>
                 </>

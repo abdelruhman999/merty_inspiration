@@ -14,7 +14,7 @@ import { FaInstagram, FaFacebookF, FaTiktok, FaGlobe, FaMapMarkerAlt } from "rea
 
 interface ProductData {
   id:number
-  code: string;
+  code: number;
   product:{
     name: string;
   }
@@ -136,46 +136,80 @@ const CashierSystem: FC = () => {
 
    
 
-  async function CreateOrder(){
-    const custmor = watchCustomer()
-    if(!custmor.name){
-      Swal.fire("برجاء ادخال اسم العميل ")
-      return
-    }
-    if(!custmor.phone){
-      Swal.fire("برجاء ادخال  رقم الهاتف ")
-      return
-    }
-    if(custmor.phone.length< 11 || custmor.phone.length > 11 ){
-      Swal.fire("برجاء ادخال  رقم الهاتف صحيح ")
-      return
-    }
-    if(!custmor.address){
-      Swal.fire("برجاء ادخال  العنوان  ")
-      return
-    }
-    
-    await sendRequest({
-      url:'/api/create-order',
-      method:'POST',
-      data:JSON.stringify({
-      items: order.items,
-      first_name: custmor.name,
-      phone_number: custmor.phone,
-      address: custmor.address, 
-      source:order.source,
-      status:order.status, 
-      note: custmor.note, 
-      delivery_price: deliveryPrice, 
-      type: order.type,  
-      })
-    }).then((res)=>{
-      console.log(res);
-      setShowButtonPrint(true)
-      
-    })
+async function CreateOrder() {
+  const custmor = watchCustomer();
+
+  if (!custmor.name) {
+    Swal.fire("برجاء ادخال اسم العميل");
+    return;
+  }
+  if (!custmor.phone) {
+    Swal.fire("برجاء ادخال رقم الهاتف");
+    return;
+  }
+  if (custmor.phone.length !== 11) {
+    Swal.fire("برجاء ادخال رقم الهاتف صحيح");
+    return;
+  }
+  if (!custmor.address) {
+    Swal.fire("برجاء ادخال العنوان");
+    return;
   }
 
+  // عرض تأكيد عملية الدفع
+  const { isConfirmed } = await Swal.fire({
+    title: 'تأكيد عملية الدفع',
+    html: `
+      <div class="text-right">
+        <p class="text-lg">هل تريد اتمام عملية الدفع؟</p>
+        <hr class="my-3">
+        <p class="text-gray-600">سيتم إنشاء الطلب وإرسال البيانات</p>
+      </div>
+    `,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'نعم، اتمام الدفع',
+    cancelButtonText: 'لا، إلغاء',
+    customClass: {
+      confirmButton: 'bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md',
+      cancelButton: 'bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md mr-2'
+    }
+  });
+
+  // إذا لم يؤكد المستخدم، نعود دون تنفيذ الطلب
+  if (!isConfirmed) {
+    return;
+  }
+
+  // إذا أكد المستخدم، ننفذ الطلب
+  try {
+    const res = await sendRequest({
+      url: '/api/create-order',
+      method: 'POST',
+      data: JSON.stringify({
+        items: order.items,
+        first_name: custmor.name,
+        phone_number: custmor.phone,
+        address: custmor.address,
+        source: order.source,
+        status: order.status,
+        note: custmor.note,
+        delivery_price: deliveryPrice,
+        type: order.type,
+      })
+    });
+
+    console.log(res);
+    setShowButtonPrint(true);
+    
+  } catch (error) {
+    Swal.fire({
+      title: 'خطأ',
+      text: 'حدث خطأ أثناء إنشاء الطلب',
+      icon: 'error'
+    });
+  }
+}
 const addToCart = () => {
     const product = watchProduct();
     if (!product.code || !data) return;
@@ -203,12 +237,14 @@ const addToCart = () => {
     const price = data.discounts.length > 0 
       ? data.discounts[0].discount 
       : data.size.price;
-    
+
     setCart(prevCart => {
-      const existingItemIndex = prevCart.findIndex(item => item.code === product.code);
+      const existingItemIndex = prevCart.findIndex(item => item.code == product.code)  ;
+      console.log(existingItemIndex);
+      
       if (existingItemIndex >= 0) {
-        const updatedCart = [...prevCart];
-        updatedCart[existingItemIndex] = {
+        const updatedCart = [...prevCart];       
+       updatedCart[existingItemIndex] = {
           ...updatedCart[existingItemIndex],
           quantity: updatedCart[existingItemIndex].quantity + product.quantity,
           total: (data.discounts.length > 0 ? data.discounts[0].discount : data.size.price) * 
@@ -446,7 +482,7 @@ const addToCart = () => {
 
 
   // إزالة منتج من السلة
-  const removeFromCart = (barcode: string) => {
+  const removeFromCart = (barcode: number) => {
     setCart(prevCart => prevCart.filter(item => item.code !== barcode));
   };
 
@@ -725,8 +761,8 @@ const addToCart = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {cart.map((item) => (
-                      <tr key={item.code}>
+                    {cart.map((item,index) => (
+                      <tr key={index}>
                         <td className="px-4 py-2 text-right">
                           <div className="font-medium">{item.product.name}</div>
                           <div className="text-xs text-gray-500">{item.code}</div>
@@ -885,8 +921,8 @@ const addToCart = () => {
               </tr>
             </thead>
             <tbody>
-              {cart.map((item) => (
-                <tr key={item.code}>
+              {cart.map((item,index) => (
+                <tr key={index}>
                   <td>{item.product.name}</td>
                   <td>{item.quantity}</td>
                   <td>{(item.size.price || 0).toFixed(2)}</td>
