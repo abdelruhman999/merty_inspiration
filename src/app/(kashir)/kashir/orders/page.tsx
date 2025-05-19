@@ -1,8 +1,9 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Table } from '@/component/Table/Table';
 import { sendRequest } from '@/api';
+import debounce from 'lodash/debounce';
 
 interface Order extends Record<string, string | number> {
     id: number;
@@ -49,6 +50,7 @@ const typeFilters = [
 ];
 
 export default function OrderList() {
+    
     const router = useRouter();
     const [orders, setOrders] = useState<FormattedOrder[]>([]);
     const [originalOrders, setOriginalOrders] = useState<FormattedOrder[]>([]);
@@ -61,6 +63,7 @@ export default function OrderList() {
     const [selectedStatus, setSelectedStatus] = useState<string>('');
     const [selectedSource, setSelectedSource] = useState<string>('');
     const [selectedType, setSelectedType] = useState<string>('');
+
 
     const headers = [
         { key: 'id', label: 'رقم الطلب' },
@@ -141,9 +144,16 @@ export default function OrderList() {
         setCurrentPage(page);
     };
 
-    const handleSearch = (e: React.FormEvent) => {
+    
+        const handleSearch = useCallback(
+            debounce((searchText: string) => {
+                setSearchQuery(searchText);
+            }, 700), []
+        );
+    
+    const handleSearch_two = (e: React.FormEvent) => {
         e.preventDefault();
-        fetchOrders(1); // إعادة تحميل الصفحة الأولى مع نتائج البحث
+            fetchOrders(1)
     };
 
     const handleResetFilters = () => {
@@ -171,13 +181,12 @@ export default function OrderList() {
 
             {/* شريط البحث والفلاتر */}
             <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-                <form onSubmit={handleSearch} className="mb-4">
+                <form onSubmit={handleSearch_two} className="mb-4">
                     <div className="flex gap-4">
                         <input
                             type="text"
                             placeholder="ابحث برقم الطلب أو اسم العميل..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onChange={(e) => handleSearch(e.target.value)}
                             className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <button

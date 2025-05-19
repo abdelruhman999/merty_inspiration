@@ -2,6 +2,7 @@ import Carousel from '@/component/Carousel';
 import Pagination from '@/component/Pagination';
 import Products from '@/component/Products';
 import ProductsList from '@/component/ProductsList ';
+import { PromoAlert } from '@/component/PromoAlert ';
 import type { FC } from 'react';
 
 
@@ -12,6 +13,7 @@ const page: FC = async () => {
             <div className="flex justify-center  max-sm:p-[0px] max-sm:gap-[10px] gap-[50px] flex-wrap w-full p-[50px]">
                 {/* <Products/> */}
                 <ProductsList/>
+                <PromoAlert />
             </div>
                 <Pagination />
         </div>
