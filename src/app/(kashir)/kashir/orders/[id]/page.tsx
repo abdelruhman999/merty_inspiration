@@ -1,16 +1,40 @@
 'use client';
-import type { FC, HtmlHTMLAttributes } from 'react';
+import type { FC } from 'react';
 import React, {  useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaQrcode, FaPrint, FaTimes } from 'react-icons/fa';
 import { useRef, useState } from 'react';
-import logo from '../../../../assets/logo.png';
-import { imageToBase64 } from '../../../../assets/assests';
+import logo from '../../../../../../assets/logo.png';
+import { imageToBase64 } from '../../../../../../assets/assests';
 import { sendRequest } from '@/api';
 import style from "./icons.module.css";
 import Swal from 'sweetalert2';
 import { FaInstagram, FaFacebookF, FaTiktok, FaGlobe, FaMapMarkerAlt } from "react-icons/fa";
+import { useParams } from 'next/navigation';
 
+
+
+interface newResponse {
+    address:string
+    note:string
+    items:insideItem[]
+    total_price:number
+    delivery_price:number
+    first_name:string
+    phone_number:string
+    status: string;
+    created_at: string;
+    source: string;
+    type: string;
+}
+interface OrdersResponse {
+    results: newResponse[];
+    count: number;
+}
+interface insideItem{
+price:number
+size_color:ProductData
+}
 
 interface ProductData {
   id:number
@@ -45,6 +69,8 @@ interface CustomerData {
 
 interface InvoiceItem extends ProductData {
   total: number;
+  
+
 }
 
 
@@ -63,23 +89,24 @@ type OrderStatus = "PENDING" | "ONWAY" | "DELIVERED" | "CANCELLED";
 
 
 const CashierSystem: FC = () => {
-
+  const params = useParams()  
   const [logoBase64, setLogoBase64] = useState('');
   const [data, setData] = useState<ProductData | null>(null);
   const [showButtonPrint  , setShowButtonPrint] = useState<boolean>(false)
   const [stock, setStock] = useState<number>(0);
   const [cart, setCart] = useState<InvoiceItem[]>([]);
   const [deliveryPrice, setDeliveryPrice] = useState<number>(0); 
+  const [total, setTotal] = useState<number>(0); 
+  const [subtotal, setSubtotal] = useState<number>(0); 
   const [order, setOrder] = useState<Create_orderProps>({
     items: [],
-    source:"HOTSPOT",
-    status:"PENDING", 
-    type:"HOTSPOT"
+    source:"",
+    status:"", 
+    type:""
 
   });
   const invoiceRef = useRef<HTMLDivElement>(null); 
 
-  
   const { 
     register: registerProduct,
     setValue: setProductValue,
@@ -90,6 +117,7 @@ const CashierSystem: FC = () => {
 
   const { 
     register: registerCustomer,
+    setValue: setCustmorValue,
     watch: watchCustomer,
     formState: { errors: customerErrors },
   } = useForm<CustomerData>();
@@ -102,7 +130,45 @@ const CashierSystem: FC = () => {
     loadLogo();
   }, []);
 
-  
+      const fetchOrders = async (id: number) => {
+        const product = watchProduct();
+          try {
+              const response = await sendRequest<OrdersResponse>({
+                  method: 'GET',
+                  url:`/api/orders?order_id=${id}`,
+                
+              });
+                  console.log(response.results);
+              setOrder((prev)=>({
+                ...prev,
+                source:response.results[0].source,
+                status:response.results[0].status, 
+                type:response.results[0].type
+              }))
+              setCustmorValue('name',response.results[0].first_name)
+              setCustmorValue('phone',response.results[0].phone_number)
+              setCustmorValue('address',response.results[0].address)
+              setCustmorValue('note',response.results[0].note)
+              const subTotal =  response.results[0].items.reduce((sum, item) => sum + item.price, 0)
+              setTotal(subTotal +  deliveryPrice)
+              console.log( response.results[0].items);
+           
+            
+         
+          } catch (error) {
+              console.error('Error fetching orders:', error);
+          } 
+      };
+      
+      useEffect(()=>{
+      console.log(cart);
+      
+      },[cart])
+
+      useEffect(()=>{
+      fetchOrders(Number(params.id))
+      },[params.id , deliveryPrice])
+      
   useEffect(() => {
     const code = watchProduct('code');
     if (code) {
@@ -185,7 +251,7 @@ async function CreateOrder() {
   try {
     const res = await sendRequest({
       url: '/api/create-order',
-      method: 'POST',
+      method: 'PUT',
       data: JSON.stringify({
         items: order.items,
         first_name: custmor.name,
@@ -240,7 +306,6 @@ const addToCart = () => {
 
     setCart(prevCart => {
       const existingItemIndex = prevCart.findIndex(item => item.code == product.code)  ;
-      console.log(existingItemIndex);
       
       if (existingItemIndex >= 0) {
         const updatedCart = [...prevCart];       
@@ -487,8 +552,12 @@ const addToCart = () => {
   };
 
   // حساب الإجماليات
-  const subtotal = cart.reduce((sum, item) => sum + item.total, 0);
-  const total = subtotal + deliveryPrice;
+  useEffect(()=>{
+      const subtotall = cart.reduce((sum, item) => sum + item.total, 0)
+      setSubtotal(subtotall);
+       setTotal(subtotall + deliveryPrice);
+    
+  },[])
 
   return (
     <div className="max-w-6xl mx-auto p-4 bg-gray-50 min-h-screen">
@@ -727,9 +796,8 @@ const addToCart = () => {
             onClick={()=>{
               CreateOrder()
             }}
-            disabled={cart.length === 0}
               className={`flex w-full  items-center justify-center gap-2 py-2 px-3 rounded-md ${
-                  cart.length === 0 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'
+             'bg-blue-600 hover:bg-blue-700 text-white'
                 }`}
             >
               حفظ
@@ -843,7 +911,7 @@ const addToCart = () => {
           <option value="PENDING" className="bg-yellow-50 cursor-pointer">🟡 PENDING - قيد الانتظار</option>
           <option value="ONWAY" className="bg-blue-50 cursor-pointer">🚚 ONWAY - في الطريق</option>
           <option value="DELIVERED" className="bg-green-50 cursor-pointer">✅ DELIVERED - تم التوصيل</option>
-          <option value="CANCELLED" className="bg-red-50 cursor-pointer">❌ CANCELLED - ملغي</option>
+           <option value="CANCELLED" className="bg-red-50 cursor-pointer">❌ CANCELLED - ملغي</option>
         </select>
 
       </div>
@@ -865,7 +933,7 @@ const addToCart = () => {
 
         <div className="flex justify-between items-center pt-2 border-t border-gray-200 font-bold text-lg">
           <span>المبلغ النهائي:</span>
-          <span className="text-blue-600">{(subtotal + deliveryPrice).toFixed(2)} ج.م</span>
+          <span className="text-blue-600">{total.toFixed(2)} ج.م</span>
         </div>
 
         </div>
