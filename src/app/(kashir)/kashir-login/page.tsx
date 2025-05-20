@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import type { FC } from 'react';
 import { sendRequest } from '@/api';
-import Cookies from 'js-cookie';
+import { cookies } from 'next/headers';
 
 type FormData = {
     username: string;
@@ -31,14 +31,15 @@ const Login: FC<LoginProps> = () => {
             },
             data: JSON.stringify({ username, password }),
         })
-        .then((response) => {
+        .then(async (response) => {
+            const cookieStore = await cookies();
             // Set cookies with session data
             console.log(response)
             console.log(response.sessionid)
-            Cookies.set('sessionid', response.sessionid , {expires:1});
-            Cookies.set('user_id', response.user_id.toString(), {expires:1});
-            Cookies.set('username', response.username, {expires:1});
-            router.push('/kashir'); 
+            cookieStore.set('sessionid', response.sessionid , {expires:1});
+            cookieStore.set('user_id', response.user_id.toString(), {expires:1});
+            cookieStore.set('username', response.username, {expires:1});
+            router.push('/kashir');
         })
         .catch((error) => {
             alert('Login failed. Please check your credentials.');
