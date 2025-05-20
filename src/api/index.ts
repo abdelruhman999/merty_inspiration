@@ -1,7 +1,6 @@
 import Swal from "sweetalert2";
 import { Base_Url } from "../calls/constant";
-import { cookies } from 'next/headers';
-
+import Cookies from "js-cookie";
 
 export interface sendRequestKwargs {
     url: string;
@@ -28,10 +27,8 @@ export const sendRequest = async <T>({
     next,
     ignoreContentType = false,
 }: sendRequestKwargs): Promise<T> => {
-    const cookieStore = await cookies();
-    const sessionId = cookieStore.get("sessionid")?.value;
-    const csrfToken = cookieStore.get("csrftoken")?.value;
-    console.log(sessionId,csrfToken)
+    const sessionId = Cookies.get("sessionid");
+    const csrfToken = Cookies.get("csrftoken");
     const mergedHeaders: HeadersInit = ignoreContentType
         ? {
               sessionid: sessionId || "",
