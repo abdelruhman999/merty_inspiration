@@ -29,6 +29,7 @@ export const sendRequest = async <T>({
 }: sendRequestKwargs): Promise<T> => {
     const sessionId = Cookies.get("sessionid");
     const csrfToken = Cookies.get("csrftoken");
+    console.log(sessionId,csrfToken)
     const mergedHeaders: HeadersInit = ignoreContentType
         ? {
               sessionid: sessionId || "",
