@@ -33,6 +33,8 @@ const Login: FC<LoginProps> = () => {
         })
         .then((response) => {
             // Set cookies with session data
+            console.log(response)
+            console.log(response.sessionid)
             Cookies.set('sessionid', response.sessionid , {expires:1});
             Cookies.set('user_id', response.user_id.toString(), {expires:1});
             Cookies.set('username', response.username, {expires:1});
