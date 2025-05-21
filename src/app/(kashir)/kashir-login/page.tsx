@@ -38,11 +38,10 @@ const Login: FC<LoginProps> = () => {
             Cookies.set('sessionid', response.sessionid , {expires:1});
             Cookies.set('user_id', response.user_id.toString(), {expires:1});
             Cookies.set('username', response.username, {expires:1});
-            console.log(Cookies.attributes)
-
             router.push('/kashir'); 
         })
         .catch((error) => {
+            console.log(error)
             alert('Login failed. Please check your credentials.');
             reset();
         });
