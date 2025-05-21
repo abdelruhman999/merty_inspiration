@@ -34,10 +34,11 @@ const Login: FC<LoginProps> = () => {
         .then((response) => {
             // Set cookies with session data
             console.log(response.sessionid)
+            localStorage.setItem('auth', JSON.stringify(response));
             Cookies.set('sessionid', response.sessionid , {expires:1});
             Cookies.set('user_id', response.user_id.toString(), {expires:1});
             Cookies.set('username', response.username, {expires:1});
-            console.log(Cookies)
+            console.log(Cookies.attributes)
 
             router.push('/kashir'); 
         })
