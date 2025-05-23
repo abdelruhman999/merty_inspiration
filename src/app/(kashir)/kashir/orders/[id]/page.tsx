@@ -265,7 +265,7 @@ async function CreateOrder() {
 
   try {
     const res = await sendRequest({
-      url: `api/update-order?order_id=${params.id}`,
+      url: `/api/update-order?order_id=${params.id}`,
       method: 'PUT',
       data: JSON.stringify({
         items: order.items,
