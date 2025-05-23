@@ -15,7 +15,7 @@ export function ClientSidebar() {
         { href: '/kashir/product-list', label: 'المنتجات', icon: FaBox },
         { href: '/kashir/orders', label: 'الطلبات', icon: FaShoppingCart },
         { href: '/kashir/analytics', label: 'الاحصائيات', icon: MdAnalytics },
-    ];0
+    ];
 
     return (
         <div className="h-screen w-64 pb-[70px] flex flex-col justify-between bg-gray-800 text-white fixed right-0 top-0 p-4 overflow-y-auto" dir="rtl">
