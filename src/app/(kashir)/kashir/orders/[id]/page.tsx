@@ -11,6 +11,7 @@ import style from "./icons.module.css";
 import Swal from 'sweetalert2';
 import { FaInstagram, FaFacebookF, FaTiktok, FaGlobe, FaMapMarkerAlt } from "react-icons/fa";
 import { useParams } from 'next/navigation';
+import DeleteOrder from '../delete-order/DeleteOrder';
 
 
 
@@ -33,6 +34,7 @@ interface OrdersResponse {
 }
 interface insideItem{
 price:number
+quantity: number; 
 size_color:ProductData
 }
 
@@ -52,8 +54,10 @@ interface ProductData {
     price: number;
   };
   discounts: discountData[];
-  quantity: number; 
   stock : number;
+  total: number;
+  quantity: number; 
+
 }
 
 interface discountData {
@@ -67,11 +71,6 @@ interface CustomerData {
   address: string;
 }
 
-interface InvoiceItem extends ProductData {
-  total: number;
-  
-
-}
 
 
 interface Create_orderProps {
@@ -94,7 +93,7 @@ const CashierSystem: FC = () => {
   const [data, setData] = useState<ProductData | null>(null);
   const [showButtonPrint  , setShowButtonPrint] = useState<boolean>(false)
   const [stock, setStock] = useState<number>(0);
-  const [cart, setCart] = useState<InvoiceItem[]>([]);
+  const [cart, setCart] = useState<ProductData[]>([]);
   const [deliveryPrice, setDeliveryPrice] = useState<number>(0); 
   const [total, setTotal] = useState<number>(0); 
   const [subtotal, setSubtotal] = useState<number>(0); 
@@ -130,44 +129,50 @@ const CashierSystem: FC = () => {
     loadLogo();
   }, []);
 
-      const fetchOrders = async (id: number) => {
-        const product = watchProduct();
-          try {
-              const response = await sendRequest<OrdersResponse>({
-                  method: 'GET',
-                  url:`/api/orders?order_id=${id}`,
-                
-              });
-                  console.log(response.results);
-              setOrder((prev)=>({
-                ...prev,
-                source:response.results[0].source,
-                status:response.results[0].status, 
-                type:response.results[0].type
-              }))
-              setCustmorValue('name',response.results[0].first_name)
-              setCustmorValue('phone',response.results[0].phone_number)
-              setCustmorValue('address',response.results[0].address)
-              setCustmorValue('note',response.results[0].note)
-              const subTotal =  response.results[0].items.reduce((sum, item) => sum + item.price, 0)
-              setTotal(subTotal +  deliveryPrice)
-              console.log( response.results[0].items);
-           
+  const fetchOrders = async (id: number) => {
+      try {
+          const response = await sendRequest<OrdersResponse>({
+              method: 'GET',
+              url:`/api/orders?order_id=${id}`,
             
-         
-          } catch (error) {
-              console.error('Error fetching orders:', error);
-          } 
-      };
-      
-      useEffect(()=>{
-      console.log(cart);
-      
-      },[cart])
+          });
+              console.log(response.results);
+          setOrder((prev)=>({
+            ...prev,
+            source:response.results[0].source,
+            status:response.results[0].status, 
+            type:response.results[0].type
+          }))
+          setCustmorValue('name',response.results[0].first_name)
+          setCustmorValue('phone',response.results[0].phone_number)
+          setCustmorValue('address',response.results[0].address)
+          setCustmorValue('note',response.results[0].note)
+          // console.log( response.results[0].items[0].size_color);
+      const newCartItems = response.results[0].items.map((el) => {
+        console.log(el.size_color);
+        const price = el.size_color.discounts.length > 0 
+                      ? el.size_color.discounts[0].discount 
+                      : el.size_color.size.price;
+        
+        const newItem: ProductData = {
+          ...el.size_color,
+          quantity: el.quantity,
+          total: price * el.quantity
+        };
+        
+        return newItem;
+      });
 
-      useEffect(()=>{
-      fetchOrders(Number(params.id))
-      },[params.id , deliveryPrice])
+      setCart(newCartItems);
+                
+      } catch (error) {
+          console.error('Error fetching orders:', error);
+      } 
+  };
+
+  useEffect(()=>{
+    fetchOrders(Number(params.id))
+  },[params.id])
       
   useEffect(() => {
     const code = watchProduct('code');
@@ -190,16 +195,7 @@ const CashierSystem: FC = () => {
     }
   }, [watchProduct('code')]);
 
-      useEffect(()=>{
-        if(cart.length > 0){
-            console.log(cart);
-           setOrder((prev)=>({
-            ...prev,
-            items: cart.map(el => ({size_color: el.id , quantity: el.quantity}))
-            }));
-        }
-        },[cart])
-
+   
    
 
 async function CreateOrder() {
@@ -222,7 +218,7 @@ async function CreateOrder() {
     return;
   }
 
-  // عرض تأكيد عملية الدفع
+ 
   const { isConfirmed } = await Swal.fire({
     title: 'تأكيد عملية الدفع',
     html: `
@@ -242,15 +238,14 @@ async function CreateOrder() {
     }
   });
 
-  // إذا لم يؤكد المستخدم، نعود دون تنفيذ الطلب
+
   if (!isConfirmed) {
     return;
   }
 
-  // إذا أكد المستخدم، ننفذ الطلب
   try {
     const res = await sendRequest({
-      url: '/api/create-order',
+      url: `api/update-order?order_id=${params.id}`,
       method: 'PUT',
       data: JSON.stringify({
         items: order.items,
@@ -276,6 +271,9 @@ async function CreateOrder() {
     });
   }
 }
+
+// ..............................................
+
 const addToCart = () => {
     const product = watchProduct();
     if (!product.code || !data) return;
@@ -304,20 +302,19 @@ const addToCart = () => {
       ? data.discounts[0].discount 
       : data.size.price;
 
-    setCart(prevCart => {
-      const existingItemIndex = prevCart.findIndex(item => item.code == product.code)  ;
-      
+    setCart(prevCart => {      
+      const existingItemIndex = prevCart.findIndex(item => item.code == product.code)  ; 
       if (existingItemIndex >= 0) {
         const updatedCart = [...prevCart];       
        updatedCart[existingItemIndex] = {
           ...updatedCart[existingItemIndex],
           quantity: updatedCart[existingItemIndex].quantity + product.quantity,
-          total: (data.discounts.length > 0 ? data.discounts[0].discount : data.size.price) * 
+          total : (data.discounts.length > 0 ? data.discounts[0].discount : data.size.price) * 
                 (updatedCart[existingItemIndex].quantity + product.quantity)
         };
         return updatedCart;
       } else {
-        const newItem: InvoiceItem = {
+        const newItem: ProductData = {
           ...data,
           quantity: product.quantity,
           total: price * product.quantity
@@ -332,6 +329,8 @@ const addToCart = () => {
     });
     setData(null);
   };
+
+  // ....................................................
 
   const handlePrint = async () => {
     const logoBase64 = await imageToBase64(logo.src);
@@ -543,26 +542,49 @@ const addToCart = () => {
     }
   };
 
-
-
-
-  // إزالة منتج من السلة
-  const removeFromCart = (barcode: number) => {
+  
+  const removeFromCart = (barcode: number) => {    
     setCart(prevCart => prevCart.filter(item => item.code !== barcode));
   };
-
-  // حساب الإجماليات
+  
   useEffect(()=>{
-      const subtotall = cart.reduce((sum, item) => sum + item.total, 0)
-      setSubtotal(subtotall);
-       setTotal(subtotall + deliveryPrice);
+      if(cart.length > 0){
+          console.log(cart);   
+          setOrder((prev)=>({
+          ...prev,
+          items: cart.map(el => ({size_color: el.id , quantity: el.quantity}))
+          }));
+      }
+      },[cart])
+
+      useEffect(()=>{
+        if(cart.length> 0){
+          console.log(`cart` , cart);
+          const subtotall = cart.reduce((sum, item) => sum + item.total, 0)
+          setSubtotal(subtotall);
+          setTotal(subtotall + deliveryPrice);
+
+        }
     
-  },[])
+  },[cart,deliveryPrice])
 
   return (
     <div className="max-w-6xl mx-auto p-4 bg-gray-50 min-h-screen">
       <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center"> الكاشير</h1>
-      
+     <DeleteOrder 
+      orderId={String(params.id)}
+      onDelete={async () => {
+        await sendRequest({
+          url: `/api/delete-order?order_id=${params.id}`,
+          method: 'DELETE',
+        }).then(() => {
+         setTimeout(() => {
+           window.location.href = '/kashir/orders'; 
+         }, 1000);
+         
+        })
+      }}
+      />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* قسم مسح المنتج */}
         <div className="lg:col-span-1 space-y-4">
@@ -847,7 +869,7 @@ const addToCart = () => {
                           )}
                         </td>
                         <td className="px-4 py-2 text-right">{item.quantity}</td>
-                        <td className="px-4 py-2 text-right font-medium">{item.total.toFixed(2)} ج.م</td>
+                        <td className="px-4 py-2 text-right font-medium">{item.total.toFixed(2) || 0} ج.م</td>
                         <td className="px-4 py-2 text-right">
                           <button
                             onClick={() => removeFromCart(item.code)}

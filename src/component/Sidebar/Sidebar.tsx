@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FaHome, FaBox, FaUsers, FaShoppingCart, FaCog } from 'react-icons/fa';
+import { FaHome, FaBox, FaUsers, FaShoppingCart, FaCog, FaChartLine } from 'react-icons/fa';
 
 export function ClientSidebar() {
     const pathname = usePathname();
@@ -10,6 +10,7 @@ export function ClientSidebar() {
         { href: '/kashir', label: 'الرئيسية', icon: FaHome },
         { href: '/kashir/product-list', label: 'المنتجات', icon: FaBox },
         { href: '/kashir/orders', label: 'الطلبات', icon: FaShoppingCart },
+        { href: '/kashir/analytics', label: 'الإحصائيات', icon: FaChartLine },
     ];
 
     return (

@@ -148,45 +148,35 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
          max-sm:gap-[20px]
          bg-white w-[90%]"
         >
-          <div
-            className="flex
-          gap-[15px]  max-sm:flex-col
-           max-sm:items-center
-            flex-row-reverse"
-          >
-            <div className="relative ">
-              {
-                current_img ? (
-                  <Image
-                src={`${serve(current_img)}` }
-                className="w-[491px]
-                max-sm:w-[350px] 
-                max-sm:h-[400px]
-                h-[567px]"
-                alt="logo"
-                width={200}
-                height={200}
-              />
-                ) : (
-                  <p>الصورة غير موجودة حاليا</p>
-                )
-              }
-              <div
-                className="bg-black absolute 
-                w-[55px] h-[65px] 
-                rounded-br-full
-                  top-0 left-0  flex
-                items-center justify-center "
-              >
-                <p className="text-white pb-2  rotate-[-38deg]">
-                  {data.season.name}
-                </p>
-              </div>
-            </div>
-            <div className="flex justify-end items-start h-fit max-sm:w-full max-sm:justify-center w-[150px] flex-wrap gap-[10px]">       
-              {Img_card}
-            </div>
-          </div>
+         <div className="flex gap-[15px] max-sm:flex-col max-sm:items-center flex-row-reverse">
+  <div className="relative">
+    {current_img ? (
+      <Image
+        src={`${serve(current_img)}`}
+        className="object-contain" // للحفاظ على نسبة العرض إلى الارتفاع دون تشويه
+        alt="logo"
+        width={3016} // الدقة الأصلية للعرض
+        height={4528} // الدقة الأصلية للارتفاع
+        quality={100} // للحفاظ على الجودة العالية (اختياري)
+        priority // إذا كانت الصورة فوق الطية (اختياري)
+        style={{
+          maxWidth: '491px', // أقصى عرض للصورة
+          maxHeight: '567px', // أقصى ارتفاع للصورة
+          width: 'auto', // للتكيف مع الحاوية
+          height: 'auto', // للتكيف مع الحاوية
+        }}
+      />
+    ) : (
+      <p>الصورة غير موجودة حاليا</p>
+    )}
+    <div className="bg-black absolute w-[55px] h-[65px] rounded-br-full top-0 left-0 flex items-center justify-center">
+      <p className="text-white pb-2 rotate-[-38deg]">{data.season.name}</p>
+    </div>
+  </div>
+  <div className="flex justify-end items-start h-fit max-sm:w-full max-sm:justify-center w-[150px] flex-wrap gap-[10px]">
+    {Img_card}
+  </div>
+</div>
 
           <div
             className="flex
