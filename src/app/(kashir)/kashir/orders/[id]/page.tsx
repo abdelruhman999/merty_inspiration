@@ -157,8 +157,7 @@ const CashierSystem: FC = () => {
           setCustmorValue('note',response.results[0].note)
           setCustmorValue('order_id',response.results[0].order_id)
           setCustmorValue('is_paid',response.results[0].is_paid)
-          
-          console.log( "order__id ",response.results[0].order_id);
+          setDeliveryPrice(response.results[0].delivery_price)
       const newCartItems = response.results[0].items.map((el) => {
         console.log(el.size_color);
         const price = el.size_color.discounts.length > 0 
