@@ -32,6 +32,7 @@ const eslintConfig = [
       // Allow `any` type
       '@typescript-eslint/no-explicit-any': 'off',
     },
+    ignorePatterns: ["src/calls/constant.js"],
   }
 ];
 
