@@ -5,6 +5,7 @@ import { FaHome, FaBox , FaShoppingCart, FaCog } from 'react-icons/fa';
 import { MdAnalytics } from "react-icons/md";
 import { FaSignOutAlt } from "react-icons/fa";
 import Swal from 'sweetalert2';
+import Cookies from 'js-cookie';
 
 export function ClientSidebar() {
     const pathname = usePathname();
@@ -62,8 +63,10 @@ export function ClientSidebar() {
                 });
 
                 if (result.isConfirmed) {
-                document.cookie = 'sessionid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                
+                Cookies.remove("sessionid");
+                Cookies.remove("user_id");
+                Cookies.remove("username");
+                document.cookie = '';
                 window.location.href = '/kashir-login';
                 }
             }}
