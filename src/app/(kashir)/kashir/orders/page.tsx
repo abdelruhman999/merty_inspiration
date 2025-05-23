@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Table } from '@/component/Table/Table';
 import { sendRequest } from '@/api';
 import debounce from 'lodash/debounce';
+import { FaCircle} from 'react-icons/fa6';
 
 interface Order extends Record<string, string | number> {
     id: number;
@@ -66,13 +67,15 @@ export default function OrderList() {
 
 
     const headers = [
-        { key: 'id', label: 'رقم الطلب' },
+        { key: 'order_id', label: 'رقم الطلب' },
         { key: 'customer_name', label: 'اسم العميل' },
+        { key: 'phone_number', label: 'رقم الهاتف' },
         { key: 'total_amount', label: 'المبلغ الإجمالي' },
         { key: 'status', label: 'الحالة' },
         { key: 'source', label: 'المصدر' },
         { key: 'payment_type', label: 'نوع الدفع' },
         { key: 'created_at', label: 'تاريخ الإنشاء' },
+        { key: 'is_paid', label: 'تم الدفع' , render: (item: FormattedOrder) => <span className='w-full flex justify-center'>{item.is_paid ? <FaCircle className='text-green-500'></FaCircle> : <FaCircle className='text-red-500'></FaCircle>}</span> },
     ];
 
     const fetchOrders = async (page: number) => {
