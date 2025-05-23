@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import type { FC } from 'react';
 import { sendRequest } from '@/api';
 import Cookies from 'js-cookie';
+import Swal from 'sweetalert2';
+
 
 type FormData = {
     username: string;
@@ -42,7 +44,12 @@ const Login: FC<LoginProps> = () => {
         })
         .catch((error) => {
             console.log(error)
-            alert('Login failed. Please check your credentials.');
+            Swal.fire({
+                icon: 'error',
+                text: 'فشل تسجيل الدخول الرجاء التحقق من بياناتك',
+                showConfirmButton: false,
+                timer: 10000,
+            });
             reset();
         });
     };

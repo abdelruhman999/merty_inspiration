@@ -82,10 +82,12 @@ const AnalyticsPage: React.FC = () => {
       </div>
     );
   }
-
+  const date = new Date()
+  date.setMonth(date.getMonth() + 1 )
   return (
     <main className="container mx-auto px-4 py-8" dir="rtl">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">لوحة التحليل والإحصائيات</h1>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800">احصائيات شهر {date.getMonth().toLocaleString('ar-EG')}</h2>
       
       {/* بطاقات الملخص */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">

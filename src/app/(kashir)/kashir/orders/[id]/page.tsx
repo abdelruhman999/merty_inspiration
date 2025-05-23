@@ -27,6 +27,8 @@ interface newResponse {
     created_at: string;
     source: string;
     type: string;
+    order_id:number;
+    is_paid:boolean;
 }
 interface OrdersResponse {
     results: newResponse[];
@@ -69,6 +71,8 @@ interface CustomerData {
   name: string;
   phone: string;
   address: string;
+  order_id:number;
+  is_paid:boolean;
 }
 
 
@@ -76,8 +80,10 @@ interface CustomerData {
 interface Create_orderProps {
     items: items[],
     source:string,
-    status:string
-    type:string
+    status:string,
+    type:string,
+    order_id:number,
+    is_paid:boolean;
 }
 interface items {
     size_color:number,
@@ -91,7 +97,7 @@ const CashierSystem: FC = () => {
   const params = useParams()  
   const [logoBase64, setLogoBase64] = useState('');
   const [data, setData] = useState<ProductData | null>(null);
-  const [showButtonPrint  , setShowButtonPrint] = useState<boolean>(false)
+  const [showButtonPrint  , setShowButtonPrint] = useState<boolean>(true)
   const [stock, setStock] = useState<number>(0);
   const [cart, setCart] = useState<ProductData[]>([]);
   const [deliveryPrice, setDeliveryPrice] = useState<number>(0); 
@@ -101,7 +107,9 @@ const CashierSystem: FC = () => {
     items: [],
     source:"",
     status:"", 
-    type:""
+    type:"",
+    order_id:0,
+    is_paid:false
 
   });
   const invoiceRef = useRef<HTMLDivElement>(null); 
@@ -147,7 +155,10 @@ const CashierSystem: FC = () => {
           setCustmorValue('phone',response.results[0].phone_number)
           setCustmorValue('address',response.results[0].address)
           setCustmorValue('note',response.results[0].note)
-          // console.log( response.results[0].items[0].size_color);
+          setCustmorValue('order_id',response.results[0].order_id)
+          setCustmorValue('is_paid',response.results[0].is_paid)
+          
+          console.log( "order__id ",response.results[0].order_id);
       const newCartItems = response.results[0].items.map((el) => {
         console.log(el.size_color);
         const price = el.size_color.discounts.length > 0 
@@ -175,25 +186,34 @@ const CashierSystem: FC = () => {
   },[params.id])
       
   useEffect(() => {
-    const code = watchProduct('code');
+    let timer : NodeJS.Timeout | undefined;
+    const code = watchProduct("code");
     if (code) {
-      sendRequest<ProductData>({
-        url: '/api/product/get-product-by-barcode',
-        method: 'GET',
-        params: { barcode: String(code) },
-      }).then((res) => {
-        setData(res);
-        console.log(res);
-        setProductValue('color', res.color);
-        setProductValue('size', res.size);
-        setProductValue('discounts', res.discounts);
-        setProductValue('quantity', 1);
-        setStock(res.stock);
-      }).catch(error => {
-        console.error('Error fetching product:', error);
-      });
+      console.log(code)
+
+      timer = setTimeout(() => {
+          console.log("hello")
+          sendRequest<ProductData>({
+              url: "/api/product/get-product-by-barcode",
+              method: "GET",
+              params: { barcode: String(code) },
+          })
+              .then((res) => {
+                  setData(res);
+                  console.log(res);
+                  setProductValue("color", res.color);
+                  setProductValue("size", res.size);
+                  setProductValue("discounts", res.discounts);
+                  setProductValue("quantity", 1);
+                  setStock(res.stock);
+              })
+              .catch((error) => {
+                  console.error("Error fetching product:", error);
+              });
+        }, 1000);
     }
-  }, [watchProduct('code')]);
+  return ()=> clearTimeout(timer);
+}, [watchProduct("code")]);
 
    
    
@@ -448,7 +468,7 @@ const addToCart = () => {
           <div class="shop-name">Merty inspiration</div>
           <div class="invoice-info">
             <div>التاريخ: ${new Date().toLocaleDateString('ar-EG')}</div>
-            <div>رقم الفاتورة: INV-${Math.floor(Math.random() * 100000).toString().padStart(5, '0')}</div>
+            <div>رقم الفاتورة: ${watchCustomer('order_id')}</div>
           </div>
         </div>
   
@@ -462,10 +482,16 @@ const addToCart = () => {
           </div>
 
           <div class="customer-name">
-          <strong>رقم الهاتف:</strong> 
-          <div>
-            ${watchCustomer('phone') || 'غير محدد'}
+            <strong>رقم الهاتف:</strong> 
+            <div>
+              ${watchCustomer('phone') || 'غير محدد'}
+            </div>
           </div>
+          <div class="customer-name">
+            <strong>الحالة:</strong> 
+            <div>
+              ${watchCustomer('is_paid') ? 'تم الدفع' : 'غير مدفوع'}
+            </div>
           </div>
 
           <div class="customer-name">
@@ -789,9 +815,9 @@ const addToCart = () => {
 
           <div className="bg-white p-4 rounded-lg shadow border border-gray-200">
             <h2 className="font-medium text-gray-700 mb-4">أوامر سريعة</h2>
-            { 
-          showButtonPrint?
-           <div className="grid grid-cols-2 gap-3">
+
+           <div className="grid grid-cols-2 gap-3 m-1">
+
               <button
              onClick={handlePrint}
                 disabled={cart.length === 0}
@@ -812,8 +838,6 @@ const addToCart = () => {
                 <FaTimes /> إلغاء
               </button>
             </div>
-            :
-            
             <button
             onClick={()=>{
               CreateOrder()
@@ -825,7 +849,7 @@ const addToCart = () => {
               حفظ
             </button>
          
-            }
+            
           </div>
         </div>
 

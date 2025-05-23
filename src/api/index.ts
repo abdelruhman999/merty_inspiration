@@ -14,6 +14,7 @@ export interface sendRequestKwargs {
     next?: {
         revalidate: number;
     };
+    showMessageOnError?:boolean;
 }
 
 export const sendRequest = async <T>({
@@ -26,6 +27,7 @@ export const sendRequest = async <T>({
     cache,
     next,
     ignoreContentType = false,
+    showMessageOnError = true
 }: sendRequestKwargs): Promise<T> => {
     const sessionId = Cookies.get("sessionid") ;
     const csrfToken = Cookies.get("csrftoken") ;
@@ -61,23 +63,27 @@ export const sendRequest = async <T>({
 
         if (response.status === 400) {
             const errorResponse = await response.json();
-            Swal.fire({
-                icon: "error",
-                text: `${errorResponse.error}`,
-                showConfirmButton: false,
-                timer: 10000,
-            });
+            if(showMessageOnError){
+                Swal.fire({
+                    icon: "error",
+                    text: `${errorResponse.error}`,
+                    showConfirmButton: false,
+                    timer: 10000,
+                });
+            }
             throw new Error(response.statusText);
         } else {
             const errorResponse = await response.json();
             // console.log('Error response:', errorResponse.error);
-            Swal.fire({
-                icon: "error",
-                text: `${errorResponse.error}`,
-                showConfirmButton: false,
-                timer: 10000,
-            });
-
+            if(showMessageOnError){
+                Swal.fire({
+                    icon: "error",
+                    text: `${errorResponse.error}`,
+                    showConfirmButton: false,
+                    timer: 10000,
+                });
+                
+            }
             throw new Error(response.statusText);
         }
     }
