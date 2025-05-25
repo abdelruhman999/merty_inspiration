@@ -4,22 +4,22 @@ import React, { useEffect, useState } from 'react';
 
 interface AnalyticsData {
   order_payment_types: {
-    COD: number;
-    HOTSPOT: number;
-    ONLINE: number;
+    COD: { count: number; price: number };
+    HOTSPOT: { count: number; price: number };
+    ONLINE: { count: number; price: number };
   };
   order_status: {
-    CANCELLED: number;
-    DELIVERED: number;
-    ONWAY: number;
-    PENDING: number;
+    CANCELLED: { count: number; price: number };
+    DELIVERED: { count: number; price: number };
+    ONWAY: { count: number; price: number };
+    PENDING: { count: number; price: number };
   };
   order_types: {
-    FACEBOOK: number;
-    HOTSPOT: number;
-    INSTAGRAM: number;
-    TIKTOK: number;
-    WEBSITE: number;
+    FACEBOOK: { count: number; price: number };
+    HOTSPOT: { count: number; price: number };
+    INSTAGRAM: { count: number; price: number };
+    TIKTOK: { count: number; price: number };
+    WEBSITE: { count: number; price: number };
   };
   total_orders: number;
   total_revenue: number;
@@ -56,6 +56,8 @@ const AnalyticsPage: React.FC = () => {
       method: 'GET',
     })
       .then((response) => {
+        console.log('تم جلب البيانات بنجاح:', response);
+        
         setData(response);
       })
       .catch((error) => {
@@ -82,65 +84,57 @@ const AnalyticsPage: React.FC = () => {
       </div>
     );
   }
-  const date = new Date()
-  date.setMonth(date.getMonth() + 1 )
+
+  const renderStatsCard = (title: string, value: number, secondaryValue?: number) => (
+    <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center">
+      <h3 className="text-gray-500 text-lg font-medium">{translateToArabic(title)}</h3>
+      <p className="text-2xl font-bold text-blue-600 mt-2">{value}</p>
+      {secondaryValue !== undefined && (
+        <p className="text-gray-500 mt-1">{secondaryValue} ج.م</p>
+      )}
+    </div>
+  );
+
+  const renderSection = (title: string, data: Record<string, { count: number; price: number }>) => (
+    <div className="bg-white rounded-lg shadow p-6">
+      <h2 className="text-xl font-bold text-gray-800 mb-4">{translateToArabic(title)}</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {Object.entries(data).map(([key, value]) => (
+          <div key={key} className="border rounded-lg p-4">
+            <h3 className="text-gray-600 font-medium">{translateToArabic(key)}</h3>
+            <div className="mt-2">
+              <p className="text-gray-800">العدد: <span className="font-bold">{value.count}</span></p>
+              <p className="text-gray-800">القيمة: <span className="font-bold">{value.price} ج.م</span></p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
-    <main className="container mx-auto px-4 py-8" dir="rtl">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">لوحة التحليل والإحصائيات</h1>
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">احصائيات شهر {date.getMonth().toLocaleString('ar-EG')}</h2>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">لوحة التحليلات</h1>
       
-      {/* بطاقات الملخص */}
+      {/* الإحصائيات الرئيسية */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2 text-gray-700">إجمالي الطلبات</h2>
-          <p className="text-3xl font-bold text-blue-600">{data.total_orders}</p>
-        </div>
-        
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-2 text-gray-700">إجمالي الإيرادات</h2>
-          <p className="text-3xl font-bold text-green-600">{data.total_revenue.toLocaleString()} ج.م</p>
-        </div>
+        {renderStatsCard('total_orders', data.total_orders)}
+        {renderStatsCard('total_revenue', data.total_revenue)}
       </div>
-
-      {/* حالة الطلب */}
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">حالات الطلبات</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {Object.entries(data.order_status).map(([status, count]) => (
-            <div key={status} className="border p-4 rounded">
-              <p className="text-sm text-gray-500">{translateToArabic(status)}</p>
-              <p className="text-2xl font-bold">{count}</p>
-            </div>
-          ))}
-        </div>
+      
+      {/* أنواع الدفع */}
+      {renderSection('أنواع الدفع ', data.order_payment_types)}
+      
+      {/* حالات الطلب */}
+      <div className="mt-8">
+        {renderSection('حالات الطلب ', data.order_status)}
       </div>
-
-      {/* طرق الدفع */}
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">طرق الدفع</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {Object.entries(data.order_payment_types).map(([method, count]) => (
-            <div key={method} className="border p-4 rounded">
-              <p className="text-sm text-gray-500">{translateToArabic(method)}</p>
-              <p className="text-2xl font-bold">{count}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
+      
       {/* مصادر الطلبات */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4 text-gray-700">مصادر الطلبات</h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {Object.entries(data.order_types).map(([source, count]) => (
-            <div key={source} className="border p-4 rounded">
-              <p className="text-sm text-gray-500">{translateToArabic(source)}</p>
-              <p className="text-2xl font-bold">{count}</p>
-            </div>
-          ))}
-        </div>
+      <div className="mt-8">
+        {renderSection('مصادر الطلبات ', data.order_types)}
       </div>
-    </main>
+    </div>
   );
 };
 

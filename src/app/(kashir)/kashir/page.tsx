@@ -16,7 +16,6 @@ import {
     FaGlobe,
     FaMapMarkerAlt,
 } from "react-icons/fa";
-import { debounce } from "lodash";
 
 interface ProductData {
     id: number;
@@ -43,6 +42,9 @@ interface discountData {
 }
 
 interface CustomerData {
+    paid_part: number;
+    custom_discount: number;
+    temp_total_price: number;
     note: string;
     name: string;
     phone: string;
@@ -56,6 +58,7 @@ interface InvoiceItem extends ProductData {
 }
 
 interface Create_orderProps {
+
     items: items[];
     source: string;
     status: string;
@@ -74,6 +77,8 @@ const CashierSystem: FC = () => {
     const [showButtonPrint, setShowButtonPrint] = useState<boolean>(false);
     const [stock, setStock] = useState<number>(0);
     const [cart, setCart] = useState<InvoiceItem[]>([]);
+    const [total, setTotal] = useState<number>(0);
+    const [subtotal, setSubtotal] = useState<number>(0);
     const [deliveryPrice, setDeliveryPrice] = useState<number>(0);
     const [order, setOrder] = useState<Create_orderProps>({
         items: [],
@@ -209,10 +214,16 @@ const CashierSystem: FC = () => {
                     source: order.source,
                     status: order.status,
                     note: custmor.note,
+                    total_price: total,
+                    temp_total_price:custmor.temp_total_price, // سعر الاوردر كامل - الجزئ المدفوع
+                    custom_discount:custmor.custom_discount, // في حالة وجود خصم
+                    paid_part:custmor.paid_part,  // الجزء المدفوع 
                     delivery_price: deliveryPrice,
+                    is_paid: custmor.is_paid,
                     type: order.type,
                 }),
             });
+            console.log(res);
             setCustmorValue("order_id", res.order_id);
             setCustmorValue("is_paid", res.is_paid);
             setShowButtonPrint(true);
@@ -293,234 +304,295 @@ const CashierSystem: FC = () => {
         setData(null);
     };
 
-    const handlePrint = async () => {
-        const logoBase64 = await imageToBase64(logo.src);
-        const imgSrc = logoBase64 || null;
+ const handlePrint = async () => {
+    const logoBase64 = await imageToBase64(logo.src);
+    const imgSrc = logoBase64 || null;
 
-        const printContent = `
-      <!DOCTYPE html>
-      <html dir="rtl">
-      <head>
-        <meta charset="utf-8">
-        <title>فاتورة مبيعات</title>
-        <style>
-          @page {
-            size: 80mm;
-            margin: 0;
-          }
-          * {
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-          }
-          body {
-             width: 80mm !important;
-            -webkit-print-color-adjust: exact; 
-            print-color-adjust: exact;
-            margin: 0 auto;
-            padding: 5mm;
-            color: #000;
-            line-height: 1.4;
-          }
-          .header {
-            text-align: center;
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed #ddd;
-          }
-          .logo {
-            width: 60px;
-            height: auto;
-            margin: 0 auto 5px;
-            display: block;
-          }
-          .shop-name {
-            font-size: 18px;
-            font-weight: bold;
-            margin: 5px 0;
-          }
-          .invoice-info {
-            font-size: 12px;
-            margin-bottom: 10px;
-          }
-          .customer-info {
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed #ddd;
-            font-size: 12px;
-          }
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 10px 0;
-            font-size: 12px;
-          }
-          th {
-            padding: 5px;
-            text-align: right;
-            border-bottom: 1px solid #ddd;
-          }
-          td {
-            padding: 5px;
-            text-align: right;
-            border-bottom: 1px dashed #eee;
-          }
-          .totals {
-            margin-top: 10px;
-            padding-top: 8px;
-            border-top: 1px dashed #ddd;
-            font-size: 13px;
-          }
-          .total-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-          }
-          .grand-total {
-            font-weight: bold;
-            font-size: 14px;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid #000;
-          }
-          .footer {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 11px;
-            color: #666;
-          }
-          .customer-name{
-          display: flex;
-          justify-content: space-between;
-          }
-          .logo{
-            width : 50px
-          }
-        </style>
-      </head>
-      <body>
-        <!-- رأس الفاتورة -->
-        <div class="header">
-          <img 
-            class="logo"
-            src=${imgSrc} 
-            alt="شعار المحل" 
-            style={{ width: '60px', margin: '0 auto' }} 
-          />
-          <div class="shop-name">Merty inspiration</div>
-          <div class="invoice-info">
-            <div>التاريخ: ${new Date().toLocaleDateString("ar-EG")}</div>
-            <div>رقم الفاتورة: ${watchCustomer("order_id")}</div>
-          </div>
-        </div>
-  
-        <!-- بيانات العميل -->
-        <div class="customer-info">
-          <div class="customer-name">
-          <strong>اسم العميل:</strong> 
-          <div>
-            ${watchCustomer("name") || "غير محدد"}
-          </div>
-          </div>
+    const printContent = `
+  <!DOCTYPE html>
+  <html dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <title>فاتورة مبيعات</title>
+    <style>
+      @page {
+        size: 80mm;
+        margin: 0;
+      }
+      * {
+        box-sizing: border-box;
+        font-family: 'Arial', sans-serif;
+      }
+      body {
+         width: 80mm !important;
+        -webkit-print-color-adjust: exact; 
+        print-color-adjust: exact;
+        margin: 0 auto;
+        padding: 5mm;
+        color: #000;
+        line-height: 1.4;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px dashed #ddd;
+      }
+      .logo {
+        width: 60px;
+        height: auto;
+        margin: 0 auto 5px;
+        display: block;
+      }
+      .shop-name {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 5px 0;
+      }
+      .invoice-info {
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
+      .customer-info {
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px dashed #ddd;
+        font-size: 12px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0;
+        font-size: 12px;
+      }
+      th {
+        padding: 5px;
+        text-align: right;
+        border-bottom: 1px solid #ddd;
+      }
+      td {
+        padding: 5px;
+        text-align: right;
+        border-bottom: 1px dashed #eee;
+      }
+      .totals {
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px dashed #ddd;
+        font-size: 13px;
+      }
+      .total-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+      }
+      .grand-total {
+        font-weight: bold;
+        font-size: 14px;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid #000;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 11px;
+        color: #666;
+      }
+      .customer-name{
+      display: flex;
+      justify-content: space-between;
+      }
+      .logo{
+        width : 50px
+      }
+      .tax-info {
+        font-size: 10px;
+        text-align: center;
+        margin-top: 5px;
+      }
+      .complaints-info {
+        font-size: 10px;
+        text-align: center;
+        margin-top: 3px;
+      }
+        .complaints-info {
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px dashed #ddd;
+        text-align: center;
+        font-size: 11px;
+      }
+      .complaints-info div {
+        direction: ltr;
+        display: inline-block;
+        margin: 0 3px;
+      }
+      .phone-number {
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- رأس الفاتورة -->
+    <div class="header">
+      <img 
+        class="logo"
+        src=${imgSrc} 
+        alt="شعار المحل" 
+        style={{ width: '60px', margin: '0 auto' }} 
+      />
+      <div class="shop-name">Merty inspiration</div>
+      <div class="tax-info">الرقم الضريبي: 413-080-234</div>
+      <div class="invoice-info">
+        <div>التاريخ: ${new Date().toLocaleDateString("ar-EG")}</div>
+        <div>رقم الفاتورة: ${watchCustomer("order_id")}</div>
+      </div>
+    </div>
 
-          <div class="customer-name">
-          <strong>رقم الهاتف:</strong> 
-          <div>
-            ${watchCustomer("phone") || "غير محدد"}
-          </div>
-          </div>
-          <div class="customer-name">
-            <strong>الحالة:</strong> 
-            <div>
-              ${watchCustomer("is_paid") ? "تم الدفع" : "غير مدفوع"}
-            </div>
-          </div>
+    <!-- بيانات العميل -->
+    <div class="customer-info">
+      <div class="customer-name">
+      <strong>اسم العميل:</strong> 
+      <div>
+        ${watchCustomer("name") || "غير محدد"}
+      </div>
+      </div>
 
-          <div class="customer-name">
-          <strong>العنوان:</strong>
-          <div>
-            ${watchCustomer("address") || "غير محدد"}
-          </div>
-           </div>
-          <div class="customer-name">
-          <strong>الملاحطه:</strong>
-          <div>
-            ${watchCustomer("note") || " لا يوجد ملاحطه  "}
-          </div>
-           </div>
+      <div class="customer-name">
+      <strong>رقم الهاتف:</strong> 
+      <div>
+        ${watchCustomer("phone") || "غير محدد"}
+      </div>
+      </div>
+      <div class="customer-name">
+        <strong>الحالة:</strong> 
+        <div>
+          ${watchCustomer("is_paid") ? " مدفوع" : "غير مدفوع"}
         </div>
-  
-        <!-- تفاصيل الفاتورة -->
-        <table>
-          <thead>
-            <tr>
-              <th>الصنف</th>
-              <th>الكمية</th>
-              <th>السعر</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${cart
-                .map(
-                    (item) => `
-              <tr>
-                <td>${item.product.name}</td>
-                <td>${item.quantity}</td>
-                <td>${(item.size.price || 0).toFixed(2)} ج.م</td>
-              </tr>
-            `
-                )
-                .join("")}
-          </tbody>
-        </table>
-  
-        <!-- المجموع -->
-        <div >
-          <div class="total-row">
-            <span>الإجمالي:</span>
-            <span>${subtotal.toFixed(2)} ج.م</span>
-          </div>
-          <div class="total-row">
-            <span>قيمة الشحن:</span>
-            <span>${deliveryPrice.toFixed(2)} ج.م</span>
-          </div>
-          <div class="total-row grand-total">
-            <span>المجموع الكلي:</span>
-            <span>${total.toFixed(2)} ج.م</span>
-          </div>
-        </div>
-  
-        <!-- تذييل الفاتورة -->
-        <div class="footer">
-          شكراً لثقتكم بنا - نرجو زيارة متجرنا مرة أخرى
-        </div>
-  
-        <script>
-          setTimeout(() => {
-            window.print();
-            window.close();
-          }, 300);
-        </script>
-      </body>
-      </html>
-    `;
+      </div>
 
-        const printWindow = window.open("", "_blank");
-        if (printWindow) {
-            printWindow.document.write(printContent);
-            printWindow.document.close();
-        } else {
-            alert("تعذر فتح نافذة الطباعة. يرجى تعطيل مانع النوافذ المنبثقة.");
-        }
-    };
+      <div class="customer-name">
+      <strong>العنوان:</strong>
+      <div>
+        ${watchCustomer("address") || "غير محدد"}
+      </div>
+       </div>
+      <div class="customer-name">
+      <strong>الملاحطه:</strong>
+      <div>
+        ${watchCustomer("note") || " لا يوجد ملاحطه  "}
+      </div>
+       </div>
+    </div>
+
+    <!-- تفاصيل الفاتورة -->
+    <table>
+      <thead>
+        <tr>
+          <th>الصنف</th>
+          <th>الكمية</th>
+          <th>السعر</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${cart
+            .map(
+                (item) => `
+          <tr>
+            <td>${item.product.name}</td>
+            <td>${item.quantity}</td>
+            <td>${(item.size.price || 0).toFixed(2)} ج.م</td>
+          </tr>
+        `
+            )
+            .join("")}
+      </tbody>
+    </table>
+
+    <!-- المجموع -->
+    <div >
+      <div class="total-row">
+        <span>الإجمالي:</span>
+        <span>${subtotal.toFixed(2)} ج.م</span>
+      </div>
+     <div class="total-row">
+        <span>نسبة الخصم:</span>
+        <span>${watchCustomer("custom_discount")} ج.م</span>
+    </div>
+      <div class="total-row">
+        <span>قيمة الشحن:</span>
+        <span>${deliveryPrice.toFixed(2)} ج.م</span>
+      </div>
+      <div class="total-row">
+        <span>تم دفع:</span>
+        <span>${watchCustomer("paid_part").toFixed(2)} ج.م</span>
+      </div>
+      <div class="total-row grand-total">
+        <span>المجموع الكلي:</span>
+        <span>${watchCustomer('temp_total_price').toFixed(2)} ج.م</span>
+      </div>
+    </div>
+
+    <!-- تذييل الفاتورة -->
+  <div class="footer">
+  شكراً لثقتكم بنا - نرجو زيارة متجرنا مرة أخرى
+  <div class="complaints-info">
+    للشكاوى والاقتراحات:<br>
+    <span class="phone-number">010-0035-5808</span> - 
+    <span class="phone-number">010-2645-6902</span> - 
+    <span class="phone-number">012-2772-7874</span>
+  </div>
+    </div>
+
+    <script>
+      setTimeout(() => {
+        window.print();
+        window.close();
+      }, 300);
+    </script>
+  </body>
+  </html>
+`;
+
+    const printWindow = window.open("", "_blank");
+    if (printWindow) {
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+    } else {
+        alert("تعذر فتح نافذة الطباعة. يرجى تعطيل مانع النوافذ المنبثقة.");
+    }
+};
 
     // إزالة منتج من السلة
     const removeFromCart = (barcode: number) => {
         setCart((prevCart) => prevCart.filter((item) => item.code !== barcode));
     };
 
-    // حساب الإجماليات
-    const subtotal = cart.reduce((sum, item) => sum + item.total, 0);
-    const total = subtotal + deliveryPrice;
+    
+    useEffect(()=>{
+        if(cart.length> 0){
+            const supPrice = cart.reduce((sum, item) => sum + item.total, 0)
+             setSubtotal(supPrice);
+             setTotal(supPrice + deliveryPrice)
+        }else{
+            setSubtotal(0);
+            setTotal(0);
+            setCustmorValue("temp_total_price", 0);
+            setCustmorValue("paid_part", 0);
+            setCustmorValue("custom_discount", 0);
+            setDeliveryPrice(0);
+        }
+
+    },[cart , deliveryPrice])
+  
+    useEffect(()=>{
+            const tep =( total - watchCustomer("paid_part")) - watchCustomer("custom_discount");
+            
+            setCustmorValue("temp_total_price", tep);
+    },[total ,  watchCustomer("paid_part") , watchCustomer("custom_discount")])
+  
+
 
     return (
         <div className="max-w-6xl mx-auto p-4 bg-gray-50 min-h-screen">
@@ -1011,6 +1083,30 @@ const CashierSystem: FC = () => {
                                 📶 HOTSPOT - دفع محلي
                             </span>
                         </div>
+
+                        <div className=" flex items-center gap-5 pt-4">
+                            <div
+                                onClick={()=>{
+                                    setCustmorValue('is_paid',true)
+                                }}
+                                className="flex items-center gap-2">
+                                    <p className="text-gray-500 font-semibold">تم الدفع </p>
+                                    <div className="flex cursor-pointer  items-center justify-center size-[20px] rounded-full border-2 border-gray-300">
+                                        <div className={` ${watchCustomer('is_paid') == true ? 'scale-100' : 'scale-0'} duration-200 bg-blue-500 size-[90%]  rounded-full`}></div>
+                                    </div>
+                                </div>
+                            <div
+                                onClick={()=>{
+                                    setCustmorValue('is_paid',false)
+                            }}
+                            className="flex items-center gap-2">
+                                <p className="text-gray-500 font-semibold"> لم يتم الدفع  </p>
+                                <div className="flex cursor-pointer  items-center justify-center size-[20px] rounded-full border-2 border-gray-300">
+                                    <div className={` ${watchCustomer('is_paid') == false ? 'scale-100' : 'scale-0'} duration-200 bg-blue-500 size-[90%]  rounded-full`}></div>
+                                </div>
+                            </div>
+                        </div>
+
                         <select
                             onClick={(e) => {
                                 setOrder((prev) => ({
@@ -1047,8 +1143,53 @@ const CashierSystem: FC = () => {
                             </option>
                         </select>
                     </div>
-
                     {/* ملخص الفاتورة */}
+                    <div className="flex justify-between pt-[10px] items-center mb-2 text-sm text-gray-600">
+                        <span> الخصم:</span>
+                        <div className="flex items-center">
+                            <input
+                                type="number"
+                                value={watchCustomer('custom_discount') || 0}
+                               
+                                   {
+                                    ...registerCustomer("custom_discount", {
+                                        min: {
+                                            value: 0,
+                                            message: "المبلغ المدفوع يجب أن يكون أكبر من أو يساوي 0",
+                                        },  
+                                        valueAsNumber: true,
+                                    })
+                                   }
+                                min="0"
+                                className="w-20 px-2 py-1 border border-gray-300 rounded-md text-right"
+                            />
+                            <span className="mr-2">ج.م</span>
+                        </div>
+                    </div>
+
+                    <div className="flex justify-between pt-[10px] items-center mb-2 text-sm text-gray-600">
+                        <span>المبلغ المدفوع:</span>
+                        <div className="flex items-center">
+                            <input
+                                type="number"
+                                value={watchCustomer('paid_part') || 0}
+                               
+                                   {
+                                    ...registerCustomer("paid_part", {
+                                        min: {
+                                            value: 0,
+                                            message: "المبلغ المدفوع يجب أن يكون أكبر من أو يساوي 0",
+                                        },  
+                                        valueAsNumber: true,
+                                    })
+                                   }
+                                min="0"
+                                className="w-20 px-2 py-1 border border-gray-300 rounded-md text-right"
+                            />
+                            <span className="mr-2">ج.م</span>
+                        </div>
+                    </div>
+
                     <div className="flex justify-between pt-[10px] items-center mb-2 text-sm text-gray-600">
                         <span>قيمة الشحن:</span>
                         <div className="flex items-center">
@@ -1067,8 +1208,8 @@ const CashierSystem: FC = () => {
 
                     <div className="flex justify-between items-center pt-2 border-t border-gray-200 font-bold text-lg">
                         <span>المبلغ النهائي:</span>
-                        <span className="text-blue-600">
-                            {(subtotal + deliveryPrice).toFixed(2)} ج.م
+                        <span className={`${ watchCustomer('temp_total_price') >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {( watchCustomer('temp_total_price')|| 0).toFixed(2)} ج.م
                         </span>
                     </div>
                 </div>
