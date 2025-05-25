@@ -10,6 +10,9 @@ const initialState: CountType = {
 };
 
 export interface itemsType {
+  order_id: number
+  total_price: number
+  created_at: string
 id: number
 url:string
 items: itemsType2[]

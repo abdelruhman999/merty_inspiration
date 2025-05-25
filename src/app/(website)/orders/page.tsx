@@ -40,13 +40,10 @@ const Orders: FC<OrdersProps> = () => {
         <thead className="bg-gray-100">
     <tr>
         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-            المنتج
+            رقم الطلب
         </th>
         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-            الصورة
-        </th>
-        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-            الحجم
+            تاريخ الطلب
         </th>
         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
             السعر
@@ -61,26 +58,24 @@ const Orders: FC<OrdersProps> = () => {
 </thead>
 <tbody className="bg-white divide-y divide-gray-200">
     {items.map((el) => (
-        el.items.length > 0 &&
-        el.items.map((item, index) => (
-            <tr key={index} className="hover:bg-gray-50 transition-colors">
+         
+            <tr key={el.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {item.product.name}
+                    {el.order_id}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                    <Image
-                        src={serve(item.size_color.color.image)}
-                        alt={item.size_color.color.name || 'Product Image'}
-                        width={60}
-                        height={60}
-                        className='h-15 w-15 object-contain rounded'
-                    />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.size_color.size.size}
+             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                {new Date(el.created_at).toLocaleString('ar-EG', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZone: 'Africa/Cairo' 
+                })}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                    LE {item.price.toLocaleString()}
+                    LE {el.total_price.toLocaleString()}
                 </td>
                     
                     
@@ -125,7 +120,7 @@ const Orders: FC<OrdersProps> = () => {
                     }
                 </td>
             </tr>
-        ))
+        
     ))}
 </tbody>
 </table>

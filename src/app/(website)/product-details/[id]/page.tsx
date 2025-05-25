@@ -152,7 +152,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
   <div className="relative">
     {current_img ? (
       <Image
-        src={`${serve(current_img)}`}
+        src={current_img}
         className="object-contain" // للحفاظ على نسبة العرض إلى الارتفاع دون تشويه
         alt="logo"
         width={3016} // الدقة الأصلية للعرض

@@ -9,7 +9,7 @@ const Whatsappicon: FC<WhatsappiconProps> = () => {
      
         <button
         onClick={()=>{
-          window.open('https://wa.me/${}/','_self')
+          window.open('https://wa.me/01281126696/','_self')
         }}
          className="Btn">
         <div
