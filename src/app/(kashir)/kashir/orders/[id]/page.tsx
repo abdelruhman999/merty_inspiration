@@ -658,8 +658,10 @@ const addToCart = () => {
         if(cart.length> 0){
           console.log(`cart` , cart);
           const subtotall = cart.reduce((sum, item) => sum + item.total, 0)
+           const totalWithDiscount = (subtotall + deliveryPrice) - watchCustomer("custom_discount");
+            console.log("totalWithDiscount", totalWithDiscount);
           setSubtotal(subtotall);
-          setTotal((subtotall + deliveryPrice)-watchCustomer("custom_discount"));
+          setTotal(totalWithDiscount);
 
         }else{
             setSubtotal(0);
@@ -670,12 +672,12 @@ const addToCart = () => {
             setDeliveryPrice(0);
         }
     
-  },[cart,deliveryPrice])
+  },[cart,deliveryPrice , watchCustomer("custom_discount")]);
 
    useEffect(()=>{
-              const tep =( total - watchCustomer("paid_part")) - watchCustomer("custom_discount");
+              const tep =( total - watchCustomer("paid_part"))
               setCustmorValue("temp_total_price", tep);
-      },[total ,  watchCustomer("paid_part") , watchCustomer("custom_discount")])
+      },[total ,  watchCustomer("paid_part")])
 
   return (
     <div className="max-w-6xl mx-auto p-4 bg-gray-50 min-h-screen">

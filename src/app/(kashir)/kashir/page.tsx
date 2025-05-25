@@ -573,8 +573,11 @@ const CashierSystem: FC = () => {
     useEffect(()=>{
         if(cart.length> 0){
             const supPrice = cart.reduce((sum, item) => sum + item.total, 0)
+            const totalWithDiscount = (supPrice + deliveryPrice) - watchCustomer("custom_discount");
+            console.log("totalWithDiscount", totalWithDiscount);
+            
              setSubtotal(supPrice);
-             setTotal((supPrice + deliveryPrice)- watchCustomer("custom_discount"));
+             setTotal(totalWithDiscount);
         }else{
             setSubtotal(0);
             setTotal(0);
@@ -587,10 +590,9 @@ const CashierSystem: FC = () => {
     },[cart , deliveryPrice , watchCustomer("custom_discount")])
   
     useEffect(()=>{
-            const tep =( total - watchCustomer("paid_part")) - watchCustomer("custom_discount");
-            
+            const tep =( total - watchCustomer("paid_part"));
             setCustmorValue("temp_total_price", tep);
-    },[total ,  watchCustomer("paid_part") , watchCustomer("custom_discount")])
+    },[total ,  watchCustomer("paid_part")])
   
 
 
