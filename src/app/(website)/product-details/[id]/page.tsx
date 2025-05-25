@@ -160,8 +160,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
         quality={100} // للحفاظ على الجودة العالية (اختياري)
         priority // إذا كانت الصورة فوق الطية (اختياري)
         style={{
-          maxWidth: '491px', // أقصى عرض للصورة
-          maxHeight: '567px', // أقصى ارتفاع للصورة
+          maxHeight: '567px', // أقصى ارتفاع للصورةmax
           width: 'auto', // للتكيف مع الحاوية
           height: 'auto', // للتكيف مع الحاوية
         }}
