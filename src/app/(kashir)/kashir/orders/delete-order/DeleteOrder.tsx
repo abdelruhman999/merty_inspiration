@@ -2,7 +2,7 @@ import React from 'react';
 import Swal from 'sweetalert2';
 
 interface DeleteOrderProps {
-  orderId: string;
+  orderId: number;
   onDelete: () => Promise<void>; 
 }
 

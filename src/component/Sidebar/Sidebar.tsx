@@ -74,7 +74,7 @@ async function rigister() {
 
                 if (result.isConfirmed) {
                     rigister()
-                    // window.location.href = '/kashir-login';
+                    window.location.href = '/kashir-login';
                 }
             }}
             className={`flex items-center gap-2 p-3 rounded-lg transition-colors bg-red-500/90 cursor-pointer text-white`}
