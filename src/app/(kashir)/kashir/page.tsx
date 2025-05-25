@@ -136,7 +136,7 @@ const CashierSystem: FC = () => {
                   .catch((error) => {
                       console.error("Error fetching product:", error);
                   });
-            }, 1000);
+            }, 500);
         }
       return ()=> clearTimeout(timer);
     }, [watchProduct("code")]);
@@ -516,14 +516,14 @@ const CashierSystem: FC = () => {
         <span>الإجمالي:</span>
         <span>${subtotal.toFixed(2)} ج.م</span>
       </div>
-     <div class="total-row">
-        <span>نسبة الخصم:</span>
-        <span>${watchCustomer("custom_discount")} ج.م</span>
-    </div>
       <div class="total-row">
         <span>قيمة الشحن:</span>
         <span>${deliveryPrice.toFixed(2)} ج.م</span>
       </div>
+     <div class="total-row">
+        <span>نسبة الخصم:</span>
+        <span>${watchCustomer("custom_discount")} ج.م</span>
+    </div>
       <div class="total-row">
         <span>تم دفع:</span>
         <span>${watchCustomer("paid_part").toFixed(2)} ج.م</span>
@@ -574,7 +574,7 @@ const CashierSystem: FC = () => {
         if(cart.length> 0){
             const supPrice = cart.reduce((sum, item) => sum + item.total, 0)
              setSubtotal(supPrice);
-             setTotal(supPrice + deliveryPrice)
+             setTotal((supPrice + deliveryPrice)- watchCustomer("custom_discount"));
         }else{
             setSubtotal(0);
             setTotal(0);
@@ -584,7 +584,7 @@ const CashierSystem: FC = () => {
             setDeliveryPrice(0);
         }
 
-    },[cart , deliveryPrice])
+    },[cart , deliveryPrice , watchCustomer("custom_discount")])
   
     useEffect(()=>{
             const tep =( total - watchCustomer("paid_part")) - watchCustomer("custom_discount");
@@ -1208,7 +1208,7 @@ const CashierSystem: FC = () => {
 
                     <div className="flex justify-between items-center pt-2 border-t border-gray-200 font-bold text-lg">
                         <span>المبلغ النهائي:</span>
-                        <span className={`${ watchCustomer('temp_total_price') >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <span className={`${ watchCustomer('temp_total_price') >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
                             {( watchCustomer('temp_total_price')|| 0).toFixed(2)} ج.م
                         </span>
                     </div>

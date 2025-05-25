@@ -6,10 +6,20 @@ import { MdAnalytics } from "react-icons/md";
 import { FaSignOutAlt } from "react-icons/fa";
 import Swal from 'sweetalert2';
 import Cookies from 'js-cookie';
+import { sendRequest } from '@/api';
 
 export function ClientSidebar() {
     const pathname = usePathname();
+async function rigister() {
+    await sendRequest({
+        url:'/api/logout/',
+        method: 'POST',
+    }).then((res) => {
+       console.log(res);
+       
+    });
 
+}
     const menuItems = [
         { href: '/kashir', label: 'الرئيسية', icon: FaHome },
         { href: '/kashir/product-list', label: 'المنتجات', icon: FaBox },
@@ -63,11 +73,8 @@ export function ClientSidebar() {
                 });
 
                 if (result.isConfirmed) {
-                Cookies.remove("sessionid");
-                Cookies.remove("user_id");
-                Cookies.remove("username");
-                document.cookie = '';
-                window.location.href = '/kashir-login';
+                    rigister()
+                    // window.location.href = '/kashir-login';
                 }
             }}
             className={`flex items-center gap-2 p-3 rounded-lg transition-colors bg-red-500/90 cursor-pointer text-white`}
