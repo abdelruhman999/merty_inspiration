@@ -115,7 +115,10 @@ const AnalyticsPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">لوحة التحليلات</h1>
-      
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">
+        إحصائيات شهر {new Date().getMonth() + 1}
+      </h1>
+            
       {/* الإحصائيات الرئيسية */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {renderStatsCard('total_orders', data.total_orders)}
