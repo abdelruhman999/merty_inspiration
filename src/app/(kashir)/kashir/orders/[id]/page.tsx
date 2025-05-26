@@ -603,8 +603,12 @@ const addToCart = () => {
         <span>تم دفع:</span>
         <span>${watchCustomer("paid_part").toFixed(2)} ج.م</span>
       </div>
-      <div class="total-row grand-total">
+    <div class="total-row grand-total">
         <span>المجموع الكلي:</span>
+        <span>${total.toFixed(2)} ج.م</span>
+      </div>
+      <div class="total-row grand-total">
+        <span>المبلغ المطلوب:</span>
         <span>${watchCustomer('temp_total_price').toFixed(2)} ج.م</span>
       </div>
     </div>
