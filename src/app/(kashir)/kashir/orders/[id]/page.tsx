@@ -171,10 +171,10 @@ const CashierSystem: FC = () => {
             is_paid: response.results[0].is_paid,
           }))
           setDeliveryPrice(response.results[0].delivery_price)
-      const newCartItems = response.results[0].items.map((el) => {
+        const newCartItems = response.results[0].items.map((el) => {
         console.log(el.size_color);
         const price = el.size_color.discounts.length > 0 
-                      ? el.size_color.discounts[0].discount 
+                      ?(el.size_color.size.price - el.size_color.discounts[0].discount )
                       : el.size_color.size.price;
         
         const newItem: ProductData = {
@@ -346,7 +346,7 @@ const addToCart = () => {
       return;
     }
     const price = data.discounts.length > 0 
-      ? data.discounts[0].discount 
+      ? data.size.price- data.discounts[0].discount 
       : data.size.price;
 
     setCart(prevCart => {      
@@ -356,7 +356,7 @@ const addToCart = () => {
        updatedCart[existingItemIndex] = {
           ...updatedCart[existingItemIndex],
           quantity: updatedCart[existingItemIndex].quantity + product.quantity,
-          total : (data.discounts.length > 0 ? data.discounts[0].discount : data.size.price) * 
+          total : (data.discounts.length > 0 ? data.size.price - data.discounts[0].discount : data.size.price) * 
                 (updatedCart[existingItemIndex].quantity + product.quantity)
         };
         return updatedCart;
@@ -975,7 +975,7 @@ const addToCart = () => {
                             <>
                               <span className="line-through text-gray-400 text-sm">{item.size.price} ج.م</span>
                               <br />
-                              <span className="text-red-600">{item.discounts[0].discount} ج.م</span>
+                              <span className="text-red-600">{item.size.price-item.discounts[0].discount} ج.م</span>
                             </>
                           ) : (
                             <span>{item.size.price} ج.م</span>
@@ -1137,6 +1137,12 @@ const addToCart = () => {
                         </div>
                     </div>
 
+                    <div className="flex justify-between items-center pt-2 border-t border-gray-200 font-bold text-lg">
+                        <span>المبلغ الفعلي:</span>
+                        <span className='text-blue-600'>
+                            {total} ج.م
+                        </span>
+                    </div>
                     <div className="flex justify-between items-center pt-2 border-t border-gray-200 font-bold text-lg">
                         <span>المبلغ النهائي:</span>
                         <span className={`${ watchCustomer('temp_total_price') >= 0 ? 'text-blue-600' : 'text-red-600'}`}>

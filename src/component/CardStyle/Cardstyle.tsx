@@ -5,6 +5,8 @@ import style from "./Cardstyle.module.css";
 import Image from "next/image";
 import {Color} from "@/types/product";
 import Loaderimg from "../Loaderimg";
+import logo from "../../../assets/p_img13.png";
+import { Base_Url } from "@/calls/constant";
 
 
 export interface CardstyleProps {
@@ -41,15 +43,18 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
     <div className={`${style.card} relative`}>
       <div className={style.wrapper}>
         <div>
+          {
+            colors.length > 0 &&
         <Suspense  fallback={<Loaderimg/>}>
             <Image   
               className={`${style["card-image"]}`}
-              src={img }
+              src={img || `${Base_Url}${logo}`}
               alt="logo"
               width={200}
               height={200}
             />  
         </Suspense>
+          }
         </div>
       
     
@@ -64,8 +69,6 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
 
 
           {colors.map((el , index: number) => {
-          
-         
             
             return (      
            
@@ -85,7 +88,7 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
                 border-[#c5b3b3]  hover:border-gray-800" 
                >
                  <Image
-                 src={el.image}
+                 src={el.image || logo}
                  alt="logo"
                  className="rounded-full  hover:scale-80 duration-200"
                  width={25}

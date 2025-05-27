@@ -187,7 +187,6 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
          gap-[10px]
          max-sm:gap-[0]
          max-sm:items-center
-         
          "
             >
               <div className="flex w-[300px]  justify-between items-start">
@@ -237,7 +236,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
             >
               <p className="text-xl xs:text-2xl">اختر المقاس</p>
 
-              <div className="grid grid-cols-4 md:grid-cols-6 gap-2 pr-5">
+              <div className="flex flex-wrap max-sm:w-[90%] max-sm:pr-0 w-[400px] -400 gap-2 pr-5">
             {
             size.map((el, index) => {
               const isOutOfStock = el.stock === 0;
@@ -265,16 +264,15 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                     className={`text-xl 
                       border-black border
                       ${isOutOfStock ? 'bg-gray-100 text-gray-400' : 'bg-gray-200 cursor-pointer'}
-                      text-center
-                      font-serif relative
-                      w-[60px]
+                      text-center w-[100px]
+                      font-serif relative max-sm:w-[95px]
                       ${active === index ? "border-red-600" : ""}
                       p-[10px]`}
                   >
                     {el.size.size}
                   </button>
                   {isOutOfStock && (
-                    <div className="absolute inset-0 bg-black/50"></div>
+                    <div className="absolute  inset-0 bg-black/50"></div>
                   )}
                 </div>
               );

@@ -53,6 +53,8 @@ export default function EditSizes({ id }: EditSizesProps) {
 
 
   const handleDeleteSize = (sizeId: string) => {
+    console.log(`Deleting size with ID: ${sizeId}`);
+    
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -105,7 +107,10 @@ export default function EditSizes({ id }: EditSizesProps) {
             </button>
             <button
               className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors flex items-center gap-2"
-              onClick={() => handleDeleteSize(size.id.toString())}
+              onClick={() =>
+                
+                handleDeleteSize(size.id.toString())
+                }
             >
               <MdDelete className="h-4 w-4" />
             </button>

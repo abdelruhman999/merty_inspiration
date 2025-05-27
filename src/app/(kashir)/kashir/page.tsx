@@ -263,7 +263,7 @@ const CashierSystem: FC = () => {
         }
         const price =
             data.discounts.length > 0
-                ? data.discounts[0].discount
+                ?data.size.price - data.discounts[0].discount
                 : data.size.price;
 
         setCart((prevCart) => {
@@ -281,7 +281,7 @@ const CashierSystem: FC = () => {
                         product.quantity,
                     total:
                         (data.discounts.length > 0
-                            ? data.discounts[0].discount
+                            ? data.size.price - data.discounts[0].discount
                             : data.size.price) *
                         (updatedCart[existingItemIndex].quantity +
                             product.quantity),
@@ -999,7 +999,8 @@ const CashierSystem: FC = () => {
                                                             <br />
                                                             <span className="text-red-600">
                                                                 {
-                                                                    item
+                                                                  item.size
+                                                                        .price -  item
                                                                         .discounts[0]
                                                                         .discount
                                                                 }{" "}
@@ -1212,6 +1213,12 @@ const CashierSystem: FC = () => {
                         </div>
                     </div>
 
+                    <div className="flex justify-between items-center pt-2 border-t border-gray-200 font-bold text-lg">
+                        <span>المبلغ الفعلي:</span>
+                        <span className={`text-blue-600`}>
+                            {total.toFixed(2)} ج.م
+                        </span>
+                    </div>
                     <div className="flex justify-between items-center pt-2 border-t border-gray-200 font-bold text-lg">
                         <span>المبلغ النهائي:</span>
                         <span className={`${ watchCustomer('temp_total_price') >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
