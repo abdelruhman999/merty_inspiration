@@ -541,10 +541,10 @@ const CashierSystem: FC = () => {
     <!-- تذييل الفاتورة -->
   <div class="footer">
   شكراً لثقتكم بنا - نرجو زيارة متجرنا مرة أخرى
-  <div class="complaints-info">
+ <div class="complaints-info">
     للشكاوى والاقتراحات:<br>
-    <span class="phone-number">010-0035-5808</span> - 
-    <span class="phone-number">010-2645-6902</span> - 
+    <span class="phone-number">010-0035-5808</span> <br>
+    <span class="phone-number">010-2645-6902</span><br>
     <span class="phone-number">012-2772-7874</span>
   </div>
     </div>

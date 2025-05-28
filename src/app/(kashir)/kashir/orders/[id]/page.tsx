@@ -488,11 +488,10 @@ const addToCart = () => {
       }
       .complaints-info {
         font-size: 10px;
-        text-align: center;
-        margin-top: 3px;
+        text-align: ;
+    
       }
         .complaints-info {
-        margin-top: 8px;
         padding-top: 8px;
         border-top: 1px dashed #ddd;
         text-align: center;
@@ -618,8 +617,8 @@ const addToCart = () => {
   شكراً لثقتكم بنا - نرجو زيارة متجرنا مرة أخرى
   <div class="complaints-info">
     للشكاوى والاقتراحات:<br>
-    <span class="phone-number">010-0035-5808</span> - 
-    <span class="phone-number">010-2645-6902</span> - 
+    <span class="phone-number">010-0035-5808</span> <br>
+    <span class="phone-number">010-2645-6902</span><br>
     <span class="phone-number">012-2772-7874</span>
   </div>
     </div>
