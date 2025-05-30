@@ -16,19 +16,21 @@ const ProductListSale: FC<ProductListSaleProps> = () => {
           
         })
         return (<>
-            {items.length > 0 ? (
-              items.map((el:any,index) => (
-                <Cardstyle 
-                  key={index} 
-                  image={el.colors[0].image} 
-                  name={el.name} 
-                  id={el.id} 
-                  colors={el.colors} 
+          {items.length > 0 ? (
+            items.map((el: any) =>
+              el.colors.length > 0 ? (
+                <Cardstyle
+                  key={el.id}
+                  image={el.colors[0].image}
+                  name={el.name}
+                  id={el.id}
+                  colors={el.colors}
                   el={el}
                   season={el.season.name}
-                  />
-              )) 
-            ) :
+                />
+              ) : null
+            )
+          ) :
              <div className="text-center p-8 text-gray-500">
               <i className="text-4xl mb-4">📭</i>
               <h2 className="text-xl font-semibold">مافيش عروض حالياً</h2>
