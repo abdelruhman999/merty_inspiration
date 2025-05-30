@@ -31,15 +31,19 @@
     height: 190px;
     transition: all 0.3s;
   }
-  .content {
-    
-    height: fit-content;
-    display: flex;
-    flex-direction: row-reverse;
-    width: 100%;
-    align-items: center;
-    justify-content: space-between
-  }
+.content {
+  height: fit-content;
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  justify-content: space-between;
+}
+.priceWithDiscount{
+  display: flex;
+}
+  
+
+
   .title {
     font-size: 0.72em;
     text-transform: uppercase;

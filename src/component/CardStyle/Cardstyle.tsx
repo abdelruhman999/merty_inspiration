@@ -7,6 +7,7 @@ import {Color} from "@/types/product";
 import Loaderimg from "../Loaderimg";
 import logo from "../../../assets/p_img13.png";
 import { Base_Url } from "@/calls/constant";
+import { size } from "lodash";
 
 
 export interface CardstyleProps {
@@ -15,26 +16,33 @@ export interface CardstyleProps {
   id: number;
   colors:Color[]
   el:{
-    sizes:[]
+    sizes:PriceType[]
   }
   season:string
 
 }
 
 interface PriceType{
-price:number,
+discount: number
+price: number
+size: string
 
 }
+
 
 const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }: CardstyleProps) => {
 
   const [img , setImg] = useState(image)
   const [min_Cost , setMin_Cost] = useState<number>(0)
+  const [oldPrice , setOldPrice] = useState<number>(0)
 
 
   useEffect(()=>{
         const sizes = el.sizes        
-        const min_value = sizes.length > 0 ? Math.min(...sizes.map((el:PriceType)=>el.price)) : 0;
+        const min_value = sizes.length > 0 ? Math.min(...sizes.map((el)=> el.discount > 0 ? el.price - el.discount : el.price )) : 0 ;
+        sizes.map((el)=>{
+          setOldPrice((prev) => Math.max(prev, el.price))
+        })
         setMin_Cost(min_value)
   },[])
 
@@ -48,7 +56,7 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
         <Suspense  fallback={<Loaderimg/>}>
             <Image   
               className={`${style["card-image"]}`}
-              src={img || `${Base_Url}${logo}`}
+              src={`${Base_Url}${img}`}
               alt="logo"
               width={200}
               height={200}
@@ -58,9 +66,12 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
         </div>
       
     
-        <div className={`${style["content"]} `}>
+        <div className={`${style["content"]}`}>
           <p className={`${style["title"]}`}>{name}</p>   
+          <p className={`${style["priceWithDiscount"]}`}>
           <p className={`${style["title"]} ${style["price"]}`}>{ min_Cost ? min_Cost : '0'} LE</p>
+          <p className={`${style["title"]} ${style["price"]} ${style["old-price"]}`}>&nbsp;LE{oldPrice}</p>
+          </p>
         </div>
         
         <div className={`${style.noScrollbar} overflow-y-hidden flex justify-center w-[150px] overflow-x-auto`}>
@@ -88,7 +99,7 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
                 border-[#c5b3b3]  hover:border-gray-800" 
                >
                  <Image
-                 src={el.image || logo}
+                 src={el.image ? `${Base_Url}${el.image}` : logo}
                  alt="logo"
                  className="rounded-full  hover:scale-80 duration-200"
                  width={25}
