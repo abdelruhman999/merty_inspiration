@@ -1,4 +1,4 @@
-module.exports = {
-  siteUrl: 'https://merty-inspiration.com',
-  generateRobotsTxt: true,
-};
+// module.exports = {
+//   siteUrl: 'https://merty-inspiration.com',
+//   generateRobotsTxt: true,
+// };
