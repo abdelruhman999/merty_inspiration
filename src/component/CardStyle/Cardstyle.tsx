@@ -39,11 +39,20 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
 
 
   useEffect(()=>{
-        const sizes = el.sizes        
-        const min_value = sizes.length > 0 ? Math.min(...sizes.map((el)=> el.discount > 0 ? el.price - el.discount : el.price )) : 0 ;
-        sizes.map((el)=>{
-          setOldPrice((prev) => Math.max(prev, el.price))
+        const sizes = el.sizes   
+        const sizes_with_diff = sizes.map((el)=> {
+          return {
+            ...el,
+            diff: el.price - el.discount
+          }
+        } )     
+        const min_value = sizes.length > 0 ? Math.min(...sizes_with_diff.map((el)=> el.diff )) : 0 ;
+        sizes_with_diff.map((el)=>{
+          if (el.diff === min_value) {
+            setOldPrice(el.price)
+          }
         })
+
         setMin_Cost(min_value)
   },[])
 
