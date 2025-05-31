@@ -8,6 +8,7 @@ import Loaderimg from "../Loaderimg";
 import logo from "../../../assets/p_img13.png";
 import { Base_Url } from "@/calls/constant";
 import { size } from "lodash";
+import { serve } from "@/api/utils";
 
 
 export interface CardstyleProps {
@@ -56,7 +57,7 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
         <Suspense  fallback={<Loaderimg/>}>
             <Image   
               className={`${style["card-image"]}`}
-              src={`${Base_Url}${img}`}
+              src={`${serve(img)}`}
               alt="logo"
               width={200}
               height={200}
@@ -99,7 +100,7 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
                 border-[#c5b3b3]  hover:border-gray-800" 
                >
                  <Image
-                 src={el.image ? `${Base_Url}${el.image}` : logo}
+                 src={el.image ? `${serve(el.image)}` : logo}
                  alt="logo"
                  className="rounded-full  hover:scale-80 duration-200"
                  width={25}
