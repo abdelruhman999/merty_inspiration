@@ -16,6 +16,7 @@ import {
     FaGlobe,
     FaMapMarkerAlt,
 } from "react-icons/fa";
+import { log } from "console";
 
 interface ProductData {
     id: number;
@@ -257,6 +258,37 @@ const CashierSystem: FC = () => {
             });
             return;
         }
+
+         if(cart.length > 0){
+             const existingItem = cart.find(
+                (item) => item.code == product.code
+            );
+            console.log("existingItem", existingItem);
+            
+            if(existingItem){
+                if(existingItem.quantity + product.quantity > stock){
+                console.log("existingItem", existingItem);
+                    Swal.fire({
+                    title: "خطأ في الكمية",
+                    html: `
+              <div class="text-right">
+                <p class="text-lg">الكمية المتواجده ف السله هي  (${existingItem.quantity}) والكمية المتاحة (${stock})</p>
+                <hr class="my-3">
+                <p class="text-gray-600">الرجاء تعديل الكمية أو مراجعة المخزون</p>
+              </div>
+            `,
+                    icon: "error",
+                    confirmButtonText: "حسناً",
+                    customClass: {
+                        confirmButton:
+                            "bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md",
+                    },
+                });
+                return;   
+                }
+            }
+        }
+
         if (product.quantity < 1) {
             Swal.fire("الكمية يجب أن تكون أكبر من 0");
             return;
@@ -270,8 +302,8 @@ const CashierSystem: FC = () => {
             const existingItemIndex = prevCart.findIndex(
                 (item) => item.code == product.code
             );
-            console.log(existingItemIndex);
 
+           
             if (existingItemIndex >= 0) {
                 const updatedCart = [...prevCart];
                 updatedCart[existingItemIndex] = {
@@ -674,7 +706,7 @@ const CashierSystem: FC = () => {
                                         data &&
                                         (data.discounts ?? []).length > 0 &&
                                         data.discounts[0]?.discount != null
-                                            ? data.discounts[0].discount
+                                            ?data?.size?.price - data.discounts[0].discount
                                             : data?.size?.price ?? 0
                                     }
                                     readOnly
