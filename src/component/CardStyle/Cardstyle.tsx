@@ -8,6 +8,7 @@ import Loaderimg from "../Loaderimg";
 import logo from "../../../assets/p_img13.png";
 import { Base_Url } from "@/calls/constant";
 import { size } from "lodash";
+import { serve } from "@/api/utils";
 
 
 export interface CardstyleProps {
@@ -38,11 +39,20 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
 
 
   useEffect(()=>{
-        const sizes = el.sizes        
-        const min_value = sizes.length > 0 ? Math.min(...sizes.map((el)=> el.discount > 0 ? el.price - el.discount : el.price )) : 0 ;
-        sizes.map((el)=>{
-          setOldPrice((prev) => Math.max(prev, el.price))
+        const sizes = el.sizes   
+        const sizes_with_diff = sizes.map((el)=> {
+          return {
+            ...el,
+            diff: el.price - el.discount
+          }
+        } )     
+        const min_value = sizes.length > 0 ? Math.min(...sizes_with_diff.map((el)=> el.diff )) : 0 ;
+        sizes_with_diff.map((el)=>{
+          if (el.diff === min_value) {
+            setOldPrice(el.price)
+          }
         })
+
         setMin_Cost(min_value)
   },[])
 
@@ -56,7 +66,7 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
         <Suspense  fallback={<Loaderimg/>}>
             <Image   
               className={`${style["card-image"]}`}
-              src={`${Base_Url}${img}`}
+              src={`${serve(img)}`}
               alt="logo"
               width={200}
               height={200}
@@ -99,7 +109,7 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
                 border-[#c5b3b3]  hover:border-gray-800" 
                >
                  <Image
-                 src={el.image ? `${Base_Url}${el.image}` : logo}
+                 src={el.image ? `${serve(el.image)}` : logo}
                  alt="logo"
                  className="rounded-full  hover:scale-80 duration-200"
                  width={25}
