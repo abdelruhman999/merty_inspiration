@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Image, { ImageProps } from "next/image";
-import Loaderimg from "./Loaderimg"; 
-
+import Loaderimg from "./Loaderimg";
 
 const ImageWithLoader = ({ src, alt, ...props }: ImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -18,11 +17,9 @@ const ImageWithLoader = ({ src, alt, ...props }: ImageProps) => {
         alt={alt}
         onLoadingComplete={() => setIsLoading(false)}
         {...props}
-        style={{
-          ...props.style,
-          opacity: isLoading ? 0 : 1,
-          transition: "opacity 0.5s ease-in-out",
-        }}
+        className={`${props.className || ""} transition-opacity duration-500 ${
+          isLoading ? "opacity-0" : "opacity-100"
+        }`}
       />
     </div>
   );

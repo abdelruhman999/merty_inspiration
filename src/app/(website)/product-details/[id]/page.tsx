@@ -4,8 +4,9 @@ import { useEffect, useMemo, useState, type FC } from "react";
 import useRequest from "../../../../hooks/call";
 import { useParams } from "next/navigation";
 import { Product, ProductSizeColor } from "@/types/product";
-import style from "../../../../component/CardStyle/Cardstyle.module.css";
 import Loadercom from "@/component/Loadercom";
+import style from "../../../../component/CardStyle/Cardstyle.module.css";
+import styleimg from "./transtionImage.module.css";
 import { useDispatch} from "react-redux";
 import { addItemsShopping, setShow } from "@/redux/slices/dataShopping";
 import Swal from "sweetalert2";
@@ -43,8 +44,8 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                 onClick={() => {
                   setactive(0);
                   const element_img = data?.product_size_colors.filter((ele) => ele.color.image === el.image);
-                  if ( element_img ) {    
-                    // console.log(element_img);
+                  if ( element_img.length > 0) {    
+                    console.log(element_img);
                                   
                     setSize(element_img);
                     const size_selector = element_img[0].size.size;
@@ -64,6 +65,13 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                     setStock_id(Stock_id_selector)
                     setStock(Stock_Size_selector)
                     setSizeSelector(size_selector);
+                  }else
+                  {
+                    setSize([]);
+                    setSizeSelector("");
+                    setPrice(0);
+                    setOld_Price(0);
+                    setDiscount(0);
                   }
                   setCurrent_img(el.image);
                 }}
@@ -83,9 +91,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
   // وهنا برجع اول صورة بالمعلومات بتاعتها سواء مقاس او سعر عشان اعرضها في الصفحة
   useEffect(() => {
     if (data) {          
-    
-         console.log(data);
-         
+     console.log(data);
      const first_img =  data.product_size_colors.filter((el) => el.color.image === data.colors[0].image);
       console.log(first_img);
       setCurrent_img(data.colors[0].image);
@@ -113,6 +119,12 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
           }
       }
       setSizeSelector(ele.size.size);
+    }
+    else {
+      setSizeSelector("");
+      setPrice(0);
+      setOld_Price(0);
+      setDiscount(0);
     }
   }, [size]);
 
@@ -152,25 +164,24 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
         >
          <div className="flex gap-[15px] max-sm:flex-col max-sm:items-center flex-row-reverse">
   <div className="relative">
-    {current_img ? (
-      <ImageWithLoader
-        src={current_img}
-        className="object-contain"
-        alt="logo"
-        width={3016}
-        height={4528}
-        quality={100}
-        loading="lazy"
-        style={{
-          maxHeight: '567px',
-          width: 'auto',
-          height: 'auto',
-        }}
-      />
-    ) 
-    : (
-      <p>الصورة غير موجودة حاليا</p>
-    )}
+      {current_img ? (
+        <ImageWithLoader
+          src={current_img}
+          className="object-contain"
+          alt="logo"
+          width={3016}
+          height={4528}
+          quality={100}
+          loading="lazy"
+          style={{
+            maxHeight: '567px',
+            width: 'auto',
+            height: 'auto',
+          }}
+        />
+      ) : (
+        <p>الصورة غير موجودة حاليا</p>
+      )}
     <div className="bg-black absolute w-[55px] h-[65px] rounded-br-full top-0 left-0 flex items-center justify-center">
       <p className="text-white pb-2 rotate-[-38deg]">{data.season.name}</p>
     </div>

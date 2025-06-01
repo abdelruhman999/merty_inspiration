@@ -9,6 +9,7 @@ import logo from "../../../assets/p_img13.png";
 import { Base_Url } from "@/calls/constant";
 import { size } from "lodash";
 import { serve } from "@/api/utils";
+import ImageWithLoader from "../ImageWithLoader";
 
 
 export interface CardstyleProps {
@@ -63,15 +64,15 @@ const Cardstyle: FC<CardstyleProps> = ({ image, name, colors , id , el ,season }
         <div>
           {
             colors.length > 0 &&
-        <Suspense  fallback={<Loaderimg/>}>
-            <Image   
+       
+            <ImageWithLoader   
               className={`${style["card-image"]}`}
               src={`${serve(img)}`}
               alt="logo"
               width={200}
               height={200}
             />  
-        </Suspense>
+     
           }
         </div>
       
