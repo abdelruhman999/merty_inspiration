@@ -2,10 +2,8 @@ import { useState } from "react";
 import Image, { ImageProps } from "next/image";
 import Loaderimg from "./Loaderimg"; 
 
-interface ImageWithLoaderProps extends ImageProps {
-}
 
-const ImageWithLoader = ({ src, alt, ...props }: ImageWithLoaderProps) => {
+const ImageWithLoader = ({ src, alt, ...props }: ImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
 
   return (
