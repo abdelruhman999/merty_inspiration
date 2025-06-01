@@ -1,3 +1,5 @@
+
+
 export const Routes = [
     {name:'الرئيسية', path:'/'},
     {name:'خصومات ', path:'/sales'},
@@ -33,3 +35,5 @@ export const imageToBase64 = async (path) => {
       return null;
     }
   };
+
+

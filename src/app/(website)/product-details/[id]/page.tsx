@@ -3,7 +3,6 @@ import Image from "next/image";
 import { useEffect, useMemo, useState, type FC } from "react";
 import useRequest from "../../../../hooks/call";
 import { useParams } from "next/navigation";
-import { Base_Url } from "@/calls/constant";
 import { Product, ProductSizeColor } from "@/types/product";
 import style from "../../../../component/CardStyle/Cardstyle.module.css";
 import Loadercom from "@/component/Loadercom";
@@ -11,6 +10,7 @@ import { useDispatch} from "react-redux";
 import { addItemsShopping, setShow } from "@/redux/slices/dataShopping";
 import Swal from "sweetalert2";
 import {serve} from "@/api/utils";
+import ImageWithLoader from "../../../../component/ImageWithLoader";
 
 interface ProdcutdetailsProps {}
 
@@ -136,6 +136,8 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
   },[sizeSelector])
 
    
+  
+
   return (
     <>
       {data ? (
@@ -151,21 +153,22 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
          <div className="flex gap-[15px] max-sm:flex-col max-sm:items-center flex-row-reverse">
   <div className="relative">
     {current_img ? (
-      <Image
+      <ImageWithLoader
         src={current_img}
-        className="object-contain" // للحفاظ على نسبة العرض إلى الارتفاع دون تشويه
+        className="object-contain"
         alt="logo"
-        width={3016} // الدقة الأصلية للعرض
-        height={4528} // الدقة الأصلية للارتفاع
-        quality={100} // للحفاظ على الجودة العالية (اختياري)
-        priority // إذا كانت الصورة فوق الطية (اختياري)
+        width={3016}
+        height={4528}
+        quality={100}
+        loading="lazy"
         style={{
-          maxHeight: '567px', // أقصى ارتفاع للصورةmax
-          width: 'auto', // للتكيف مع الحاوية
-          height: 'auto', // للتكيف مع الحاوية
+          maxHeight: '567px',
+          width: 'auto',
+          height: 'auto',
         }}
       />
-    ) : (
+    ) 
+    : (
       <p>الصورة غير موجودة حاليا</p>
     )}
     <div className="bg-black absolute w-[55px] h-[65px] rounded-br-full top-0 left-0 flex items-center justify-center">
