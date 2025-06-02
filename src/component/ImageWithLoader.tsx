@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Image, { ImageProps } from "next/image";
 import Loaderimg from "./Loaderimg";
+import { serve } from "@/api/utils";
 
 const ImageWithLoader = ({ src, alt, ...props }: ImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,7 +14,7 @@ const ImageWithLoader = ({ src, alt, ...props }: ImageProps) => {
         </div>
       )}
       <Image
-        src={src}
+        src={serve(src as string) }
         alt={alt}
         onLoadingComplete={() => setIsLoading(false)}
         {...props}

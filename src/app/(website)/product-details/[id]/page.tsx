@@ -76,7 +76,7 @@ const Prodcutdetails: FC<ProdcutdetailsProps> = () => {
                   setCurrent_img(el.image);
                 }}
                 key={el.id}
-                src={`${serve(el.image)}`}
+                src={serve(el.image)}
                 className={`h-[100px] w-[70px] hover:scale-80 duration-200 xs:size-[75px] cursor-pointer `}
                 alt="logo"
                 width={400}
