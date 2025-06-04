@@ -1109,6 +1109,7 @@ const addToCart = () => {
             status:(e.target as HTMLSelectElement).value as OrderStatus 
           }))
          }} 
+         value={order.status}
           className="mt-4 p-2 w-full outline-none border-2 border-gray-300 rounded-lg focus:ring-2 cursor-pointer focus:ring-blue-500">
           <option value="PENDING" className="bg-yellow-50 cursor-pointer">🟡 PENDING - قيد الانتظار</option>
           <option value="ONWAY" className="bg-blue-50 cursor-pointer">🚚 ONWAY - في الطريق</option>
