@@ -12,6 +12,8 @@ import Swal from 'sweetalert2';
 import { FaInstagram, FaFacebookF, FaTiktok, FaGlobe, FaMapMarkerAlt } from "react-icons/fa";
 import { useParams } from 'next/navigation';
 import DeleteOrder from '../delete-order/DeleteOrder';
+import ImageWithLoader from '@/component/ImageWithLoader';
+import { serve } from '@/api/utils';
 
 
 
@@ -51,7 +53,7 @@ interface ProductData {
   }
   color: {
     id:number
-    image?: string;
+    image: string;
   };
   size: {
     id:number
@@ -689,7 +691,7 @@ const addToCart = () => {
 
       useEffect(()=>{
         if(cart.length> 0){
-          console.log(`cart` , cart);
+          // console.log(`cart` , cart);
           const subtotall = cart.reduce((sum, item) => sum + item.total, 0)
            const totalWithDiscount = (subtotall + deliveryPrice) - watchCustomer("custom_discount");
             console.log("totalWithDiscount", totalWithDiscount);
@@ -985,6 +987,7 @@ const addToCart = () => {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
+                      <th className="px-4 py-2 text-right text-xs font-medium text-gray-500">صورة المنتج</th>
                       <th className="px-4 py-2 text-right text-xs font-medium text-gray-500">المنتج</th>
                       <th className="px-4 py-2 text-right text-xs font-medium text-gray-500">السعر</th>
                       <th className="px-4 py-2 text-right text-xs font-medium text-gray-500">الكمية</th>
@@ -995,6 +998,17 @@ const addToCart = () => {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {cart.map((item,index) => (
                       <tr key={index}>
+                         <td className="px-4 py-2 text-right">
+                            <div>
+                                <ImageWithLoader
+                                src={`${serve(item.color.image)}`}
+                                alt="صورة المنتج"
+                                className="w-12 h-12 object-cover rounded-md"
+                                width={48}
+                                height={48}
+                                />
+                            </div>
+                        </td>
                         <td className="px-4 py-2 text-right">
                           <div className="font-medium">{item.product.name}</div>
                           <div className="text-xs text-gray-500">{item.code}</div>

@@ -17,6 +17,8 @@ import {
     FaMapMarkerAlt,
 } from "react-icons/fa";
 import { log } from "console";
+import ImageWithLoader from "@/component/ImageWithLoader";
+import { serve } from "@/api/utils";
 
 interface ProductData {
     id: number;
@@ -26,7 +28,7 @@ interface ProductData {
     };
     color: {
         id: number;
-        image?: string;
+        image: string;
     };
     size: {
         id: number;
@@ -992,6 +994,9 @@ const CashierSystem: FC = () => {
                                     <thead className="bg-gray-50">
                                         <tr>
                                             <th className="px-4 py-2 text-right text-xs font-medium text-gray-500">
+                                             صورة المنتج 
+                                            </th>
+                                            <th className="px-4 py-2 text-right text-xs font-medium text-gray-500">
                                                 المنتج
                                             </th>
                                             <th className="px-4 py-2 text-right text-xs font-medium text-gray-500">
@@ -1009,6 +1014,17 @@ const CashierSystem: FC = () => {
                                     <tbody className="bg-white divide-y divide-gray-200">
                                         {cart.map((item, index) => (
                                             <tr key={index}>
+                                                <td className="px-4 py-2 text-right">
+                                                    <div>
+                                                        <ImageWithLoader
+                                                        src={`${serve(item.color.image)}`}
+                                                        alt="صورة المنتج"
+                                                        className="w-12 h-12 object-cover rounded-md"
+                                                        width={48}
+                                                        height={48}
+                                                        />
+                                                    </div>
+                                                </td>
                                                 <td className="px-4 py-2 text-right">
                                                     <div className="font-medium">
                                                         {item.product.name}
