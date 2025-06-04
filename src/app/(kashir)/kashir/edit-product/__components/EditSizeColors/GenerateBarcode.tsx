@@ -24,7 +24,7 @@ interface GenerateBarcodeProps {
 const GenerateBarcode: FC<GenerateBarcodeProps> = ({sizeColor}) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef});
-  return (<>
+  return (<div className='flex items-center flex-row-reverse'>
 
           <button
             type="button"
@@ -42,7 +42,7 @@ const GenerateBarcode: FC<GenerateBarcodeProps> = ({sizeColor}) => {
               format="CODE128"
               displayValue={true}
             />
-          </div>  </>);
+          </div>  </div>);
 }
 
 export default GenerateBarcode;
