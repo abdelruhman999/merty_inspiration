@@ -3,12 +3,17 @@ import { useRouter } from 'next/navigation';
 import { ReactNode, useEffect, useState } from 'react';
 import { Table, TableHeader } from '@/component/Table/Table';
 import { sendRequest } from '@/api';
+import { Color, Size } from '@/types/product';
+import ImageWithLoader from '@/component/ImageWithLoader';
+import { serve } from '@/api/utils';
 
 interface Product {
     id: number;
     name: string;
     description: string;
     is_active: string | number;
+    colors: Color[];
+    sizes: Size[];
 }
 
 interface ProductsResponse {
@@ -22,6 +27,7 @@ const headers: TableHeader<Product>[] = [
     { key: 'id', label: 'رقم المنتج' },
     { key: 'name', label: 'اسم المنتج' },
     { key: 'description', label: 'الوصف' },
+    { key: 'colors', label: 'الصورة' , render: (item) => item.colors && <ImageWithLoader src={serve(item.colors[0].image)} width="100" height="100" alt="" /> },
     { key: 'is_active', label: 'الحالة' , render: (item) => item.is_active ? <span className="text-green-500"   >مفعل</span> : <span className="text-red-500">معطل</span> },
 ];
 
