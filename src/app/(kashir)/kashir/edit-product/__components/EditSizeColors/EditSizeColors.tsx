@@ -12,8 +12,6 @@ import { serve } from '@/api/utils';
 import UpdateModal from './UpdateModal/UpdateModal';
 import { FiEdit2, FiPrinter } from 'react-icons/fi';
 import { LuRefreshCcw } from 'react-icons/lu';
-import Barcode from 'react-barcode';
-import { useReactToPrint } from "react-to-print";
 import GenerateBarcode from './GenerateBarcode';
 
 
@@ -45,8 +43,6 @@ export default function EditSizeColors({ id }: EditSizeColorsProps) {
   const [refresh, setRefresh] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [selectedSizeColor, setSelectedSizeColor] = useState<SizeColor | null>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const reactToPrintFn = useReactToPrint({ contentRef});
   const { data: sizeColors } = useRequest<SizeColor[]>({
     url: `/api/product/${id}/size-colors`,
     method: 'GET',
@@ -193,41 +189,16 @@ export default function EditSizeColors({ id }: EditSizeColorsProps) {
     {
       key: 'code',
       label: 'Barcode',
-      render: (sizeColor: SizeColor) => {
-        return (
-          // <div className="flex flex-col items-center justify-between overflow-auto" ref={contentRef}>
-          //   <p>{sizeColor.size.size  ? sizeColor.size.size + " - " : "" } {sizeColor.size.price.toString()}LE</p>
-          //   <Barcode
-          //     value={sizeColor.code} 
-          //     className="h-[100px] w-[100px]" 
-          //     format="CODE128"
-          //     displayValue={true}
-          //   />
-          // </div>
-          
-
-        <GenerateBarcode
-          size={sizeColor.size}
-          price={sizeColor.size.price}
-          code={sizeColor.code}
-          ref={contentRef}
-        />
-
-        );
-      }
+      render: (sizeColor: SizeColor) =>
+      <GenerateBarcode
+        sizeColor={sizeColor}
+      />
     },
     {
       key: 'id',
       label: 'العمليات',
       render: (sizeColor: SizeColor) => (
         <div className="flex gap-2 justify-center">
-          <button
-            type="button"
-            onClick={() => reactToPrintFn()}
-            className="p-2 text-green-600 hover:bg-green-100 rounded-full transition-colors duration-200"
-          >
-            <FiPrinter className="h-5 w-5" />
-          </button>
           <button
             type="button"
             onClick={() => {
