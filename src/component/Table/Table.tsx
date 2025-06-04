@@ -1,3 +1,5 @@
+import Barcode from '@/app/(kashir)/kashir/edit-product/__components/EditSizeColors/GenerateBarcode';
+import { log } from 'console';
 import React from 'react';
 
 export interface TableHeader<T> {
@@ -37,8 +39,8 @@ export function Table<T>({
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {data.map((item, index) => (
-                 
+                  {data.map((item, index) =>(
+                    console.log('item' , item),
                     
                 <tr
                     key={index}
@@ -50,15 +52,20 @@ export function Table<T>({
                             key={`${index}-${String(header.key)}-${String(header.label)}`}
                             className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center"
                         >
-                            {header.render 
-                                ? header.render(item)
-                                : String(item[header.key])}
+                            {
+                            header.render 
+                                ?
+                                 header.render(item)
+                                : 
+                                String(item[header.key])
+                            }
                         </td>
                     ))}
                 </tr>
             ))}
          </tbody>
             </table>
+            
         </div>
     );
 }

@@ -14,6 +14,7 @@ import { FiEdit2, FiPrinter } from 'react-icons/fi';
 import { LuRefreshCcw } from 'react-icons/lu';
 import Barcode from 'react-barcode';
 import { useReactToPrint } from "react-to-print";
+import GenerateBarcode from './GenerateBarcode';
 
 
 
@@ -194,15 +195,24 @@ export default function EditSizeColors({ id }: EditSizeColorsProps) {
       label: 'Barcode',
       render: (sizeColor: SizeColor) => {
         return (
-          <div className="flex flex-col items-center justify-between overflow-auto" ref={contentRef}>
-            <p>{sizeColor.size.size  ? sizeColor.size.size + " - " : "" } {sizeColor.size.price.toString()}LE</p>
-            <Barcode
-              value={sizeColor.code} 
-              className="h-[100px] w-[100px]" 
-              format="CODE128"
-              displayValue={true}
-            />
-          </div>
+          // <div className="flex flex-col items-center justify-between overflow-auto" ref={contentRef}>
+          //   <p>{sizeColor.size.size  ? sizeColor.size.size + " - " : "" } {sizeColor.size.price.toString()}LE</p>
+          //   <Barcode
+          //     value={sizeColor.code} 
+          //     className="h-[100px] w-[100px]" 
+          //     format="CODE128"
+          //     displayValue={true}
+          //   />
+          // </div>
+          
+
+        <GenerateBarcode
+          size={sizeColor.size}
+          price={sizeColor.size.price}
+          code={sizeColor.code}
+          ref={contentRef}
+        />
+
         );
       }
     },
